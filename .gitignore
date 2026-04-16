@@ -3,3 +3,9 @@ dist/
 .DS_Store
 *.log
 apps/**/dist/
+.env
+.env.*
+apps/**/.env
+apps/**/.env.*
+!.env.example
+!apps/**/.env.example

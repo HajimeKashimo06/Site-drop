@@ -1,214 +1,259 @@
-import { gsap } from 'gsap';
-import * as THREE from 'three';
+﻿import { gsap } from 'gsap';
 import './style.css';
 
-type DemoApiResponse = {
-  service: string;
-  status: string;
-  uptimeSeconds: number;
-  timestamp: string;
-  message: string;
+type ProductImage = {
+  src: string;
+  alt: string;
 };
 
+const company = 'Lamaisonduglacon';
+
+const product = {
+  displayName: 'Machine a glacons Signature',
+  heroName: "L'AURORE",
+  sentence: 'On prefere servir plutot que faire attendre.',
+  subtitle: 'Edition ambree',
+  description:
+    'Un seul produit, une promesse claire: des glacons rapides, une finition premium et une presence elegante dans votre cuisine ou vos receptions.',
+  price: '349 EUR',
+  cta: 'Commander',
+  shipping: 'Livraison offerte - stock limite'
+};
+
+const productImages: ProductImage[] = [
+  { src: '/myproduct/images/1.png', alt: 'Machine a glacons vue principale' },
+  { src: '/myproduct/images/image_001.png', alt: 'Machine a glacons sur plan de travail' },
+  { src: '/myproduct/images/image_002.jpg', alt: 'Machine a glacons en contexte' },
+  { src: '/myproduct/images/image_003.jpg', alt: 'Detail machine a glacons' },
+  { src: '/myproduct/images/image_004.jpg', alt: 'Machine a glacons usage cocktail' },
+  { src: '/myproduct/images/image_005.jpg', alt: 'Machine a glacons et accessoires' },
+  { src: '/myproduct/images/image_006.jpg', alt: 'Machine a glacons detail design' }
+];
+
+const firstImage = productImages[0];
+if (!firstImage) {
+  throw new Error('Missing product images');
+}
+
+document.title = `${company} | ${product.displayName}`;
+
 const app = mustElement<HTMLDivElement>('#app');
-
 app.innerHTML = `
-  <main class="layout">
-    <div class="ambient ambient-a"></div>
-    <div class="ambient ambient-b"></div>
-    <canvas id="scene" aria-hidden="true"></canvas>
+  <main class="landing">
+    <div class="backdrop" aria-hidden="true"></div>
 
-    <header class="hero reveal">
-      <p class="eyebrow">Vite + TypeScript + GSAP + Three.js</p>
-      <h1>Test Lab Moderne<br />Front + Back clean</h1>
-      <p class="lead">
-        Base prete pour prototyper vite: animation fluide, scene 3D, et API Node
-        branchee en direct.
-      </p>
-      <div class="actions">
-        <button class="btn btn-primary" type="button" id="refresh-api">Refresh API</button>
-        <a class="btn btn-secondary" href="http://localhost:8787/api/health" target="_blank" rel="noreferrer">Health API</a>
+    <header class="nav" data-reveal>
+      <div class="logo-wrap">
+        <span class="logo-dot" aria-hidden="true"></span>
+        <p class="logo">${company}</p>
       </div>
+      <nav>
+        <a href="#hero">Accueil</a>
+        <a href="#product">Le produit</a>
+        <a href="#details">Details</a>
+        <a href="#order">Commander</a>
+      </nav>
     </header>
 
-    <section class="info-grid">
-      <article class="card reveal" id="status-card">
-        <p class="card-label">Etat backend</p>
-        <h2 id="api-state">Chargement...</h2>
-        <p id="api-time">En attente de reponse.</p>
+    <section class="hero" id="hero" data-reveal>
+      <div class="hero-left">
+        <p class="hero-brand">${company}</p>
+        <h1>${product.heroName}</h1>
+        <p class="hero-script">${product.sentence}</p>
+        <div class="hero-line" aria-hidden="true"></div>
+
+        <figure class="product-frame" id="product-frame">
+          <img id="hero-image" src="${firstImage.src}" alt="${firstImage.alt}" />
+        </figure>
+      </div>
+
+      <aside class="hero-card" id="product">
+        <p class="card-kicker">Produit unique</p>
+        <h2>${product.displayName}</h2>
+        <p class="card-subtitle">${product.subtitle}</p>
+        <p class="card-text">${product.description}</p>
+
+        <ul>
+          <li>Cycle de glacons en 6 a 9 minutes</li>
+          <li>Production jusqu a 12 kg par jour</li>
+          <li>Mode autonettoyant + panneau LED</li>
+        </ul>
+
+        <div class="card-footer" id="order">
+          <p class="price">${product.price}</p>
+          <button class="cta" id="checkout-button" type="button">${product.cta}</button>
+        </div>
+        <p class="shipping">${product.shipping}</p>
+        <p class="checkout-feedback" id="checkout-feedback" aria-live="polite"></p>
+      </aside>
+    </section>
+
+    <section class="thumbs" id="details" data-reveal></section>
+
+    <section class="specs" data-reveal>
+      <article>
+        <p class="spec-value">120 W</p>
+        <p class="spec-label">Puissance maitrisee</p>
       </article>
-      <article class="card reveal">
-        <p class="card-label">Stack</p>
-        <h2>Architecture claire</h2>
-        <p>Monorepo workspace avec apps web/api, scripts unifies et TypeScript partout.</p>
+      <article>
+        <p class="spec-value">12 kg</p>
+        <p class="spec-label">Production par jour</p>
       </article>
-      <article class="card reveal">
-        <p class="card-label">Animation</p>
-        <h2>Motion premium</h2>
-        <p>GSAP gere les reveals, Three.js gere le fond 3D reactif a la souris.</p>
+      <article>
+        <p class="spec-value">Auto-clean</p>
+        <p class="spec-label">Entretien simplifie</p>
       </article>
     </section>
   </main>
 `;
 
-const refreshButton = mustElement<HTMLButtonElement>('#refresh-api');
-const apiState = mustElement<HTMLElement>('#api-state');
-const apiTime = mustElement<HTMLElement>('#api-time');
-const statusCard = mustElement<HTMLElement>('#status-card');
-const canvas = mustElement<HTMLCanvasElement>('#scene');
+renderThumbnails(productImages);
+setupReveal();
+setupImageSwitch(productImages);
+setupParallax();
+setupCheckout();
+showCheckoutStatusFromQuery();
 
-setupRevealAnimation();
-setupThreeScene(canvas);
-void loadApiStatus();
-
-refreshButton.addEventListener('click', () => {
-  void loadApiStatus();
-});
-
-async function loadApiStatus(): Promise<void> {
-  apiState.textContent = 'Chargement...';
-  apiTime.textContent = 'Connexion API en cours...';
-  statusCard.classList.remove('offline');
-  try {
-    const baseUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? '';
-    const response = await fetch(baseUrl ? `${baseUrl}/api/demo` : '/api/demo');
-    if (!response.ok) {
-      throw new Error(`API request failed (${response.status})`);
-    }
-
-    const payload = (await response.json()) as DemoApiResponse;
-    apiState.textContent = `API ${payload.status.toUpperCase()}`;
-    apiTime.textContent = `${payload.service} - ${new Date(payload.timestamp).toLocaleString('fr-FR')}`;
-    statusCard.classList.remove('offline');
-  } catch {
-    apiState.textContent = 'API OFFLINE';
-    apiTime.textContent = 'Lance `npm run dev` a la racine.';
-    statusCard.classList.add('offline');
-  }
+function renderThumbnails(images: ProductImage[]): void {
+  const thumbs = mustElement<HTMLElement>('.thumbs');
+  thumbs.innerHTML = images
+    .map(
+      (image, index) => `
+      <button class="thumb${index === 0 ? ' is-active' : ''}" type="button" data-index="${index}" aria-label="Image ${index + 1}">
+        <img src="${image.src}" alt="" loading="lazy" />
+      </button>
+    `
+    )
+    .join('');
 }
 
-function setupRevealAnimation(): void {
-  gsap.set('.reveal', { autoAlpha: 0, y: 28 });
-  gsap.timeline({ defaults: { ease: 'power3.out' } }).to('.reveal', {
+function setupReveal(): void {
+  gsap.set('[data-reveal]', { autoAlpha: 0, y: 26 });
+  gsap.to('[data-reveal]', {
     autoAlpha: 1,
     y: 0,
     duration: 0.9,
-    stagger: 0.12
-  });
-
-  gsap.to('.ambient-a', {
-    xPercent: 15,
-    yPercent: -10,
-    duration: 10,
-    repeat: -1,
-    yoyo: true,
-    ease: 'sine.inOut'
-  });
-
-  gsap.to('.ambient-b', {
-    xPercent: -12,
-    yPercent: 12,
-    duration: 12,
-    repeat: -1,
-    yoyo: true,
-    ease: 'sine.inOut'
+    ease: 'power3.out',
+    stagger: 0.14
   });
 }
 
-function setupThreeScene(canvasElement: HTMLCanvasElement): void {
-  const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2('#08101f', 0.11);
+function setupImageSwitch(images: ProductImage[]): void {
+  const heroImage = mustElement<HTMLImageElement>('#hero-image');
+  const thumbs = Array.from(document.querySelectorAll<HTMLButtonElement>('.thumb'));
 
-  const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 100);
-  camera.position.set(0, 0, 5.8);
+  thumbs.forEach((thumb) => {
+    thumb.addEventListener('click', () => {
+      const index = Number(thumb.dataset.index ?? '0');
+      const image = images[index];
+      if (!image) {
+        return;
+      }
 
-  const renderer = new THREE.WebGLRenderer({
-    canvas: canvasElement,
-    antialias: true,
-    alpha: true
+      heroImage.src = image.src;
+      heroImage.alt = image.alt;
+
+      thumbs.forEach((item) => item.classList.remove('is-active'));
+      thumb.classList.add('is-active');
+
+      gsap.fromTo(
+        heroImage,
+        { autoAlpha: 0.55, scale: 0.97, rotate: -3 },
+        { autoAlpha: 1, scale: 1, rotate: -8, duration: 0.36, ease: 'power2.out' }
+      );
+    });
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+}
 
-  const lightA = new THREE.DirectionalLight('#7dd3fc', 1.3);
-  lightA.position.set(2, 3, 4);
-  scene.add(lightA);
+function setupParallax(): void {
+  const frame = mustElement<HTMLElement>('#product-frame');
+  frame.addEventListener('pointermove', (event) => {
+    const rect = frame.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
 
-  const lightB = new THREE.DirectionalLight('#f97316', 1.1);
-  lightB.position.set(-2, -2, 2);
-  scene.add(lightB);
-
-  const knot = new THREE.Mesh(
-    new THREE.TorusKnotGeometry(1, 0.33, 220, 40),
-    new THREE.MeshPhysicalMaterial({
-      color: '#22d3ee',
-      roughness: 0.15,
-      metalness: 0.75,
-      clearcoat: 1,
-      clearcoatRoughness: 0.2
-    })
-  );
-  scene.add(knot);
-
-  const starsGeometry = new THREE.BufferGeometry();
-  const count = 700;
-  const positions = new Float32Array(count * 3);
-  for (let i = 0; i < count; i += 1) {
-    positions[i * 3] = (Math.random() - 0.5) * 14;
-    positions[i * 3 + 1] = (Math.random() - 0.5) * 14;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 14;
-  }
-  starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  const stars = new THREE.Points(
-    starsGeometry,
-    new THREE.PointsMaterial({
-      color: '#f5f7ff',
-      size: 0.03,
-      transparent: true,
-      opacity: 0.65
-    })
-  );
-  scene.add(stars);
-
-  const pointer = new THREE.Vector2(0, 0);
-  window.addEventListener('pointermove', (event) => {
-    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-    pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    gsap.to(frame, {
+      rotateX: -y * 7,
+      rotateY: x * 9,
+      transformPerspective: 900,
+      duration: 0.36,
+      ease: 'power2.out'
+    });
   });
 
-  const clock = new THREE.Clock();
+  frame.addEventListener('pointerleave', () => {
+    gsap.to(frame, {
+      rotateX: 0,
+      rotateY: 0,
+      duration: 0.5,
+      ease: 'power2.out'
+    });
+  });
+}
 
-  const resize = () => {
-    const { clientWidth, clientHeight } = canvasElement;
-    if (!clientWidth || !clientHeight) {
-      return;
+function setupCheckout(): void {
+  const checkoutButton = mustElement<HTMLButtonElement>('#checkout-button');
+  const feedback = mustElement<HTMLElement>('#checkout-feedback');
+  const apiBaseUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? '';
+  const endpoint = apiBaseUrl ? `${apiBaseUrl}/api/create-checkout-session` : '/api/create-checkout-session';
+
+  checkoutButton.addEventListener('click', async () => {
+    const originalButtonLabel = checkoutButton.textContent ?? product.cta;
+
+    checkoutButton.disabled = true;
+    checkoutButton.textContent = 'Redirection...';
+    feedback.textContent = '';
+    feedback.classList.remove('is-success', 'is-error');
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json'
+        }
+      });
+
+      const payload = (await response.json()) as { error?: string; url?: string };
+      if (!response.ok) {
+        throw new Error(payload.error ?? 'Erreur lors de la creation de la session Stripe.');
+      }
+
+      if (!payload.url) {
+        throw new Error('Aucune URL Stripe recue.');
+      }
+
+      window.location.assign(payload.url);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erreur de paiement.';
+      feedback.textContent = message;
+      feedback.classList.add('is-error');
+      checkoutButton.disabled = false;
+      checkoutButton.textContent = originalButtonLabel;
     }
-    renderer.setSize(clientWidth, clientHeight, false);
-    camera.aspect = clientWidth / clientHeight;
-    camera.updateProjectionMatrix();
-  };
+  });
+}
 
-  resize();
-  window.addEventListener('resize', resize);
+function showCheckoutStatusFromQuery(): void {
+  const feedback = mustElement<HTMLElement>('#checkout-feedback');
+  const params = new URLSearchParams(window.location.search);
+  const checkoutStatus = params.get('checkout');
 
-  const render = () => {
-    const elapsed = clock.getElapsedTime();
+  if (checkoutStatus === 'success') {
+    feedback.textContent = 'Paiement valide. Votre commande test est confirmee.';
+    feedback.classList.add('is-success');
+  }
 
-    knot.rotation.x = elapsed * 0.35;
-    knot.rotation.y = elapsed * 0.5;
-    knot.position.x = Math.sin(elapsed * 0.6) * 0.2;
+  if (checkoutStatus === 'canceled') {
+    feedback.textContent = 'Paiement annule. Vous pouvez reessayer quand vous voulez.';
+    feedback.classList.add('is-error');
+  }
 
-    stars.rotation.y = -elapsed * 0.04;
-    stars.rotation.x = elapsed * 0.02;
-
-    camera.position.x = THREE.MathUtils.lerp(camera.position.x, pointer.x * 0.45, 0.04);
-    camera.position.y = THREE.MathUtils.lerp(camera.position.y, pointer.y * 0.25, 0.04);
-    camera.lookAt(0, 0, 0);
-
-    renderer.render(scene, camera);
-    requestAnimationFrame(render);
-  };
-
-  render();
+  if (checkoutStatus) {
+    params.delete('checkout');
+    const query = params.toString();
+    const nextUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+    window.history.replaceState({}, '', nextUrl);
+  }
 }
 
 function mustElement<T extends Element>(selector: string): T {

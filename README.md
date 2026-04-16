@@ -26,3 +26,10 @@ npm run dev
 - `npm run dev:web` : demarre uniquement le frontend
 - `npm run dev:api` : demarre uniquement le backend
 - `npm run build` : build backend puis frontend
+
+## Paiement Stripe (mode test)
+
+1. Copier `apps/api/.env.example` vers `apps/api/.env`
+2. Ajouter `STRIPE_SECRET_KEY`
+3. Lancer `npm run dev`
+4. Cliquer sur `Commander` dans le front pour ouvrir Stripe Checkout
