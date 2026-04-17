@@ -21,22 +21,22 @@ app.innerHTML = `
     <section class="contact-grid">
       <article class="intro-card">
         <p class="kicker">Demande de rappel</p>
-        <h1>Laisse tes coordonnées et on te contacte rapidement.</h1>
+        <h1>Laissez vos coordonnées et nous vous contactons rapidement.</h1>
         <p>
-          Cette fiche envoie ta demande directement à l'adresse
+          Ce formulaire envoie votre demande directement à l'adresse
           <strong>contact@hproweb.fr</strong>.
         </p>
         <ul>
           <li>Réservation de démo 100% gratuite</li>
           <li>Réponse sous 24h en général</li>
-          <li>Échange clair sur ton besoin</li>
+          <li>Échange clair sur vos besoins</li>
           <li>Aucun engagement au premier contact</li>
         </ul>
       </article>
 
       <section class="form-card" aria-label="Fiche contact">
         <h2>Fiche contact</h2>
-        <p>Complète les champs puis clique sur Envoyer. La réservation de démo est gratuite.</p>
+        <p>Complétez les champs puis cliquez sur Envoyer. La réservation de démo est gratuite.</p>
         <form id="callback-form" novalidate>
           <label for="contact-name">Nom complet</label>
           <input id="contact-name" name="name" type="text" required maxlength="120" autocomplete="name" />
@@ -70,7 +70,7 @@ app.innerHTML = `
             minlength="10"
             maxlength="3000"
             rows="5"
-            placeholder="Décris ton besoin en quelques lignes."
+            placeholder="Décrivez votre besoin en quelques lignes."
           ></textarea>
 
           <input
@@ -107,7 +107,7 @@ form.addEventListener('submit', async (event) => {
   feedback.className = '';
 
   if (!consentCheckbox.checked) {
-    setFeedback('Tu dois accepter d’être contacté pour envoyer la demande.', 'error');
+    setFeedback('Vous devez accepter d’être contacté pour envoyer la demande.', 'error');
     return;
   }
 
@@ -155,7 +155,7 @@ form.addEventListener('submit', async (event) => {
     setFeedback(okMessage, 'success');
     form.reset();
   } catch {
-    setFeedback('Erreur réseau. Réessaie dans un instant.', 'error');
+    setFeedback('Erreur réseau. Veuillez réessayer dans un instant.', 'error');
   } finally {
     submitButton.disabled = false;
   }

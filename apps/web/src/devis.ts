@@ -108,7 +108,7 @@ form.addEventListener('submit', async (event) => {
   feedback.className = '';
 
   if (!consentCheckbox.checked) {
-    setFeedback("Tu dois accepter d'être contacté pour envoyer la demande.", 'error');
+    setFeedback("Vous devez accepter d'être contacté pour envoyer la demande.", 'error');
     return;
   }
 
@@ -148,12 +148,12 @@ form.addEventListener('submit', async (event) => {
     const okMessage =
       data && typeof data.message === 'string' && data.message.trim()
         ? data.message
-        : 'Demande de devis envoyée. Merci.';
+        : 'Votre demande de devis a bien été envoyée.';
     setFeedback(okMessage, 'success');
     form.reset();
     mustElement<HTMLSelectElement>('#quote-offer').value = selectedOffer;
   } catch {
-    setFeedback('Erreur réseau. Réessaie dans un instant.', 'error');
+    setFeedback('Erreur réseau. Veuillez réessayer dans un instant.', 'error');
   } finally {
     submitButton.disabled = false;
   }

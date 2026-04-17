@@ -369,7 +369,7 @@ app.post('/api/admin/users', async (req, res) => {
   }
 
   if (username === admin.username && (!active || role !== 'admin')) {
-    res.status(400).json({ ok: false, error: 'Tu ne peux pas retirer tes propres droits admin.' });
+    res.status(400).json({ ok: false, error: 'Vous ne pouvez pas retirer vos propres droits admin.' });
     return;
   }
 
@@ -433,7 +433,7 @@ app.post('/api/admin/users/:username/toggle', async (req, res) => {
   }
 
   if (username === admin.username && !active) {
-    res.status(400).json({ ok: false, error: 'Tu ne peux pas te désactiver toi-même.' });
+    res.status(400).json({ ok: false, error: 'Vous ne pouvez pas vous désactiver vous-même.' });
     return;
   }
 
@@ -472,7 +472,7 @@ app.post('/api/contact-request', async (req, res) => {
   if (!canSubmitContactRequest(ip)) {
     res.status(429).json({
       ok: false,
-      error: 'Trop de demandes en peu de temps. Reessaie dans quelques minutes.'
+      error: 'Trop de demandes en peu de temps. Veuillez réessayer dans quelques minutes.'
     });
     return;
   }
@@ -532,7 +532,7 @@ app.post('/api/quote-request', async (req, res) => {
   if (!canSubmitContactRequest(ip)) {
     res.status(429).json({
       ok: false,
-      error: 'Trop de demandes en peu de temps. Réessaie dans quelques minutes.'
+      error: 'Trop de demandes en peu de temps. Veuillez réessayer dans quelques minutes.'
     });
     return;
   }

@@ -437,6 +437,39 @@ section {
   justify-content: flex-end;
 }
 
+.site-footer {
+  margin-top: 0.9rem;
+  border: 1px solid #cfd8e3;
+  border-radius: 16px;
+  background: #f0f2f5;
+  padding: 1.15rem 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem;
+}
+
+.site-footer article {
+  display: grid;
+  gap: 0.36rem;
+  justify-items: center;
+  text-align: center;
+}
+
+.site-footer h3 {
+  margin: 0 0 0.34rem;
+  color: #334e6c;
+  letter-spacing: 0.04em;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.site-footer a {
+  color: #3d5f84;
+  font-size: 1.32rem;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(18px);
@@ -483,6 +516,10 @@ section {
   .contact-actions {
     justify-content: flex-start;
   }
+
+  .site-footer {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 680px) {
@@ -523,5 +560,13 @@ section {
 
   .brand-logo {
     height: 120px;
+  }
+
+  .site-footer h3 {
+    font-size: 1.45rem;
+  }
+
+  .site-footer a {
+    font-size: 1.04rem;
   }
 }

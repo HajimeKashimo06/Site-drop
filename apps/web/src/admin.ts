@@ -219,7 +219,7 @@ async function bootstrapAdmin(): Promise<void> {
     const siteId = role === 'client' ? String(formData.get('siteId') ?? '').trim().toLowerCase() : '';
 
     if (role === 'client' && !siteId) {
-      adminFeedback.textContent = 'Choisis un site démo pour ce compte client.';
+      adminFeedback.textContent = 'Veuillez choisir un site démo pour ce compte client.';
       adminFeedback.className = 'feedback error';
       return;
     }

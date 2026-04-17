@@ -132,6 +132,21 @@ app.innerHTML = `
         <a class="btn ghost" href="mailto:contact@hproweb.fr">contact@hproweb.fr</a>
       </div>
     </section>
+
+    <footer class="site-footer reveal" aria-label="Informations du site">
+      <article>
+        <h3>INFORMATIONS</h3>
+        <a href="#">Mentions légales du site</a>
+        <a href="#">Politique en matière de cookies</a>
+        <a href="#">Conditions Générales de Vente</a>
+      </article>
+      <article>
+        <h3>NOTRE ENTREPRISE</h3>
+        <a href="#">Qui sommes-nous ?</a>
+        <a href="#">Éditeurs Partenaires</a>
+        <a href="#">Newsletter</a>
+      </article>
+    </footer>
   </main>
 `;
 
