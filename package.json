@@ -10,7 +10,10 @@
     "dev:web": "npm run dev --workspace @sitedrop/web",
     "dev:api": "npm run dev --workspace @sitedrop/api",
     "build": "npm run build --workspace @sitedrop/api && npm run build --workspace @sitedrop/web",
-    "start": "npm run start --workspace @sitedrop/api"
+    "start": "npm run start --workspace @sitedrop/api",
+    "user:add": "node scripts/add-site-user.mjs",
+    "user:list": "node scripts/list-site-users.mjs",
+    "user:disable": "node scripts/disable-site-user.mjs"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

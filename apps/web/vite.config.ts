@@ -9,7 +9,11 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(rootDir, 'index.html'),
-        pageTest: resolve(rootDir, 'page-test.html')
+        contact: resolve(rootDir, 'contact.html'),
+        devis: resolve(rootDir, 'devis.html'),
+        pageTest: resolve(rootDir, 'page-test.html'),
+        demoSite: resolve(rootDir, 'demo-site.html'),
+        admin: resolve(rootDir, 'admin.html')
       }
     }
   },

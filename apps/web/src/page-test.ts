@@ -20,10 +20,10 @@ type OpeningDay = {
 const salonName = 'Best Hair';
 
 const galleryImages = [
-  { src: '/besthair/photo4.png', alt: 'Devanture du salon Best Hair' },
-  { src: '/besthair/photo1.png', alt: 'Coupe en cours par le barbier' },
-  { src: '/besthair/photo3.png', alt: 'Poste de coupe et matériel professionnel' },
-  { src: '/besthair/photo2.png', alt: 'Produits de coiffure présentés au salon' }
+  { src: '/coiffure1/photo4.png', alt: 'Devanture du salon Best Hair' },
+  { src: '/coiffure1/photo1.png', alt: 'Coupe en cours par le barbier' },
+  { src: '/coiffure1/photo3.png', alt: 'Poste de coupe et matériel professionnel' },
+  { src: '/coiffure1/photo2.png', alt: 'Produits de coiffure présentés au salon' }
 ];
 
 const serviceCategories: ServiceCategory[] = [
@@ -89,17 +89,26 @@ const openingDays: OpeningDay[] = [
 
 const openingByDayIndex = new Map(openingDays.map((day) => [day.dayIndex, day]));
 
-document.title = `${salonName} | Page test client`;
+void bootstrapProtectedPage();
 
-const app = mustElement<HTMLDivElement>('#app');
-app.innerHTML = `
+async function bootstrapProtectedPage(): Promise<void> {
+  const hasAccess = await hasValidSession();
+  if (!hasAccess) {
+    window.location.replace('/demo-site.html');
+    return;
+  }
+
+  document.title = `${salonName} | Page test client`;
+
+  const app = mustElement<HTMLDivElement>('#app');
+  app.innerHTML = `
   <main class="site-shell" id="accueil">
     <header class="topbar reveal">
       <a class="brand" href="#accueil" aria-label="Retour accueil">
         <div class="brand-media">
-          <img class="mascot mascot-left" src="/besthair/barber.png" alt="" aria-hidden="true" />
-          <img class="brand-logo" src="/besthair/logo.png" alt="Logo Best Hair" />
-          <img class="mascot mascot-right" src="/besthair/barber.png" alt="" aria-hidden="true" />
+          <img class="mascot mascot-left" src="/coiffure1/barber.png" alt="" aria-hidden="true" />
+          <img class="brand-logo" src="/coiffure1/logo.png" alt="Logo Best Hair" />
+          <img class="mascot mascot-right" src="/coiffure1/barber.png" alt="" aria-hidden="true" />
         </div>
         <div class="brand-copy">
           <p>Best Hair</p>
@@ -145,7 +154,7 @@ app.innerHTML = `
       </article>
 
       <figure class="hero-photo">
-        <img src="/besthair/photo1.png" alt="Coupe en cours par le barbier" loading="eager" />
+        <img src="/coiffure1/photo1.png" alt="Coupe en cours par le barbier" loading="eager" />
       </figure>
     </section>
 
@@ -238,7 +247,7 @@ app.innerHTML = `
         </form>
 
         <aside>
-          <img src="/besthair/logo.png" alt="Logo Best Hair" loading="lazy" />
+          <img src="/coiffure1/logo.png" alt="Logo Best Hair" loading="lazy" />
           <p>Best Hair</p>
           <span>Coiffeur - Barbier</span>
         </aside>
@@ -304,12 +313,13 @@ app.innerHTML = `
       <img id="lightbox-image" src="" alt="" />
     </div>
   </main>
-`;
+  `;
 
-setupRevealAnimation();
-setupBookingForm();
-setupPhotoLightbox();
-setupCenteredTabs();
+  setupRevealAnimation();
+  setupBookingForm();
+  setupPhotoLightbox();
+  setupCenteredTabs();
+}
 
 function setupRevealAnimation(): void {
   const nodes = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
@@ -526,6 +536,18 @@ function formatDate(isoDate: string): string {
 function toIsoDate(date: Date): string {
   const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
   return local.toISOString().slice(0, 10);
+}
+
+async function hasValidSession(): Promise<boolean> {
+  try {
+    const response = await fetch('/api/auth/session?site=page-test', {
+      method: 'GET',
+      credentials: 'include'
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
 }
 
 function mustElement<T extends Element>(selector: string): T {
