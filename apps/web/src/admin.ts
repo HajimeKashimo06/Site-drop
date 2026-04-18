@@ -16,6 +16,10 @@ type SiteAnalytics = {
   lastClickAt: string | null;
 };
 
+type SiteSettings = {
+  demoSitesPublic: boolean;
+};
+
 type CreateSiteResponse = {
   site?: DemoSite;
   vscodeUri?: string;
@@ -92,6 +96,17 @@ app.innerHTML = `
       </div>
 
       <div class="admin-tab-panel" id="tab-panel-access">
+        <div class="sites-zone site-visibility-zone">
+          <p class="small-kicker">Visibilite</p>
+          <h3>Acces aux liens demo</h3>
+          <p class="visibility-status" id="demo-public-status">Chargement du mode...</p>
+          <label class="checkbox-line toggle-line">
+            <input type="checkbox" id="demo-public-toggle" />
+            Liens publics (sans code)
+          </label>
+          <p class="feedback" id="demo-public-feedback" aria-live="polite"></p>
+        </div>
+
         <div class="sites-zone">
           <p class="small-kicker">Sites demo</p>
           <h3>Sites disponibles</h3>
@@ -192,6 +207,9 @@ async function bootstrapAdmin(): Promise<void> {
   const loginFeedback = mustElement<HTMLElement>('#login-feedback');
   const adminFeedback = mustElement<HTMLElement>('#admin-feedback');
   const siteFeedback = mustElement<HTMLElement>('#site-feedback');
+  const sitePublicStatus = mustElement<HTMLElement>('#demo-public-status');
+  const sitePublicFeedback = mustElement<HTMLElement>('#demo-public-feedback');
+  const sitePublicToggle = mustElement<HTMLInputElement>('#demo-public-toggle');
   const analyticsFeedback = mustElement<HTMLElement>('#analytics-feedback');
   const analyticsTotal = mustElement<HTMLElement>('#analytics-total');
   const analyticsBody = mustElement<HTMLTableSectionElement>('#analytics-body');
@@ -255,6 +273,24 @@ async function bootstrapAdmin(): Promise<void> {
       .join('');
   };
 
+  const renderSitePublicMode = (enabled: boolean): void => {
+    sitePublicToggle.checked = enabled;
+    sitePublicStatus.textContent = enabled
+      ? 'Mode actuel: liens demo ouverts publiquement (sans code).'
+      : 'Mode actuel: protection par code active.';
+  };
+
+  const refreshSiteSettings = async (): Promise<void> => {
+    sitePublicFeedback.textContent = '';
+    sitePublicFeedback.className = 'feedback';
+    const settings = await fetchSiteSettings();
+    if (!settings) {
+      sitePublicStatus.textContent = 'Impossible de charger le mode actuel.';
+      return;
+    }
+    renderSitePublicMode(settings.demoSitesPublic);
+  };
+
   const refreshDemoSites = async (): Promise<DemoSite[]> => {
     const demoSites = await fetchDemoSites();
     populateSiteSelect(siteSelect, demoSites);
@@ -297,6 +333,29 @@ async function bootstrapAdmin(): Promise<void> {
 
   siteCreateOpenButton.addEventListener('click', openSiteCreateForm);
   siteCreateCancelButton.addEventListener('click', closeSiteCreateForm);
+
+  sitePublicToggle.addEventListener('change', async () => {
+    sitePublicFeedback.textContent = '';
+    sitePublicFeedback.className = 'feedback';
+    const requestedValue = sitePublicToggle.checked;
+    sitePublicToggle.disabled = true;
+
+    const updated = await updateSiteSettings(requestedValue);
+    if (!updated) {
+      sitePublicFeedback.textContent = 'Impossible de mettre a jour le mode.';
+      sitePublicFeedback.className = 'feedback error';
+      await refreshSiteSettings();
+      sitePublicToggle.disabled = false;
+      return;
+    }
+
+    renderSitePublicMode(updated.demoSitesPublic);
+    sitePublicFeedback.textContent = updated.demoSitesPublic
+      ? 'Mode public active: les liens demo s ouvrent sans code.'
+      : 'Mode protege active: le code est a nouveau requis.';
+    sitePublicFeedback.className = 'feedback success';
+    sitePublicToggle.disabled = false;
+  });
 
   sitesList.addEventListener('click', async (event) => {
     const target = event.target;
@@ -357,6 +416,7 @@ async function bootstrapAdmin(): Promise<void> {
     panel.hidden = false;
     await refreshDemoSites();
     await refreshSiteAnalytics();
+    await refreshSiteSettings();
     await refreshUsers(adminFeedback);
   }
 
@@ -395,6 +455,7 @@ async function bootstrapAdmin(): Promise<void> {
       panel.hidden = false;
       await refreshDemoSites();
       await refreshSiteAnalytics();
+      await refreshSiteSettings();
       await refreshUsers(adminFeedback);
     } catch {
       loginFeedback.textContent = 'Connexion impossible pour le moment.';
@@ -651,6 +712,48 @@ async function fetchSiteAnalytics(): Promise<{ sites: SiteAnalytics[]; totalNonA
     const totalRaw = Number(payload.totalNonAdminClicks ?? 0);
     const totalNonAdminClicks = Number.isFinite(totalRaw) ? Math.max(0, Math.floor(totalRaw)) : 0;
     return { sites, totalNonAdminClicks };
+  } catch {
+    return null;
+  }
+}
+
+async function fetchSiteSettings(): Promise<SiteSettings | null> {
+  try {
+    const response = await fetch('/api/admin/site-settings', {
+      method: 'GET',
+      credentials: 'include'
+    });
+    if (!response.ok) {
+      return null;
+    }
+
+    const payload = (await response.json()) as { settings?: SiteSettings };
+    if (!payload.settings || typeof payload.settings.demoSitesPublic !== 'boolean') {
+      return null;
+    }
+    return payload.settings;
+  } catch {
+    return null;
+  }
+}
+
+async function updateSiteSettings(demoSitesPublic: boolean): Promise<SiteSettings | null> {
+  try {
+    const response = await fetch('/api/admin/site-settings', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ demoSitesPublic })
+    });
+    if (!response.ok) {
+      return null;
+    }
+
+    const payload = (await response.json()) as { settings?: SiteSettings };
+    if (!payload.settings || typeof payload.settings.demoSitesPublic !== 'boolean') {
+      return null;
+    }
+    return payload.settings;
   } catch {
     return null;
   }

@@ -274,6 +274,23 @@ button {
   margin-left: 0.35rem;
 }
 
+.site-visibility-zone {
+  margin-top: 0.8rem;
+}
+
+.site-visibility-zone .toggle-line {
+  margin-top: 0.55rem;
+  width: fit-content;
+  font-weight: 700;
+}
+
+.visibility-status {
+  margin: 0.45rem 0 0;
+  color: #244768;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
 .site-view-btn {
   text-decoration: none;
   border: 1px solid #b7c7d8;

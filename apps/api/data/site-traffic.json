@@ -26,5 +26,21 @@
   "avocattest6": {
     "nonAdminClicks": 1,
     "lastClickAt": "2026-04-18T20:34:19.322Z"
+  },
+  "page-test": {
+    "nonAdminClicks": 3,
+    "lastClickAt": "2026-04-18T21:45:10.801Z"
+  },
+  "avocattest7": {
+    "nonAdminClicks": 3,
+    "lastClickAt": "2026-04-18T22:10:44.117Z"
+  },
+  "avocattest8": {
+    "nonAdminClicks": 1,
+    "lastClickAt": "2026-04-18T22:44:51.294Z"
+  },
+  "moderne": {
+    "nonAdminClicks": 1,
+    "lastClickAt": "2026-04-18T22:47:41.079Z"
   }
 }

@@ -76,5 +76,17 @@
     "name": "avocattest6",
     "path": "/sites/avocattest6/index.html",
     "active": true
+  },
+  {
+    "id": "avocattest7",
+    "name": "avocattest7",
+    "path": "/sites/avocattest7/index.html",
+    "active": true
+  },
+  {
+    "id": "avocattest8",
+    "name": "avocattest8",
+    "path": "/sites/avocattest8/index.html",
+    "active": true
   }
 ]

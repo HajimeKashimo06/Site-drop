@@ -19,6 +19,7 @@ dotenv.config();
 const workspaceRoot = resolve(moduleDir, '../../..');
 const demoSitesDataPath = resolve(moduleDir, '../data/demo-sites.json');
 const siteTrafficDataPath = resolve(moduleDir, '../data/site-traffic.json');
+const siteSettingsDataPath = resolve(moduleDir, '../data/site-settings.json');
 const webPublicSitesRoot = resolve(workspaceRoot, 'apps/web/public/sites');
 
 type UserRole = 'admin' | 'client';
@@ -56,6 +57,10 @@ type SiteTrafficEntry = {
 };
 
 type SiteTrafficMap = Record<string, SiteTrafficEntry>;
+
+type SiteSettings = {
+  demoSitesPublic: boolean;
+};
 
 type ContactRequestBody = {
   name?: unknown;
@@ -111,8 +116,13 @@ const defaultDemoSites: DemoSite[] = [
   }
 ];
 
+const defaultSiteSettings: SiteSettings = {
+  demoSitesPublic: parseBooleanFlag(process.env.DEMO_SITES_PUBLIC, false)
+};
+
 let demoSites = loadDemoSites();
 let siteTraffic = loadSiteTraffic();
+let siteSettings = loadSiteSettings();
 const fallbackSite: DemoSite = getFallbackSite() ??
   defaultDemoSites[0] ?? {
     id: 'page-test',
@@ -256,21 +266,40 @@ app.post('/api/auth/admin-login', async (req, res) => {
 
 app.get('/api/auth/session', async (req, res) => {
   const user = await getAuthenticatedUser(req);
+  const siteQuery = typeof req.query.site === 'string' ? normalizeSiteId(req.query.site) : '';
+  let siteVisitRecorded = false;
+
   if (!user) {
+    if (siteQuery && isDemoSitesPublic() && findDemoSiteById(siteQuery)) {
+      registerNonAdminSiteVisit(siteQuery);
+      siteVisitRecorded = true;
+      res.json({
+        authenticated: false,
+        role: 'public',
+        publicAccess: true,
+        site: siteQuery
+      });
+      return;
+    }
+
     clearAuthCookie(res);
     res.status(401).json({ authenticated: false });
     return;
   }
 
-  const siteQuery = typeof req.query.site === 'string' ? normalizeSiteId(req.query.site) : '';
   const role = getEffectiveRole(user);
 
   if (siteQuery && role !== 'admin' && !hasSiteAccess(user, siteQuery)) {
-    res.status(403).json({ authenticated: false, authorized: false });
-    return;
+    if (isDemoSitesPublic() && findDemoSiteById(siteQuery)) {
+      registerNonAdminSiteVisit(siteQuery);
+      siteVisitRecorded = true;
+    } else {
+      res.status(403).json({ authenticated: false, authorized: false });
+      return;
+    }
   }
 
-  if (siteQuery && role !== 'admin') {
+  if (siteQuery && role !== 'admin' && !siteVisitRecorded) {
     registerNonAdminSiteVisit(siteQuery);
   }
 
@@ -338,6 +367,43 @@ app.get('/api/admin/site-analytics', async (req, res) => {
   res.json({
     sites,
     totalNonAdminClicks,
+    currentAdmin: admin.username
+  });
+});
+
+app.get('/api/admin/site-settings', async (req, res) => {
+  const admin = await requireAdmin(req, res);
+  if (!admin) {
+    return;
+  }
+
+  res.json({
+    settings: siteSettings,
+    currentAdmin: admin.username
+  });
+});
+
+app.post('/api/admin/site-settings', async (req, res) => {
+  const admin = await requireAdmin(req, res);
+  if (!admin) {
+    return;
+  }
+
+  const body = req.body as { demoSitesPublic?: unknown } | undefined;
+  if (typeof body?.demoSitesPublic !== 'boolean') {
+    res.status(400).json({ ok: false, error: 'Parametre demoSitesPublic invalide.' });
+    return;
+  }
+
+  siteSettings = {
+    ...siteSettings,
+    demoSitesPublic: body.demoSitesPublic
+  };
+  persistSiteSettings(siteSettings);
+
+  res.json({
+    ok: true,
+    settings: siteSettings,
     currentAdmin: admin.username
   });
 });
@@ -806,6 +872,9 @@ async function startServer(): Promise<void> {
     app.listen(port, () => {
       console.log(`[api] listening on http://localhost:${port}`);
       console.log(`[api] mongodb connected on ${mongoUri}/${mongoDbName}`);
+      console.log(
+        `[api] demo sites mode: ${siteSettings.demoSitesPublic ? 'PUBLIC (liens ouverts)' : 'PROTEGE (code requis)'}`
+      );
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Erreur MongoDB inconnue';
@@ -1377,6 +1446,44 @@ function loadDemoSites(): DemoSite[] {
   return defaultDemoSites;
 }
 
+function loadSiteSettings(): SiteSettings {
+  if (!existsSync(siteSettingsDataPath)) {
+    persistSiteSettings(defaultSiteSettings);
+    return defaultSiteSettings;
+  }
+
+  try {
+    const raw = readFileSync(siteSettingsDataPath, 'utf8').replace(/^\uFEFF/, '');
+    const parsed = JSON.parse(raw) as unknown;
+    const normalized = normalizeSiteSettings(parsed);
+    persistSiteSettings(normalized);
+    return normalized;
+  } catch {
+    persistSiteSettings(defaultSiteSettings);
+    return defaultSiteSettings;
+  }
+}
+
+function normalizeSiteSettings(input: unknown): SiteSettings {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    return defaultSiteSettings;
+  }
+
+  const candidate = input as { demoSitesPublic?: unknown };
+  return {
+    demoSitesPublic: typeof candidate.demoSitesPublic === 'boolean' ? candidate.demoSitesPublic : defaultSiteSettings.demoSitesPublic
+  };
+}
+
+function persistSiteSettings(settings: SiteSettings): void {
+  mkdirSync(dirname(siteSettingsDataPath), { recursive: true });
+  writeFileSync(siteSettingsDataPath, JSON.stringify(normalizeSiteSettings(settings), null, 2), 'utf8');
+}
+
+function isDemoSitesPublic(): boolean {
+  return siteSettings.demoSitesPublic;
+}
+
 function loadSiteTraffic(): SiteTrafficMap {
   if (!existsSync(siteTrafficDataPath)) {
     return {};
@@ -1648,4 +1755,18 @@ function toWorkspaceRelativePath(targetPath: string): string {
     return targetPath;
   }
   return relativePath;
+}
+
+function parseBooleanFlag(value: string | undefined, fallback: boolean): boolean {
+  if (!value) {
+    return fallback;
+  }
+  const normalized = value.trim().toLowerCase();
+  if (['1', 'true', 'yes', 'on'].includes(normalized)) {
+    return true;
+  }
+  if (['0', 'false', 'no', 'off'].includes(normalized)) {
+    return false;
+  }
+  return fallback;
 }
