@@ -6,13 +6,20 @@ import bcrypt from 'bcryptjs';
 import nodemailer, { type Transporter } from 'nodemailer';
 import { MongoClient, type Collection } from 'mongodb';
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
-import { dirname, resolve } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdir, rm, writeFile } from 'node:fs/promises';
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Request, Response } from 'express';
 
 const moduleDir = dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: resolve(moduleDir, '../.env') });
 dotenv.config();
+
+const workspaceRoot = resolve(moduleDir, '../../..');
+const demoSitesDataPath = resolve(moduleDir, '../data/demo-sites.json');
+const siteTrafficDataPath = resolve(moduleDir, '../data/site-traffic.json');
+const webPublicSitesRoot = resolve(workspaceRoot, 'apps/web/public/sites');
 
 type UserRole = 'admin' | 'client';
 
@@ -42,6 +49,13 @@ type PublicDemoSite = {
   name: string;
   path: string;
 };
+
+type SiteTrafficEntry = {
+  nonAdminClicks: number;
+  lastClickAt: string | null;
+};
+
+type SiteTrafficMap = Record<string, SiteTrafficEntry>;
 
 type ContactRequestBody = {
   name?: unknown;
@@ -97,9 +111,9 @@ const defaultDemoSites: DemoSite[] = [
   }
 ];
 
-const demoSites = loadDemoSites();
-const activeDemoSites = demoSites.filter((site) => site.active);
-const fallbackSite: DemoSite = activeDemoSites[0] ??
+let demoSites = loadDemoSites();
+let siteTraffic = loadSiteTraffic();
+const fallbackSite: DemoSite = getFallbackSite() ??
   defaultDemoSites[0] ?? {
     id: 'page-test',
     name: 'Site test barber',
@@ -191,7 +205,7 @@ if (!process.env.AUTH_SESSION_SECRET) {
 
 app.get('/api/demo-sites', (_req, res) => {
   res.json({
-    sites: toPublicDemoSites(activeDemoSites)
+    sites: toPublicDemoSites(getActiveDemoSites())
   });
 });
 
@@ -256,6 +270,10 @@ app.get('/api/auth/session', async (req, res) => {
     return;
   }
 
+  if (siteQuery && role !== 'admin') {
+    registerNonAdminSiteVisit(siteQuery);
+  }
+
   const redirectSite = getPrimaryAccessibleSite(user);
   res.json({
     authenticated: true,
@@ -293,9 +311,141 @@ app.get('/api/admin/demo-sites', async (req, res) => {
   }
 
   res.json({
-    sites: toPublicDemoSites(activeDemoSites),
+    sites: toPublicDemoSites(getActiveDemoSites()),
     currentAdmin: admin.username
   });
+});
+
+app.get('/api/admin/site-analytics', async (req, res) => {
+  const admin = await requireAdmin(req, res);
+  if (!admin) {
+    return;
+  }
+
+  const sites = getActiveDemoSites().map((site) => {
+    const traffic = siteTraffic[site.id];
+    return {
+      id: site.id,
+      name: site.name,
+      path: site.path,
+      nonAdminClicks: traffic?.nonAdminClicks ?? 0,
+      lastClickAt: traffic?.lastClickAt ?? null
+    };
+  });
+
+  const totalNonAdminClicks = sites.reduce((sum, site) => sum + site.nonAdminClicks, 0);
+
+  res.json({
+    sites,
+    totalNonAdminClicks,
+    currentAdmin: admin.username
+  });
+});
+
+app.post('/api/admin/demo-sites', async (req, res) => {
+  const admin = await requireAdmin(req, res);
+  if (!admin) {
+    return;
+  }
+
+  const body = req.body as { name?: unknown; siteId?: unknown } | undefined;
+  const name = normalizeDemoSiteName(body?.name);
+  const requestedSiteId = normalizeSiteIdInput(body?.siteId);
+  const siteId = requestedSiteId || slugifySiteId(name);
+  const path = `/sites/${siteId}/index.html`;
+
+  if (!name) {
+    res.status(400).json({ ok: false, error: 'Nom du site invalide (2 a 80 caracteres).' });
+    return;
+  }
+
+  if (!siteId) {
+    res.status(400).json({ ok: false, error: "Identifiant invalide (lettres/chiffres/tirets uniquement)." });
+    return;
+  }
+
+  if (demoSites.some((site) => normalizeSiteId(site.id) === siteId)) {
+    res.status(409).json({ ok: false, error: 'Ce site existe deja.' });
+    return;
+  }
+
+  const newSite: DemoSite = {
+    id: siteId,
+    name,
+    path,
+    active: true
+  };
+  const siteFolder = resolve(webPublicSitesRoot, siteId);
+  const vscodeUri = buildVsCodeUri(workspaceRoot);
+  const siteFolderPath = toWorkspaceRelativePath(siteFolder);
+
+  try {
+    await createDemoSiteStarter(newSite);
+    demoSites = [...demoSites, newSite];
+    persistDemoSites(demoSites);
+    res.json({
+      ok: true,
+      site: toPublicDemoSites([newSite])[0],
+      vscodeUri,
+      siteFolderPath,
+      currentAdmin: admin.username
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Erreur inconnue';
+    res.status(500).json({ ok: false, error: `Creation du site impossible: ${message}` });
+  }
+});
+
+app.delete('/api/admin/demo-sites/:siteId', async (req, res) => {
+  const admin = await requireAdmin(req, res);
+  if (!admin) {
+    return;
+  }
+
+  const siteId = normalizeSiteId(req.params.siteId);
+  if (!siteId) {
+    res.status(400).json({ ok: false, error: 'Identifiant de site invalide.' });
+    return;
+  }
+
+  const siteIndex = demoSites.findIndex((site) => normalizeSiteId(site.id) === siteId);
+  if (siteIndex < 0) {
+    res.status(404).json({ ok: false, error: 'Site introuvable.' });
+    return;
+  }
+
+  try {
+    await deleteDemoSiteFolder(siteId);
+    const users = await usersCollectionPromise;
+    await users.updateMany(
+      { siteAccess: siteId },
+      {
+        $pull: { siteAccess: siteId },
+        $set: { updatedAt: new Date() }
+      }
+    );
+
+    const [removedSite] = demoSites.splice(siteIndex, 1);
+    persistDemoSites(demoSites);
+    if (siteTraffic[siteId]) {
+      const { [siteId]: _removedTraffic, ...nextTraffic } = siteTraffic;
+      siteTraffic = nextTraffic;
+      persistSiteTraffic(siteTraffic);
+    }
+    res.json({
+      ok: true,
+      removedSite: removedSite
+        ? {
+            id: removedSite.id,
+            name: removedSite.name,
+            path: removedSite.path
+          }
+        : null
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Erreur inconnue';
+    res.status(500).json({ ok: false, error: `Suppression du site impossible: ${message}` });
+  }
 });
 
 app.get('/api/admin/users', async (req, res) => {
@@ -1119,6 +1269,35 @@ function normalizeSiteId(value: string): string {
   return value.trim().toLowerCase();
 }
 
+function normalizeSiteIdInput(value: unknown): string {
+  if (typeof value !== 'string') {
+    return '';
+  }
+  return slugifySiteId(value);
+}
+
+function slugifySiteId(value: string): string {
+  const normalized = normalizeSiteId(value)
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40);
+  if (normalized.length < 2) {
+    return '';
+  }
+  return normalized;
+}
+
+function normalizeDemoSiteName(value: unknown): string {
+  if (typeof value !== 'string') {
+    return '';
+  }
+  const normalized = value.trim().replace(/\s+/g, ' ');
+  if (normalized.length < 2 || normalized.length > 80) {
+    return '';
+  }
+  return normalized;
+}
+
 function normalizeSiteAccess(siteAccess: string[]): string[] {
   const dedup = new Set<string>();
   for (const id of siteAccess) {
@@ -1138,12 +1317,22 @@ function getEffectiveRole(user: Pick<SiteUserDoc, 'role'>): UserRole {
   return user.role === 'admin' ? 'admin' : 'client';
 }
 
+function getActiveDemoSites(): DemoSite[] {
+  return demoSites.filter((site) => site.active);
+}
+
+function getFallbackSite(): DemoSite | null {
+  const activeSites = getActiveDemoSites();
+  return activeSites[0] ?? demoSites[0] ?? defaultDemoSites[0] ?? null;
+}
+
 function resolveAccessibleSites(user: Pick<SiteUserDoc, 'role' | 'siteAccess'>): DemoSite[] {
+  const activeSites = getActiveDemoSites();
   if (getEffectiveRole(user) === 'admin') {
-    return activeDemoSites;
+    return activeSites;
   }
   const allowedIds = new Set(normalizeSiteAccess(user.siteAccess ?? []));
-  return activeDemoSites.filter((site) => allowedIds.has(site.id));
+  return activeSites.filter((site) => allowedIds.has(site.id));
 }
 
 function hasSiteAccess(user: Pick<SiteUserDoc, 'role' | 'siteAccess'>, siteId: string): boolean {
@@ -1169,38 +1358,294 @@ function toPublicDemoSites(sites: DemoSite[]): PublicDemoSite[] {
 
 function findDemoSiteById(siteId: string): DemoSite | null {
   const normalized = normalizeSiteId(siteId);
-  return activeDemoSites.find((site) => site.id === normalized) ?? null;
+  return getActiveDemoSites().find((site) => site.id === normalized) ?? null;
 }
 
 function loadDemoSites(): DemoSite[] {
-  const rawJson = process.env.DEMO_SITES_JSON;
-  if (!rawJson) {
-    return defaultDemoSites;
+  const fromFile = loadDemoSitesFromFile();
+  if (fromFile.length > 0) {
+    return fromFile;
+  }
+
+  const fromEnv = parseDemoSitesFromJson(process.env.DEMO_SITES_JSON);
+  if (fromEnv.length > 0) {
+    persistDemoSites(fromEnv);
+    return fromEnv;
+  }
+
+  persistDemoSites(defaultDemoSites);
+  return defaultDemoSites;
+}
+
+function loadSiteTraffic(): SiteTrafficMap {
+  if (!existsSync(siteTrafficDataPath)) {
+    return {};
   }
 
   try {
-    const parsed = JSON.parse(rawJson) as Array<{ id?: unknown; name?: unknown; path?: unknown; active?: unknown }>;
-    if (!Array.isArray(parsed)) {
-      return defaultDemoSites;
-    }
-
-    const result: DemoSite[] = [];
-    for (const item of parsed) {
-      const id = normalizeSiteId(typeof item.id === 'string' ? item.id : '');
-      const name = typeof item.name === 'string' ? item.name.trim() : '';
-      const pathRaw = typeof item.path === 'string' ? item.path.trim() : '';
-      const path = pathRaw.startsWith('/') ? pathRaw : '';
-      const active = item.active === undefined ? true : Boolean(item.active);
-
-      if (!id || !name || !path) {
-        continue;
-      }
-
-      result.push({ id, name, path, active });
-    }
-
-    return result.length > 0 ? result : defaultDemoSites;
+    const raw = readFileSync(siteTrafficDataPath, 'utf8').replace(/^\uFEFF/, '');
+    const parsed = JSON.parse(raw) as unknown;
+    return normalizeSiteTraffic(parsed);
   } catch {
-    return defaultDemoSites;
+    return {};
   }
+}
+
+function normalizeSiteTraffic(input: unknown): SiteTrafficMap {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    return {};
+  }
+
+  const output: SiteTrafficMap = {};
+
+  for (const [key, value] of Object.entries(input)) {
+    const siteId = normalizeSiteId(key);
+    if (!siteId) {
+      continue;
+    }
+
+    const candidate = value as { nonAdminClicks?: unknown; lastClickAt?: unknown };
+    const clicksRaw = Number(candidate.nonAdminClicks);
+    const nonAdminClicks = Number.isFinite(clicksRaw) ? Math.max(0, Math.floor(clicksRaw)) : 0;
+
+    const lastClickAtRaw = typeof candidate.lastClickAt === 'string' ? candidate.lastClickAt.trim() : '';
+    const lastClickAt = lastClickAtRaw && !Number.isNaN(new Date(lastClickAtRaw).getTime()) ? lastClickAtRaw : null;
+
+    output[siteId] = {
+      nonAdminClicks,
+      lastClickAt
+    };
+  }
+
+  return output;
+}
+
+function persistSiteTraffic(stats: SiteTrafficMap): void {
+  mkdirSync(dirname(siteTrafficDataPath), { recursive: true });
+  writeFileSync(siteTrafficDataPath, JSON.stringify(stats, null, 2), 'utf8');
+}
+
+function registerNonAdminSiteVisit(siteId: string): void {
+  const normalizedSiteId = normalizeSiteId(siteId);
+  if (!normalizedSiteId) {
+    return;
+  }
+
+  const current = siteTraffic[normalizedSiteId] ?? {
+    nonAdminClicks: 0,
+    lastClickAt: null
+  };
+
+  siteTraffic = {
+    ...siteTraffic,
+    [normalizedSiteId]: {
+      nonAdminClicks: current.nonAdminClicks + 1,
+      lastClickAt: new Date().toISOString()
+    }
+  };
+
+  persistSiteTraffic(siteTraffic);
+}
+
+function loadDemoSitesFromFile(): DemoSite[] {
+  if (!existsSync(demoSitesDataPath)) {
+    return [];
+  }
+
+  try {
+    const raw = readFileSync(demoSitesDataPath, 'utf8').replace(/^\uFEFF/, '');
+    const parsed = JSON.parse(raw) as unknown;
+    return normalizeDemoSites(parsed);
+  } catch {
+    return [];
+  }
+}
+
+function parseDemoSitesFromJson(rawJson: string | undefined): DemoSite[] {
+  if (!rawJson) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(rawJson) as unknown;
+    return normalizeDemoSites(parsed);
+  } catch {
+    return [];
+  }
+}
+
+function normalizeDemoSites(input: unknown): DemoSite[] {
+  if (!Array.isArray(input)) {
+    return [];
+  }
+
+  const sites: DemoSite[] = [];
+  const ids = new Set<string>();
+
+  for (const item of input) {
+    const candidate = item as { id?: unknown; name?: unknown; path?: unknown; active?: unknown };
+    const id = slugifySiteId(typeof candidate.id === 'string' ? candidate.id : '');
+    const name = normalizeDemoSiteName(candidate.name);
+    const pathRaw = typeof candidate.path === 'string' ? candidate.path.trim() : '';
+    const path = pathRaw.startsWith('/') ? pathRaw : '';
+    const active = candidate.active === undefined ? true : Boolean(candidate.active);
+
+    if (!id || !name || !path || ids.has(id)) {
+      continue;
+    }
+
+    sites.push({ id, name, path, active });
+    ids.add(id);
+  }
+
+  return sites;
+}
+
+function persistDemoSites(sites: DemoSite[]): void {
+  const normalized = normalizeDemoSites(sites);
+  const output = normalized.length > 0 ? normalized : defaultDemoSites;
+  mkdirSync(dirname(demoSitesDataPath), { recursive: true });
+  writeFileSync(demoSitesDataPath, JSON.stringify(output, null, 2), 'utf8');
+}
+
+async function createDemoSiteStarter(site: DemoSite): Promise<void> {
+  await mkdir(webPublicSitesRoot, { recursive: true });
+
+  const siteFolder = resolveSiteFolder(site.id);
+  const htmlPath = join(siteFolder, 'index.html');
+  if (existsSync(siteFolder)) {
+    if (!existsSync(htmlPath)) {
+      await writeFile(htmlPath, buildDemoSiteStarterHtml(site), 'utf8');
+    }
+    return;
+  }
+
+  await mkdir(siteFolder, { recursive: false });
+  await writeFile(htmlPath, buildDemoSiteStarterHtml(site), 'utf8');
+}
+
+async function deleteDemoSiteFolder(siteId: string): Promise<void> {
+  const siteFolder = resolveSiteFolder(siteId);
+  await rm(siteFolder, { recursive: true, force: true });
+}
+
+function resolveSiteFolder(siteId: string): string {
+  const siteFolder = resolve(webPublicSitesRoot, siteId);
+  const relativePath = relative(webPublicSitesRoot, siteFolder);
+  if (!relativePath || relativePath.startsWith('..') || isAbsolute(relativePath)) {
+    throw new Error('Chemin de site invalide.');
+  }
+  return siteFolder;
+}
+
+function buildDemoSiteStarterHtml(site: DemoSite): string {
+  const safeName = escapeHtmlText(site.name);
+  const safeSiteId = escapeHtmlText(site.id);
+  return `<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${safeName}</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: "Segoe UI", Arial, sans-serif;
+        color: #12324d;
+        background: linear-gradient(145deg, #eaf2fb, #f9fbff);
+      }
+      main {
+        width: min(760px, calc(100% - 2rem));
+        border-radius: 16px;
+        background: #ffffff;
+        border: 1px solid #d8e4f0;
+        box-shadow: 0 12px 30px rgba(16, 41, 68, 0.12);
+        padding: 1.4rem;
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.7rem;
+      }
+      p {
+        margin: 0.7rem 0 0;
+        line-height: 1.45;
+      }
+      .pill {
+        display: inline-flex;
+        margin-top: 0.9rem;
+        border-radius: 999px;
+        border: 1px solid #bfd2e5;
+        padding: 0.35rem 0.65rem;
+        font-size: 0.82rem;
+        color: #305477;
+      }
+      .cta {
+        display: inline-flex;
+        margin-top: 1.1rem;
+        border-radius: 999px;
+        text-decoration: none;
+        padding: 0.55rem 0.95rem;
+        color: #fff;
+        background: #1b7f43;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>${safeName}</h1>
+      <p>Page de demarrage creee depuis l'espace admin.</p>
+      <p>Vous pouvez maintenant personnaliser ce site et y ajouter vos sections.</p>
+      <span class="pill">ID site: ${safeSiteId}</span>
+      <a class="cta" href="/">Retour a l'accueil pro</a>
+    </main>
+    <script>
+      (async () => {
+        try {
+          const response = await fetch('/api/auth/session?site=${safeSiteId}', {
+            method: 'GET',
+            credentials: 'include'
+          });
+          if (!response.ok) {
+            window.location.replace('/demo-site.html');
+          }
+        } catch {
+          window.location.replace('/demo-site.html');
+        }
+      })();
+    </script>
+  </body>
+</html>
+`;
+}
+
+function escapeHtmlText(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function buildVsCodeUri(folderPath: string): string {
+  const normalized = folderPath.replace(/\\/g, '/');
+  return `vscode://file/${encodeURI(normalized)}`;
+}
+
+function toWorkspaceRelativePath(targetPath: string): string {
+  const relativePath = relative(workspaceRoot, targetPath).replace(/\\/g, '/');
+  if (!relativePath || relativePath.startsWith('..')) {
+    return targetPath;
+  }
+  return relativePath;
 }

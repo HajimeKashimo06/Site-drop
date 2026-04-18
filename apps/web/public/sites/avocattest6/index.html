@@ -1,0 +1,1593 @@
+﻿<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stephanie ABIER-ROUGERON | Avocat Nice</title>
+    <meta
+      name="description"
+      content="Maitre Stephanie ABIER-ROUGERON, avocat au Barreau de Nice. Informations publiques de contact et presentation du cabinet."
+    />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
+      :root {
+        --bg: #e9f5fb;
+        --panel: #ffffff;
+        --ink: #223a4d;
+        --ink-soft: #60778a;
+        --line: #d5e6f0;
+        --sea: #4f97b8;
+        --sea-deep: #2a6482;
+        --sand: #f4ebdc;
+        --radius: 22px;
+        --shadow: 0 16px 38px rgba(20, 39, 52, 0.11);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+
+      body {
+        font-family: 'Manrope', 'Segoe UI', sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 10% 0%, rgba(111, 180, 210, 0.3), transparent 34%),
+          radial-gradient(circle at 96% 8%, rgba(244, 235, 220, 0.62), transparent 40%),
+          linear-gradient(180deg, var(--bg), #f8fcff 58%, #fefefe);
+        overflow-x: hidden;
+      }
+
+      section[id] {
+        scroll-margin-top: 94px;
+      }
+
+      .progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 90;
+        width: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #63aacb, #2f6886);
+      }
+
+      .preloader {
+        position: fixed;
+        inset: 0;
+        z-index: 120;
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(circle at 18% 0%, rgba(145, 201, 226, 0.35), transparent 40%),
+          linear-gradient(180deg, #22475e, #173549);
+        color: #ecf8ff;
+        transition: opacity 520ms ease, visibility 520ms ease;
+      }
+
+      .preloader.is-hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .preloader-card {
+        width: min(430px, calc(100% - 2rem));
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(8px);
+        padding: 1rem 1rem 0.9rem;
+      }
+
+      .preloader-kicker {
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 0.7rem;
+        color: #c8e6f2;
+      }
+
+      .preloader-title {
+        margin: 0.5rem 0 0;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(1.7rem, 5vw, 3rem);
+        line-height: 1.02;
+      }
+
+      .preloader-bar {
+        margin-top: 0.75rem;
+        height: 7px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.15);
+        overflow: hidden;
+      }
+
+      .preloader-bar i {
+        display: block;
+        width: 38%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #d8effa, #8fc4dc);
+        animation: loadMove 1.35s ease-in-out infinite;
+      }
+
+      .shell {
+        width: min(1220px, calc(100% - 2rem));
+        margin: 0 auto;
+        padding-bottom: 3rem;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0.85rem;
+        z-index: 70;
+        margin-top: 0.85rem;
+        border: 1px solid rgba(32, 54, 70, 0.14);
+        border-radius: 15px;
+        background: rgba(245, 251, 255, 0.9);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 24px rgba(23, 39, 53, 0.08);
+        padding: 0.62rem 0.78rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+
+      .brand {
+        text-decoration: none;
+        color: inherit;
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.5rem;
+      }
+
+      .brand strong {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.34rem;
+      }
+
+      .brand span {
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-size: 0.63rem;
+        color: var(--ink-soft);
+      }
+
+      .topbar-quick {
+        display: none;
+      }
+
+      .quick-link {
+        text-decoration: none;
+        border-radius: 999px;
+        border: 1px solid rgba(32, 54, 70, 0.17);
+        background: rgba(255, 255, 255, 0.78);
+        color: #2a4458;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.45rem 0.68rem;
+        text-align: center;
+      }
+
+      .quick-link:last-child {
+        color: #fff;
+        border-color: #2b6785;
+        background: linear-gradient(135deg, #529abc, #2a6482);
+      }
+
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.33rem;
+      }
+
+      nav a {
+        text-decoration: none;
+        color: var(--ink-soft);
+        border-radius: 999px;
+        border: 1px solid transparent;
+        font-size: 0.76rem;
+        font-weight: 600;
+        padding: 0.41rem 0.7rem;
+        transition: color 180ms ease, border-color 180ms ease, background 180ms ease;
+      }
+
+      nav a:hover {
+        color: var(--ink);
+        border-color: rgba(32, 54, 70, 0.18);
+        background: rgba(255, 255, 255, 0.75);
+      }
+
+      .nav-cta {
+        color: #fff;
+        background: linear-gradient(135deg, #529abc, #2a6482);
+        border-color: #2b6785;
+      }
+
+      .nav-cta:hover {
+        color: #fff;
+        background: linear-gradient(135deg, #428aac, #245a75);
+      }
+
+      .hero {
+        margin-top: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background:
+          radial-gradient(circle at var(--mx, 70%) var(--my, 30%), rgba(117, 186, 216, 0.18), transparent 34%),
+          linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04)),
+          url('./fond-cotedazur.png') center 52% / cover;
+        overflow: hidden;
+        min-height: min(86vh, 740px);
+        position: relative;
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+      }
+
+      .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(90deg, rgba(237, 247, 252, 0.34) 0%, rgba(237, 247, 252, 0.18) 56%, rgba(237, 247, 252, 0.04) 100%),
+          linear-gradient(180deg, rgba(26, 66, 88, 0.06), transparent 44%);
+      }
+
+      .hero-content,
+      .hero-aside {
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero-content {
+        align-self: end;
+        padding: clamp(1.1rem, 3.4vw, 2.2rem);
+      }
+
+      .hero-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-size: 0.7rem;
+        border-radius: 999px;
+        border: 1px solid rgba(32, 54, 70, 0.2);
+        background: rgba(255, 255, 255, 0.78);
+        padding: 0.36rem 0.72rem;
+      }
+
+      h1 {
+        margin: 0.72rem 0 0;
+        max-width: 12.7ch;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(2.48rem, 6.2vw, 4.8rem);
+        line-height: 0.95;
+        text-shadow: 0 2px 10px rgba(255, 255, 255, 0.28);
+      }
+
+      .hero p {
+        margin: 0.82rem 0 0;
+        max-width: 49ch;
+        color: #486176;
+        line-height: 1.64;
+        text-shadow: 0 1px 8px rgba(255, 255, 255, 0.24);
+      }
+
+      .hero-actions {
+        margin-top: 1.08rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+      }
+
+      .btn {
+        text-decoration: none;
+        border-radius: 999px;
+        border: 1px solid rgba(32, 54, 70, 0.2);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 0.62rem 0.96rem;
+        transition: transform 180ms ease, box-shadow 180ms ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .btn-primary {
+        color: #fff;
+        border-color: #2c6986;
+        background: linear-gradient(135deg, #529abc, #2a6482);
+        box-shadow: 0 10px 24px rgba(35, 79, 104, 0.27);
+      }
+
+      .btn-ghost {
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.75);
+      }
+
+      .hero-values {
+        margin-top: 0.9rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.42rem;
+      }
+
+      .hero-values span {
+        border-radius: 999px;
+        border: 1px solid rgba(32, 54, 70, 0.16);
+        background: rgba(255, 255, 255, 0.75);
+        color: #456074;
+        font-size: 0.74rem;
+        font-weight: 600;
+        padding: 0.33rem 0.64rem;
+      }
+
+      .hero-aside {
+        padding: clamp(1rem, 2.6vw, 1.5rem);
+        align-self: center;
+      }
+
+      .identity-card {
+        margin-left: auto;
+        width: min(390px, 100%);
+        border-radius: 20px;
+        border: 1px solid rgba(32, 54, 70, 0.17);
+        background:
+          linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(245, 251, 255, 0.8)),
+          radial-gradient(circle at 100% 0%, rgba(141, 198, 223, 0.25), transparent 38%);
+        box-shadow: 0 16px 36px rgba(24, 43, 58, 0.16);
+        backdrop-filter: blur(8px);
+        padding: 0.9rem;
+        animation: floatCard 5.5s ease-in-out infinite;
+      }
+
+      .identity-photo {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 14px;
+        border: 1px solid rgba(32, 54, 70, 0.15);
+        object-fit: cover;
+        object-position: center;
+      }
+
+      .identity-card p {
+        margin: 0.62rem 0 0;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.67rem;
+        color: #607688;
+      }
+
+      .identity-card strong {
+        margin-top: 0.3rem;
+        display: block;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.52rem;
+        line-height: 1.08;
+      }
+
+      .identity-card ul {
+        margin: 0.72rem 0 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.42rem;
+      }
+
+      .identity-card li {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.5rem;
+        font-size: 0.84rem;
+        color: #496276;
+      }
+
+      .identity-card li b {
+        color: #2f6f8e;
+      }
+
+      .ticker-wrap {
+        margin-top: 0.95rem;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        overflow: hidden;
+      }
+
+      .ticker {
+        width: max-content;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        white-space: nowrap;
+        padding: 0.56rem 1rem;
+        animation: tickerMove 18s linear infinite;
+      }
+
+      .ticker span {
+        font-size: 0.69rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #4c6579;
+      }
+
+      .ticker i {
+        color: #549ebf;
+      }
+
+      .section {
+        margin-top: 1rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--panel);
+        box-shadow: var(--shadow);
+        padding: clamp(1rem, 2.7vw, 1.6rem);
+      }
+
+      .section-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
+        justify-content: space-between;
+        gap: 0.7rem;
+        margin-bottom: 0.9rem;
+      }
+
+      .eyebrow {
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.13em;
+        font-size: 0.67rem;
+        color: #2f6f8e;
+      }
+
+      h2 {
+        margin: 0.2rem 0 0;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+        line-height: 0.98;
+      }
+
+      .section-head p {
+        margin: 0;
+        color: var(--ink-soft);
+        max-width: 52ch;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.72rem;
+      }
+
+      .stat {
+        border-radius: 16px;
+        border: 1px solid rgba(32, 54, 70, 0.13);
+        background:
+          radial-gradient(circle at 0% 0%, rgba(143, 196, 221, 0.22), transparent 42%),
+          #f9fdff;
+        padding: 0.82rem 0.8rem;
+      }
+
+      .stat strong {
+        display: block;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2rem;
+        line-height: 0.9;
+      }
+
+      .stat p {
+        margin: 0.24rem 0 0;
+        color: #5a7283;
+        font-size: 0.84rem;
+      }
+
+      .hours-card {
+        border-radius: 18px;
+        border: 1px solid rgba(32, 54, 70, 0.14);
+        background:
+          linear-gradient(165deg, rgba(255, 255, 255, 0.96), rgba(243, 249, 253, 0.9));
+        padding: 0.95rem;
+      }
+
+      .hours-title {
+        margin: 0;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.7rem;
+      }
+
+      .hours-list {
+        margin: 0.55rem 0 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.34rem;
+      }
+
+      .hours-list li {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 0.6rem;
+        font-size: 0.92rem;
+        color: #4e6578;
+      }
+
+      .hours-list li strong {
+        color: #1f394f;
+      }
+
+      .expertise-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.72rem;
+      }
+
+      .expertise-card {
+        border-radius: 17px;
+        border: 1px solid rgba(32, 54, 70, 0.14);
+        background:
+          linear-gradient(165deg, rgba(255, 255, 255, 0.96), rgba(240, 248, 252, 0.9)),
+          radial-gradient(circle at 100% 0%, rgba(143, 196, 221, 0.24), transparent 36%);
+        padding: 0.9rem 0.85rem;
+        transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+      }
+
+      .expertise-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(47, 111, 142, 0.48);
+        box-shadow: 0 14px 28px rgba(23, 41, 57, 0.12);
+      }
+
+      .tag {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background: linear-gradient(140deg, #529abc, #2a6482);
+        font-size: 0.83rem;
+        font-weight: 700;
+      }
+
+      .expertise-card h3 {
+        margin: 0.58rem 0 0;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.3rem;
+      }
+
+      .expertise-card p {
+        margin: 0.34rem 0 0;
+        color: #576f82;
+        line-height: 1.52;
+        font-size: 0.86rem;
+      }
+
+      .pricing {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.72rem;
+      }
+
+      .price-card {
+        border-radius: 18px;
+        border: 1px solid rgba(32, 54, 70, 0.14);
+        background:
+          linear-gradient(165deg, rgba(255, 255, 255, 0.96), rgba(243, 249, 253, 0.9));
+        padding: 0.9rem;
+      }
+
+      .price-card h3 {
+        margin: 0;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.5rem;
+      }
+
+      .price {
+        margin-top: 0.42rem;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.7rem;
+      }
+
+      .price-card ul {
+        margin: 0.54rem 0 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.32rem;
+      }
+
+      .price-card li {
+        color: #5a7183;
+        font-size: 0.84rem;
+      }
+
+      .reviews-wrap {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 0.8rem;
+      }
+
+      .review-panel {
+        border-radius: 18px;
+        border: 1px solid rgba(32, 54, 70, 0.14);
+        background: #fbfdff;
+        padding: 0.95rem;
+      }
+
+      .review-note {
+        margin: 0.34rem 0 0.44rem;
+        color: #778b9c;
+        font-size: 0.83rem;
+      }
+
+      .rating-line {
+        display: flex;
+        align-items: center;
+        gap: 0.56rem;
+        margin-top: 0.42rem;
+      }
+
+      .rating-line span {
+        width: 14px;
+        font-size: 0.82rem;
+        color: #4f6578;
+        text-align: center;
+      }
+
+      .rating-line i {
+        flex: 1;
+        height: 8px;
+        border-radius: 999px;
+        background: #dbe4ec;
+        overflow: hidden;
+      }
+
+      .rating-line i b {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #d6a422, #f0c34b);
+      }
+
+      .score {
+        border-radius: 18px;
+        border: 1px solid rgba(32, 54, 70, 0.14);
+        background:
+          linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(238, 248, 253, 0.92)),
+          radial-gradient(circle at 100% 0%, rgba(143, 196, 221, 0.22), transparent 36%);
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding: 1rem;
+      }
+
+      .score strong {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(2.8rem, 7vw, 4.5rem);
+        line-height: 0.9;
+      }
+
+      .score p {
+        margin: 0.2rem 0 0;
+        color: #5d7486;
+      }
+
+      .score .stars {
+        color: #d6a422;
+        letter-spacing: 0.15em;
+      }
+
+      .method-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.8rem;
+      }
+
+      .steps {
+        display: grid;
+        gap: 0.68rem;
+      }
+
+      .step {
+        border-radius: 16px;
+        border: 1px solid rgba(32, 54, 70, 0.14);
+        background: #fbfdff;
+        padding: 0.78rem;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.72rem;
+      }
+
+      .step b {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background: linear-gradient(140deg, #529abc, #2a6482);
+      }
+
+      .step h3 {
+        margin: 0;
+        font-size: 0.95rem;
+      }
+
+      .step p {
+        margin: 0.25rem 0 0;
+        color: #5b7385;
+        font-size: 0.84rem;
+      }
+
+      .notice {
+        border-radius: 17px;
+        border: 1px solid rgba(32, 54, 70, 0.14);
+        background:
+          linear-gradient(145deg, rgba(39, 76, 98, 0.96), rgba(29, 58, 76, 0.94)),
+          radial-gradient(circle at 0% 0%, rgba(143, 196, 221, 0.34), transparent 40%);
+        color: #e8f5fc;
+        padding: 0.9rem;
+      }
+
+      .notice h3 {
+        margin: 0;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.56rem;
+      }
+
+      .notice p {
+        margin: 0.42rem 0 0;
+        color: #d1e8f2;
+      }
+
+      .notice ul {
+        margin: 0.7rem 0 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.34rem;
+        font-size: 0.84rem;
+      }
+
+      .contact-wrap {
+        display: grid;
+        grid-template-columns: 0.95fr 1.05fr;
+        gap: 0.8rem;
+      }
+
+      .info-card {
+        border-radius: 18px;
+        border: 1px solid rgba(32, 54, 70, 0.14);
+        background: #fbfdff;
+        padding: 0.95rem;
+      }
+
+      .info-list {
+        margin: 0.74rem 0 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.5rem;
+      }
+
+      .info-list li {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 0.52rem;
+        font-size: 0.86rem;
+      }
+
+      .info-list b {
+        color: #4d6376;
+      }
+
+      .info-list span {
+        font-weight: 700;
+      }
+
+      .info-list a {
+        color: var(--ink);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .info-list a:hover {
+        text-decoration: underline;
+      }
+
+      .small {
+        margin-top: 0.65rem;
+        color: #657b8d;
+        font-size: 0.79rem;
+      }
+
+      .form {
+        border-radius: 18px;
+        border: 1px solid rgba(32, 54, 70, 0.16);
+        background:
+          linear-gradient(145deg, rgba(37, 73, 95, 0.96), rgba(28, 56, 73, 0.94)),
+          radial-gradient(circle at 0% 0%, rgba(143, 196, 221, 0.34), transparent 40%);
+        color: #e8f5fc;
+        padding: 0.95rem;
+      }
+
+      .form p {
+        margin: 0;
+      }
+
+      .field-grid {
+        margin-top: 0.72rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.58rem;
+      }
+
+      .field {
+        display: grid;
+        gap: 0.27rem;
+      }
+
+      .field label {
+        font-size: 0.73rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #cfe8f3;
+      }
+
+      .field input,
+      .field select,
+      .field textarea {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        border-radius: 11px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        font: inherit;
+        padding: 0.57rem 0.62rem;
+      }
+
+      .field textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      .field.full {
+        grid-column: 1 / -1;
+      }
+
+      .submit {
+        margin-top: 0.72rem;
+        width: 100%;
+        border: 0;
+        border-radius: 12px;
+        font: inherit;
+        font-weight: 700;
+        color: #1c3f53;
+        background: linear-gradient(135deg, #d8eef9, #8ec4dd);
+        padding: 0.69rem 0.8rem;
+        cursor: pointer;
+      }
+
+      .contact-actions {
+        margin-top: 0.72rem;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .footer {
+        margin-top: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fff;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.86rem 0.9rem;
+        color: #62798c;
+        font-size: 0.79rem;
+      }
+
+      .footer-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+      }
+
+      .footer-nav a {
+        color: #5b7285;
+        text-decoration: none;
+      }
+
+      .footer-nav a:hover {
+        color: var(--ink);
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(16px);
+        transition: opacity 520ms ease, transform 520ms ease;
+      }
+
+      .reveal.in-view {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @keyframes loadMove {
+        0% {
+          transform: translateX(-124%);
+        }
+        55% {
+          transform: translateX(196%);
+        }
+        100% {
+          transform: translateX(196%);
+        }
+      }
+
+      @keyframes tickerMove {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      @keyframes floatCard {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-8px);
+        }
+      }
+
+      @media (max-width: 1080px) {
+        .hero {
+          grid-template-columns: 1fr;
+          min-height: 0;
+        }
+
+        .hero::before {
+          background:
+            linear-gradient(180deg, rgba(237, 247, 252, 0.38), rgba(237, 247, 252, 0.2)),
+            linear-gradient(180deg, rgba(26, 66, 88, 0.07), transparent 45%);
+        }
+
+        .hero-aside {
+          padding-top: 0;
+          padding-bottom: 1rem;
+        }
+
+        .identity-card {
+          margin-left: 0;
+        }
+
+        .stats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .expertise-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .pricing,
+        .method-grid,
+        .contact-wrap,
+        .reviews-wrap {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .shell {
+          width: min(1220px, calc(100% - 1rem));
+        }
+
+        .topbar {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 0.5rem;
+          border-radius: 16px;
+          padding: 0.62rem 0.58rem;
+        }
+
+        .brand {
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .brand strong {
+          font-size: 1.06rem;
+        }
+
+        .brand span {
+          font-size: 0.57rem;
+          letter-spacing: 0.1em;
+        }
+
+        .topbar-quick {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.42rem;
+        }
+
+        .topbar nav {
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          scrollbar-width: none;
+          -webkit-overflow-scrolling: touch;
+          gap: 0.36rem;
+          padding-bottom: 0.14rem;
+        }
+
+        .topbar nav::-webkit-scrollbar {
+          display: none;
+        }
+
+        .topbar nav a {
+          flex: 0 0 auto;
+          white-space: nowrap;
+          font-size: 0.72rem;
+          padding: 0.41rem 0.64rem;
+          border-color: rgba(32, 54, 70, 0.14);
+          background: rgba(255, 255, 255, 0.72);
+          color: #2f4457;
+        }
+
+        .topbar nav a.nav-cta {
+          color: #fff;
+          background: linear-gradient(135deg, #529abc, #2a6482);
+          border-color: #2b6785;
+        }
+
+        .hero {
+          margin-top: 0.72rem;
+          border-radius: 22px;
+          min-height: 0;
+        }
+
+        .hero-content {
+          padding: 1rem 0.86rem 0.74rem;
+        }
+
+        .hero-kicker {
+          font-size: 0.61rem;
+          letter-spacing: 0.1em;
+        }
+
+        h1 {
+          font-size: clamp(1.92rem, 9.7vw, 2.85rem);
+          line-height: 0.97;
+          max-width: 14ch;
+        }
+
+        .hero p {
+          margin-top: 0.7rem;
+          font-size: 0.91rem;
+          line-height: 1.56;
+        }
+
+        .hero-actions {
+          margin-top: 0.86rem;
+          gap: 0.45rem;
+        }
+
+        .hero-actions .btn {
+          flex: 1 1 0;
+          min-width: 0;
+          font-size: 0.76rem;
+          padding: 0.56rem 0.64rem;
+        }
+
+        .hero-values {
+          margin-top: 0.7rem;
+        }
+
+        .hero-values span {
+          font-size: 0.68rem;
+          padding: 0.28rem 0.52rem;
+        }
+
+        .hero-aside {
+          padding: 0.18rem 0.86rem 1rem;
+        }
+
+        .identity-card {
+          width: 100%;
+          border-radius: 16px;
+          padding: 0.78rem;
+          display: grid;
+          grid-template-columns: 82px 1fr;
+          column-gap: 0.62rem;
+          row-gap: 0.12rem;
+          align-items: start;
+          animation: none;
+        }
+
+        .identity-photo {
+          display: block;
+          width: 82px;
+          height: 82px;
+          aspect-ratio: 1 / 1;
+          margin: 0;
+          border-radius: 12px;
+          grid-column: 1;
+          grid-row: 1 / span 2;
+        }
+
+        .identity-card p {
+          grid-column: 2;
+          grid-row: 1;
+          margin: 0;
+          align-self: end;
+        }
+
+        .identity-card strong {
+          grid-column: 2;
+          grid-row: 2;
+          margin-top: 0.1rem;
+          font-size: 1.1rem;
+          line-height: 1.08;
+        }
+
+        .identity-card ul {
+          grid-column: 1 / -1;
+          margin-top: 0.56rem;
+        }
+
+        .stats,
+        .expertise-grid,
+        .pricing,
+        .field-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section {
+          padding: 0.9rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="progress" id="progress"></div>
+
+    <div class="preloader" id="preloader" aria-hidden="true">
+      <div class="preloader-card">
+        <p class="preloader-kicker">Barreau de Nice</p>
+        <p class="preloader-title">Stephanie ABIER-ROUGERON</p>
+        <div class="preloader-bar"><i></i></div>
+      </div>
+    </div>
+
+    <div class="shell">
+      <header class="topbar">
+        <a href="#accueil" class="brand">
+          <strong>Stephanie ABIER-ROUGERON</strong>
+          <span>Avocat Nice</span>
+        </a>
+        <div class="topbar-quick">
+          <a class="quick-link" href="#contact">Contacter</a>
+          <a class="quick-link" href="#honoraires">Tarifs</a>
+        </div>
+        <nav>
+          <a href="#expertises">Expertises</a>
+          <a href="#honoraires">Prestations</a>
+          <a href="#horaires">Horaires</a>
+          <a href="#avis">Avis</a>
+          <a href="#contact" class="nav-cta">Contact</a>
+        </nav>
+      </header>
+
+      <section class="hero reveal" id="accueil">
+        <div class="hero-content">
+          <span class="hero-kicker">Nice | Cabinet d'avocat</span>
+          <h1>Conseil clair, defense rigoureuse.</h1>
+          <p>
+            Maitre Stephanie ABIER-ROUGERON exerce au Barreau de Nice. Ce site de presentation reprend une base
+            claire et professionnelle avec les informations publiques disponibles sur la fiche Doctrine.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#contact">Prendre rendez-vous</a>
+            <a class="btn btn-ghost" href="#expertises">Voir les expertises</a>
+          </div>
+          <div class="hero-values">
+            <span>Barreau de Nice</span>
+            <span>Serment: 15 janvier 2019</span>
+            <span>22 rue Gounod, 06000 Nice</span>
+          </div>
+        </div>
+        <aside class="hero-aside">
+          <article class="identity-card">
+            <img class="identity-photo" src="./stephanie.png" alt="Portrait de Maitre Stephanie ABIER-ROUGERON" loading="lazy" />
+            <p>Profil Doctrine</p>
+            <strong>Barreau de Nice</strong>
+            <ul>
+              <li><b>Serment</b> <span>15 janvier 2019</span></li>
+              <li><b>Region</b> <span>Provence-Alpes-Cote d'Azur</span></li>
+              <li><b>Cabinet</b> <span>22 rue Gounod, 06000 Nice</span></li>
+              <li><b>Telephone</b> <span>06 30 12 89 76</span></li>
+              <li><b>Fax</b> <span>Non renseigne</span></li>
+            </ul>
+          </article>
+        </aside>
+      </section>
+
+      <div class="ticker-wrap">
+        <div class="ticker">
+          <span>Cabinet d'avocat</span><i>&bull;</i>
+          <span>Barreau de Nice</span><i>&bull;</i>
+          <span>Analyse du dossier</span><i>&bull;</i>
+          <span>Conseil juridique</span><i>&bull;</i>
+          <span>Strategie de defense</span><i>&bull;</i>
+          <span>Suivi de procedure</span><i>&bull;</i>
+          <span>Cabinet d'avocat</span><i>&bull;</i>
+          <span>Barreau de Nice</span><i>&bull;</i>
+          <span>Analyse du dossier</span><i>&bull;</i>
+          <span>Conseil juridique</span><i>&bull;</i>
+          <span>Strategie de defense</span><i>&bull;</i>
+          <span>Suivi de procedure</span><i>&bull;</i>
+        </div>
+      </div>
+
+      <section class="section reveal">
+        <div class="stats">
+          <article class="stat">
+            <strong>2019</strong>
+            <p>annee de serment</p>
+          </article>
+          <article class="stat">
+            <strong>Nice</strong>
+            <p>barreau d'inscription</p>
+          </article>
+          <article class="stat">
+            <strong>06 30 12 89 76</strong>
+            <p>contact telephone</p>
+          </article>
+          <article class="stat">
+            <strong>22 rue</strong>
+            <p>Rue Gounod, 06000 Nice</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section reveal" id="horaires">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Horaires</p>
+            <h2>Horaires du cabinet</h2>
+          </div>
+          <p>Planning affiche selon les informations transmises.</p>
+        </div>
+        <article class="hours-card">
+          <p class="hours-title">Disponibilites</p>
+          <ul class="hours-list">
+            <li><span>samedi</span><strong>08:30-12:00</strong></li>
+            <li><span>dimanche</span><strong>Ferme</strong></li>
+            <li><span>lundi</span><strong>08:30-19:00</strong></li>
+            <li><span>mardi</span><strong>08:30-19:00</strong></li>
+            <li><span>mercredi</span><strong>08:30-19:00</strong></li>
+            <li><span>jeudi</span><strong>08:30-19:00</strong></li>
+            <li><span>vendredi</span><strong>08:30-19:00</strong></li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="section reveal" id="expertises">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Domaines</p>
+            <h2>Interventions du cabinet</h2>
+          </div>
+          <p>Accompagnement en conseil et contentieux avec une approche lisible et structurée.</p>
+        </div>
+        <div class="expertise-grid">
+          <article class="expertise-card">
+            <div class="tag">01</div>
+            <h3>Consultation juridique</h3>
+            <p>Etude du dossier, points de vigilance et options de strategie juridique.</p>
+          </article>
+          <article class="expertise-card">
+            <div class="tag">02</div>
+            <h3>Representation</h3>
+            <p>Accompagnement dans les echanges et procedures selon la nature du dossier.</p>
+          </article>
+          <article class="expertise-card">
+            <div class="tag">03</div>
+            <h3>Contentieux</h3>
+            <p>Preparation des pieces, argumentaire et defense des interets du client.</p>
+          </article>
+          <article class="expertise-card">
+            <div class="tag">04</div>
+            <h3>Negociation</h3>
+            <p>Recherche de solution amiable et cadrage juridique des accords.</p>
+          </article>
+          <article class="expertise-card">
+            <div class="tag">05</div>
+            <h3>Suivi client</h3>
+            <p>Information claire a chaque etape du dossier et points de situation reguliers.</p>
+          </article>
+          <article class="expertise-card">
+            <div class="tag">06</div>
+            <h3>Preparation de dossier</h3>
+            <p>Organisation des pieces et construction d'une base solide avant action.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section reveal" id="honoraires">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Prestations</p>
+            <h2>Modalites de consultation</h2>
+          </div>
+          <p>Les conditions financieres exactes sont definies apres etude du dossier.</p>
+        </div>
+        <div class="pricing">
+          <article class="price-card">
+            <h3>Premiere prise de contact</h3>
+            <div class="price">sur demande</div>
+            <ul>
+              <li>Analyse initiale de votre besoin</li>
+              <li>Orientation sur les etapes a prevoir</li>
+              <li>Prise de rendez-vous cabinet / telephone</li>
+            </ul>
+          </article>
+          <article class="price-card">
+            <h3>Mission de conseil</h3>
+            <div class="price">sur devis</div>
+            <ul>
+              <li>Etude detaillee de la situation</li>
+              <li>Strategie et plan d'action juridique</li>
+              <li>Accompagnement personnalise</li>
+            </ul>
+          </article>
+          <article class="price-card">
+            <h3>Mission de defense</h3>
+            <div class="price">sur devis</div>
+            <ul>
+              <li>Preparation du dossier et des pieces</li>
+              <li>Representation selon la procedure</li>
+              <li>Suivi regulier jusqu'a cloture</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section reveal" id="avis">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Reputation</p>
+            <h2>Resume des avis</h2>
+          </div>
+          <p>Presentation des avis selon les captures transmises.</p>
+        </div>
+        <div class="reviews-wrap">
+          <article class="review-panel">
+            <p style="margin: 0; color: #556c80;">Resume des avis</p>
+            <p class="review-note">Les avis ne sont pas verifies</p>
+            <div class="rating-line"><span>5</span><i><b style="width: 100%;"></b></i></div>
+            <div class="rating-line"><span>4</span><i><b style="width: 0%;"></b></i></div>
+            <div class="rating-line"><span>3</span><i><b style="width: 0%;"></b></i></div>
+            <div class="rating-line"><span>2</span><i><b style="width: 0%;"></b></i></div>
+            <div class="rating-line"><span>1</span><i><b style="width: 0%;"></b></i></div>
+          </article>
+          <article class="score">
+            <strong>5,0</strong>
+            <p class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+            <p>18 avis</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section reveal" id="parcours">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Parcours</p>
+            <h2>Formation et experience</h2>
+          </div>
+        </div>
+        <div class="method-grid">
+          <div class="steps">
+            <article class="step">
+              <b>1</b>
+              <div>
+                <h3>Identite professionnelle</h3>
+                <p>Stephanie ABIER-ROUGERON, avocat au Barreau de Nice.</p>
+              </div>
+            </article>
+            <article class="step">
+              <b>2</b>
+              <div>
+                <h3>Date de serment</h3>
+                <p>Prestation de serment mentionnee au 15 janvier 2019.</p>
+              </div>
+            </article>
+            <article class="step">
+              <b>3</b>
+              <div>
+                <h3>Cabinet a Nice</h3>
+                <p>Adresse publique: 22 rue Gounod, 06000 Nice.</p>
+              </div>
+            </article>
+          </div>
+          <aside class="notice">
+            <h3>Approche du cabinet</h3>
+            <p>
+              Positionnement sobre et professionnel, avec une communication claire sur les options
+              possibles avant engagement des actions.
+            </p>
+            <ul>
+              <li>Analyse du contexte et des risques</li>
+              <li>Plan d'action progressif et lisible</li>
+              <li>Suivi du dossier jusqu'a resolution</li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section reveal" id="contact">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Contact</p>
+            <h2>Prendre rendez-vous</h2>
+          </div>
+        </div>
+        <div class="contact-wrap">
+          <article class="info-card">
+            <h3 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 1.58rem;">Informations</h3>
+            <ul class="info-list">
+              <li><b>Nom</b><span>Maitre Stephanie ABIER-ROUGERON</span></li>
+              <li><b>Barreau</b><span>Nice</span></li>
+              <li><b>Region</b><span>Provence-Alpes-Cote d'Azur</span></li>
+              <li><b>Cabinet</b><span>22 rue Gounod, 06000 Nice</span></li>
+              <li><b>Telephone</b><span><a href="tel:+33630128976">06 30 12 89 76</a></span></li>
+              <li><b>Fax</b><span>Non renseigne</span></li>
+              <li><b>Serment</b><span>15 janvier 2019</span></li>
+              <li><b>Source</b><span>Fiche publique Doctrine</span></li>
+            </ul>
+            <div class="contact-actions">
+              <a class="btn btn-ghost" href="tel:+33630128976">Appeler le cabinet</a>
+              <a class="btn btn-ghost" href="https://maps.google.com/?q=22+rue+Gounod+06000+Nice" target="_blank" rel="noopener">Voir l'adresse</a>
+              <a class="btn btn-primary" href="https://www.doctrine.fr/p/avocat/LA28A4690658B3448BF27" target="_blank" rel="noopener">Voir fiche Doctrine</a>
+            </div>
+            <p class="small">Informations renseignees a partir de la fiche publique Doctrine.</p>
+          </article>
+          <form class="form">
+            <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.58rem;">Demande de consultation</p>
+            <div class="field-grid">
+              <div class="field">
+                <label for="nom">Nom</label>
+                <input id="nom" name="nom" type="text" placeholder="Votre nom" />
+              </div>
+              <div class="field">
+                <label for="tel">Telephone</label>
+                <input id="tel" name="tel" type="tel" placeholder="06 00 00 00 00" />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="vous@email.com" />
+              </div>
+              <div class="field">
+                <label for="type">Domaine</label>
+                <select id="type" name="type">
+                  <option>Consultation juridique</option>
+                  <option>Representation</option>
+                  <option>Contentieux</option>
+                  <option>Negociation</option>
+                  <option>Suivi de dossier</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label for="message">Votre demande</label>
+                <textarea id="message" name="message" placeholder="Precisez votre besoin en quelques lignes..."></textarea>
+              </div>
+            </div>
+            <button type="button" class="submit">Envoyer la demande</button>
+          </form>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span>&copy; <span id="year"></span> Maitre Stephanie ABIER-ROUGERON - Tous droits reserves</span>
+        <div class="footer-nav">
+          <a href="#accueil">Accueil</a>
+          <a href="#expertises">Expertises</a>
+          <a href="#avis">Avis</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      (async () => {
+        try {
+          const response = await fetch('/api/auth/session?site=avocattest6', {
+            method: 'GET',
+            credentials: 'include'
+          });
+          if (!response.ok) {
+            window.location.replace('/demo-site.html');
+          }
+        } catch {
+          window.location.replace('/demo-site.html');
+        }
+      })();
+
+      const preloader = document.getElementById('preloader');
+      const progress = document.getElementById('progress');
+      const year = document.getElementById('year');
+      const reveals = document.querySelectorAll('.reveal');
+      const hero = document.querySelector('.hero');
+
+      if (year) {
+        year.textContent = new Date().getFullYear();
+      }
+
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+
+      const ensureTopOnOpen = () => {
+        window.scrollTo(0, 0);
+      };
+
+      window.addEventListener('pageshow', ensureTopOnOpen);
+      window.addEventListener('load', () => {
+        ensureTopOnOpen();
+        setTimeout(() => preloader.classList.add('is-hidden'), 700);
+      });
+
+      const updateProgress = () => {
+        const scrollTop = window.scrollY;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const value = maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0;
+        progress.style.width = `${value}%`;
+      };
+      updateProgress();
+      window.addEventListener('scroll', updateProgress, { passive: true });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('in-view');
+            observer.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.2 }
+      );
+      reveals.forEach((item) => observer.observe(item));
+
+      if (hero) {
+        hero.addEventListener('pointermove', (event) => {
+          const rect = hero.getBoundingClientRect();
+          const x = ((event.clientX - rect.left) / rect.width) * 100;
+          const y = ((event.clientY - rect.top) / rect.height) * 100;
+          hero.style.setProperty('--mx', `${x}%`);
+          hero.style.setProperty('--my', `${y}%`);
+        });
+      }
+    </script>
+  </body>
+</html>
+
+

@@ -8,6 +8,26 @@ type DemoSite = {
   path: string;
 };
 
+type SiteAnalytics = {
+  id: string;
+  name: string;
+  path: string;
+  nonAdminClicks: number;
+  lastClickAt: string | null;
+};
+
+type CreateSiteResponse = {
+  site?: DemoSite;
+  vscodeUri?: string;
+  siteFolderPath?: string;
+  error?: string;
+};
+
+type DeleteSiteResponse = {
+  removedSite?: DemoSite | null;
+  error?: string;
+};
+
 type AdminUser = {
   username: string;
   role: UserRole;
@@ -19,7 +39,7 @@ type AdminUser = {
   updatedAt: string;
 };
 
-document.title = 'Hproweb | Espace admin';
+document.title = 'Hproweb | Connexion';
 
 const app = mustElement<HTMLDivElement>('#app');
 app.innerHTML = `
@@ -27,26 +47,26 @@ app.innerHTML = `
     <header class="admin-header reveal">
       <div class="brand">
         <img class="brand-logo" src="/hplogo.png" alt="HP logo" />
-        <span>Espace administration</span>
+        <span>Espace connexion</span>
       </div>
       <div class="header-actions">
         <a class="header-link" href="/">Retour accueil</a>
-        <a class="header-link" href="/demo-site.html">Démo site</a>
+        <a class="header-link" href="/demo-site.html">Demo site</a>
       </div>
     </header>
 
     <section class="admin-card reveal" id="admin-login-card">
       <div class="section-head">
-        <p>Compte admin</p>
-        <h1>Connexion administration</h1>
+        <p>Compte</p>
+        <h1>Connexion</h1>
       </div>
       <form id="admin-login-form" novalidate>
         <label>
-          Identifiant admin
+          Identifiant
           <input type="text" name="username" required autocomplete="username" />
         </label>
         <label>
-          Mot de passe admin
+          Mot de passe
           <input type="password" name="password" required autocomplete="current-password" />
         </label>
         <button type="submit">Se connecter</button>
@@ -57,64 +77,107 @@ app.innerHTML = `
     <section class="admin-card reveal" id="admin-panel" hidden>
       <div class="panel-top">
         <div>
-          <p class="small-kicker">Administration</p>
-          <h2>Gestion des accès</h2>
+          <p class="small-kicker">Gestion</p>
+          <h2>Gestion des acces</h2>
         </div>
         <div class="top-actions">
-          <a class="secondary-btn" href="/demo-site.html">Ouvrir le site démo</a>
-          <button id="admin-logout-btn" class="secondary-btn" type="button">Se déconnecter</button>
+          <a class="secondary-btn" href="/demo-site.html">Ouvrir le site demo</a>
+          <button id="admin-logout-btn" class="secondary-btn" type="button">Se deconnecter</button>
         </div>
       </div>
 
-      <div class="sites-zone">
-        <p class="small-kicker">Sites démo</p>
-        <h3>Sites disponibles</h3>
-        <ul id="sites-list"></ul>
+      <div class="admin-tabs" role="tablist" aria-label="Sections admin">
+        <button type="button" class="tab-btn is-active" id="tab-access-btn">Acces et comptes</button>
+        <button type="button" class="tab-btn" id="tab-sites-btn">Sites et clics</button>
       </div>
 
-      <form id="admin-user-form" class="user-form" novalidate>
-        <label>
-          Identifiant utilisateur
-          <input type="text" name="username" placeholder="ex: coiffure2" required />
-        </label>
-        <label>
-          Mot de passe (laisser vide pour garder l'ancien)
-          <input type="text" name="password" placeholder="Nouveau mot de passe" />
-        </label>
-        <label>
-          Rôle
-          <select name="role" id="role-select">
-            <option value="client">client</option>
-            <option value="admin">admin</option>
-          </select>
-        </label>
-        <label id="site-select-wrapper">
-          Site démo autorisé
-          <select name="siteId" id="site-select"></select>
-        </label>
-        <label class="checkbox-line">
-          <input type="checkbox" name="active" checked />
-          Actif
-        </label>
-        <button type="submit">Créer / Mettre à jour</button>
-      </form>
+      <div class="admin-tab-panel" id="tab-panel-access">
+        <div class="sites-zone">
+          <p class="small-kicker">Sites demo</p>
+          <h3>Sites disponibles</h3>
+          <ul id="sites-list"></ul>
+          <button id="site-create-open-btn" type="button" class="site-create-open-btn">Creer un site</button>
+          <form id="site-create-form" class="site-create-form is-hidden" novalidate>
+            <label>
+              Nom du site
+              <input type="text" name="siteName" placeholder="Ex: Site test coiffure 2" required />
+            </label>
+            <div class="site-create-actions">
+              <button type="submit">Valider</button>
+              <button type="button" id="site-create-cancel-btn" class="secondary-btn">Annuler</button>
+            </div>
+          </form>
+          <a id="site-vscode-link" class="site-vscode-link" href="#" hidden>Ouvrir dans VS Code</a>
+          <p class="feedback" id="site-feedback" aria-live="polite"></p>
+        </div>
 
-      <p class="feedback" id="admin-feedback" aria-live="polite"></p>
+        <form id="admin-user-form" class="user-form" novalidate>
+          <label>
+            Identifiant utilisateur
+            <input type="text" name="username" placeholder="ex: coiffure2" required />
+          </label>
+          <label>
+            Mot de passe (laisser vide pour garder l'ancien)
+            <input type="text" name="password" placeholder="Nouveau mot de passe" />
+          </label>
+          <label>
+            Role
+            <select name="role" id="role-select">
+              <option value="client">client</option>
+              <option value="admin">admin</option>
+            </select>
+          </label>
+          <label id="site-select-wrapper">
+            Site demo autorise
+            <select name="siteId" id="site-select"></select>
+          </label>
+          <label class="checkbox-line">
+            <input type="checkbox" name="active" checked />
+            Actif
+          </label>
+          <button type="submit">Creer / Mettre a jour</button>
+        </form>
 
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Identifiant</th>
-              <th>Rôle</th>
-              <th>Site</th>
-              <th>État</th>
-              <th>Mise à jour</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="users-body"></tbody>
-        </table>
+        <p class="feedback" id="admin-feedback" aria-live="polite"></p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Identifiant</th>
+                <th>Role</th>
+                <th>Site</th>
+                <th>Etat</th>
+                <th>Mise a jour</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="users-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="admin-tab-panel" id="tab-panel-sites" hidden>
+        <div class="sites-zone analytics-zone">
+          <p class="small-kicker">Performance</p>
+          <h3>Tous les sites</h3>
+          <p class="analytics-total" id="analytics-total">Chargement...</p>
+          <div class="table-wrap analytics-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Site</th>
+                  <th>URL</th>
+                  <th>Clics hors admin</th>
+                  <th>Dernier clic</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="analytics-body"></tbody>
+            </table>
+          </div>
+          <p class="feedback" id="analytics-feedback" aria-live="polite"></p>
+        </div>
       </div>
     </section>
   </main>
@@ -128,19 +191,83 @@ async function bootstrapAdmin(): Promise<void> {
   const panel = mustElement<HTMLElement>('#admin-panel');
   const loginFeedback = mustElement<HTMLElement>('#login-feedback');
   const adminFeedback = mustElement<HTMLElement>('#admin-feedback');
+  const siteFeedback = mustElement<HTMLElement>('#site-feedback');
+  const analyticsFeedback = mustElement<HTMLElement>('#analytics-feedback');
+  const analyticsTotal = mustElement<HTMLElement>('#analytics-total');
+  const analyticsBody = mustElement<HTMLTableSectionElement>('#analytics-body');
   const loginForm = mustElement<HTMLFormElement>('#admin-login-form');
+  const siteCreateOpenButton = mustElement<HTMLButtonElement>('#site-create-open-btn');
+  const siteCreateCancelButton = mustElement<HTMLButtonElement>('#site-create-cancel-btn');
+  const siteVsCodeLink = mustElement<HTMLAnchorElement>('#site-vscode-link');
+  const siteCreateForm = mustElement<HTMLFormElement>('#site-create-form');
   const userForm = mustElement<HTMLFormElement>('#admin-user-form');
   const logoutButton = mustElement<HTMLButtonElement>('#admin-logout-btn');
   const roleSelect = mustElement<HTMLSelectElement>('#role-select');
   const siteSelect = mustElement<HTMLSelectElement>('#site-select');
   const siteWrapper = mustElement<HTMLElement>('#site-select-wrapper');
   const sitesList = mustElement<HTMLElement>('#sites-list');
+  const accessTabButton = mustElement<HTMLButtonElement>('#tab-access-btn');
+  const sitesTabButton = mustElement<HTMLButtonElement>('#tab-sites-btn');
+  const accessPanel = mustElement<HTMLElement>('#tab-panel-access');
+  const sitesPanel = mustElement<HTMLElement>('#tab-panel-sites');
 
-  const refreshDemoSites = async () => {
+  const switchTab = (tab: 'access' | 'sites'): void => {
+    const showAccess = tab === 'access';
+    accessTabButton.classList.toggle('is-active', showAccess);
+    sitesTabButton.classList.toggle('is-active', !showAccess);
+    accessPanel.hidden = !showAccess;
+    sitesPanel.hidden = showAccess;
+  };
+
+  const refreshSiteAnalytics = async (): Promise<void> => {
+    analyticsTotal.textContent = 'Chargement...';
+    analyticsBody.innerHTML = '<tr><td colspan="5">Chargement...</td></tr>';
+    analyticsFeedback.textContent = '';
+    analyticsFeedback.className = 'feedback';
+
+    const payload = await fetchSiteAnalytics();
+    if (!payload) {
+      analyticsTotal.textContent = 'Stats indisponibles.';
+      analyticsBody.innerHTML = '<tr><td colspan="5">Erreur de chargement.</td></tr>';
+      return;
+    }
+
+    analyticsTotal.textContent = `Total clics hors admin: ${formatNumber(payload.totalNonAdminClicks)}`;
+
+    if (payload.sites.length === 0) {
+      analyticsBody.innerHTML = '<tr><td colspan="5">Aucun site.</td></tr>';
+      return;
+    }
+
+    analyticsBody.innerHTML = payload.sites
+      .map((site) => {
+        const lastClickLabel = site.lastClickAt ? formatDateTime(site.lastClickAt) : '-';
+        return `
+          <tr>
+            <td>${escapeHtml(site.name)}</td>
+            <td>${escapeHtml(site.path)}</td>
+            <td>${formatNumber(site.nonAdminClicks)}</td>
+            <td>${escapeHtml(lastClickLabel)}</td>
+            <td><a class="table-link" href="${escapeHtml(site.path)}" target="_blank" rel="noopener">Voir site</a></td>
+          </tr>
+        `;
+      })
+      .join('');
+  };
+
+  const refreshDemoSites = async (): Promise<DemoSite[]> => {
     const demoSites = await fetchDemoSites();
     populateSiteSelect(siteSelect, demoSites);
     renderSiteZone(sitesList, demoSites);
+    return demoSites;
   };
+
+  accessTabButton.addEventListener('click', () => switchTab('access'));
+  sitesTabButton.addEventListener('click', async () => {
+    switchTab('sites');
+    await refreshSiteAnalytics();
+  });
+  switchTab('access');
 
   const refreshRoleUI = () => {
     const role = roleSelect.value as UserRole;
@@ -151,11 +278,85 @@ async function bootstrapAdmin(): Promise<void> {
   roleSelect.addEventListener('change', refreshRoleUI);
   refreshRoleUI();
 
+  const closeSiteCreateForm = () => {
+    siteCreateForm.reset();
+    siteCreateForm.classList.add('is-hidden');
+    siteCreateOpenButton.hidden = false;
+  };
+
+  const openSiteCreateForm = () => {
+    siteFeedback.textContent = '';
+    siteFeedback.className = 'feedback';
+    siteVsCodeLink.hidden = true;
+    siteVsCodeLink.removeAttribute('href');
+    siteCreateForm.classList.remove('is-hidden');
+    siteCreateOpenButton.hidden = true;
+    const nameInput = siteCreateForm.querySelector<HTMLInputElement>('input[name="siteName"]');
+    nameInput?.focus();
+  };
+
+  siteCreateOpenButton.addEventListener('click', openSiteCreateForm);
+  siteCreateCancelButton.addEventListener('click', closeSiteCreateForm);
+
+  sitesList.addEventListener('click', async (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+
+    const button = target.closest<HTMLButtonElement>('button[data-site-delete-id]');
+    if (!button) {
+      return;
+    }
+
+    const siteId = button.dataset.siteDeleteId ?? '';
+    const siteName = button.dataset.siteName ?? siteId;
+    if (!siteId) {
+      return;
+    }
+
+    const confirmed = window.confirm(`Supprimer le site "${siteName}" ? Cette action est definitive.`);
+    if (!confirmed) {
+      return;
+    }
+
+    siteFeedback.textContent = '';
+    siteFeedback.className = 'feedback';
+    button.disabled = true;
+
+    try {
+      const response = await fetch(`/api/admin/demo-sites/${encodeURIComponent(siteId)}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      const payload = (await readJson(response)) as DeleteSiteResponse | null;
+      if (!response.ok) {
+        const errorMessage = typeof payload?.error === 'string' ? payload.error : 'Suppression refusee.';
+        siteFeedback.textContent = errorMessage;
+        siteFeedback.className = 'feedback error';
+        return;
+      }
+
+      siteFeedback.textContent = `Site supprime: ${siteName}`;
+      siteFeedback.className = 'feedback success';
+      await refreshDemoSites();
+      await refreshSiteAnalytics();
+      await refreshUsers(adminFeedback);
+    } catch {
+      siteFeedback.textContent = 'Erreur reseau pendant la suppression.';
+      siteFeedback.className = 'feedback error';
+    } finally {
+      button.disabled = false;
+    }
+  });
+
   const session = await fetchAdminSession();
   if (session.authenticated) {
     loginCard.hidden = true;
     panel.hidden = false;
     await refreshDemoSites();
+    await refreshSiteAnalytics();
     await refreshUsers(adminFeedback);
   }
 
@@ -183,20 +384,93 @@ async function bootstrapAdmin(): Promise<void> {
       });
 
       if (!response.ok) {
-        loginFeedback.textContent = 'Connexion admin invalide.';
+        loginFeedback.textContent = 'Connexion invalide.';
         loginFeedback.className = 'feedback error';
         return;
       }
 
-      loginFeedback.textContent = 'Connexion admin validée.';
+      loginFeedback.textContent = 'Connexion validee.';
       loginFeedback.className = 'feedback success';
       loginCard.hidden = true;
       panel.hidden = false;
       await refreshDemoSites();
+      await refreshSiteAnalytics();
       await refreshUsers(adminFeedback);
     } catch {
       loginFeedback.textContent = 'Connexion impossible pour le moment.';
       loginFeedback.className = 'feedback error';
+    }
+  });
+
+  siteCreateForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    siteFeedback.textContent = '';
+    siteFeedback.className = 'feedback';
+    siteVsCodeLink.hidden = true;
+    siteVsCodeLink.removeAttribute('href');
+
+    if (!siteCreateForm.checkValidity()) {
+      siteFeedback.textContent = 'Formulaire de creation incomplet.';
+      siteFeedback.className = 'feedback error';
+      return;
+    }
+
+    const submitButton = siteCreateForm.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const formData = new FormData(siteCreateForm);
+    const siteName = String(formData.get('siteName') ?? '').trim();
+
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+
+    try {
+      const response = await fetch('/api/admin/demo-sites', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: siteName })
+      });
+
+      const payload = (await readJson(response)) as CreateSiteResponse | null;
+      if (!response.ok) {
+        const errorMessage = typeof payload?.error === 'string' ? payload.error : 'Creation refusee.';
+        siteFeedback.textContent = errorMessage;
+        siteFeedback.className = 'feedback error';
+        return;
+      }
+
+      const createdSite = payload?.site;
+      const siteFolderPath = typeof payload?.siteFolderPath === 'string' ? payload.siteFolderPath : '';
+      siteFeedback.textContent = createdSite
+        ? `Site cree: ${createdSite.name} (${createdSite.path})${siteFolderPath ? ` | Dossier: ${siteFolderPath}` : ''}`
+        : 'Site cree.';
+      siteFeedback.className = 'feedback success';
+      closeSiteCreateForm();
+
+      const sites = await refreshDemoSites();
+      await refreshSiteAnalytics();
+      if (roleSelect.value === 'client' && createdSite) {
+        const siteExists = sites.some((site) => site.id === createdSite.id);
+        if (siteExists) {
+          siteSelect.value = createdSite.id;
+        }
+      }
+
+      const vscodeUri = typeof payload?.vscodeUri === 'string' ? payload.vscodeUri : '';
+      if (vscodeUri.startsWith('vscode://')) {
+        siteVsCodeLink.href = vscodeUri;
+        siteVsCodeLink.hidden = false;
+        window.setTimeout(() => {
+          window.location.href = vscodeUri;
+        }, 250);
+      }
+    } catch {
+      siteFeedback.textContent = 'Erreur reseau pendant la creation du site.';
+      siteFeedback.className = 'feedback error';
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
     }
   });
 
@@ -219,7 +493,7 @@ async function bootstrapAdmin(): Promise<void> {
     const siteId = role === 'client' ? String(formData.get('siteId') ?? '').trim().toLowerCase() : '';
 
     if (role === 'client' && !siteId) {
-      adminFeedback.textContent = 'Veuillez choisir un site démo pour ce compte client.';
+      adminFeedback.textContent = 'Veuillez choisir un site demo pour ce compte client.';
       adminFeedback.className = 'feedback error';
       return;
     }
@@ -240,12 +514,12 @@ async function bootstrapAdmin(): Promise<void> {
 
       const payload = await readJson(response);
       if (!response.ok) {
-        adminFeedback.textContent = typeof payload?.error === 'string' ? payload.error : 'Opération refusée.';
+        adminFeedback.textContent = typeof payload?.error === 'string' ? payload.error : 'Operation refusee.';
         adminFeedback.className = 'feedback error';
         return;
       }
 
-      adminFeedback.textContent = 'Utilisateur enregistré.';
+      adminFeedback.textContent = 'Utilisateur enregistre.';
       adminFeedback.className = 'feedback success';
       userForm.reset();
       mustElement<HTMLInputElement>('#admin-user-form input[name="active"]').checked = true;
@@ -253,7 +527,7 @@ async function bootstrapAdmin(): Promise<void> {
       refreshRoleUI();
       await refreshUsers(adminFeedback);
     } catch {
-      adminFeedback.textContent = 'Erreur réseau.';
+      adminFeedback.textContent = 'Erreur reseau.';
       adminFeedback.className = 'feedback error';
     }
   });
@@ -278,7 +552,7 @@ async function refreshUsers(feedback: HTMLElement): Promise<void> {
     });
 
     if (!response.ok) {
-      body.innerHTML = '<tr><td colspan="6">Accès admin refusé.</td></tr>';
+      body.innerHTML = '<tr><td colspan="6">Acces admin refuse.</td></tr>';
       return;
     }
 
@@ -292,8 +566,8 @@ async function refreshUsers(feedback: HTMLElement): Promise<void> {
 
     body.innerHTML = users
       .map((user) => {
-        const stateLabel = user.active ? 'Actif' : 'Désactivé';
-        const actionLabel = user.active ? 'Désactiver' : 'Activer';
+        const stateLabel = user.active ? 'Actif' : 'Desactive';
+        const actionLabel = user.active ? 'Desactiver' : 'Activer';
         const siteLabel = user.siteName ? `${user.siteName} (${user.sitePath ?? ''})` : '-';
         return `
           <tr>
@@ -324,16 +598,16 @@ async function refreshUsers(feedback: HTMLElement): Promise<void> {
 
           const payload = await readJson(response);
           if (!response.ok) {
-            feedback.textContent = typeof payload?.error === 'string' ? payload.error : 'Action refusée.';
+            feedback.textContent = typeof payload?.error === 'string' ? payload.error : 'Action refusee.';
             feedback.className = 'feedback error';
             return;
           }
 
-          feedback.textContent = `État utilisateur mis à jour: ${username}`;
+          feedback.textContent = `Etat utilisateur mis a jour: ${username}`;
           feedback.className = 'feedback success';
           await refreshUsers(feedback);
         } catch {
-          feedback.textContent = 'Erreur réseau.';
+          feedback.textContent = 'Erreur reseau.';
           feedback.className = 'feedback error';
         } finally {
           button.disabled = false;
@@ -341,7 +615,7 @@ async function refreshUsers(feedback: HTMLElement): Promise<void> {
       });
     });
   } catch {
-    body.innerHTML = '<tr><td colspan="6">Erreur réseau.</td></tr>';
+    body.innerHTML = '<tr><td colspan="6">Erreur reseau.</td></tr>';
   }
 }
 
@@ -362,9 +636,29 @@ async function fetchDemoSites(): Promise<DemoSite[]> {
   }
 }
 
+async function fetchSiteAnalytics(): Promise<{ sites: SiteAnalytics[]; totalNonAdminClicks: number } | null> {
+  try {
+    const response = await fetch('/api/admin/site-analytics', {
+      method: 'GET',
+      credentials: 'include'
+    });
+    if (!response.ok) {
+      return null;
+    }
+
+    const payload = (await response.json()) as { sites?: SiteAnalytics[]; totalNonAdminClicks?: unknown };
+    const sites = Array.isArray(payload.sites) ? payload.sites : [];
+    const totalRaw = Number(payload.totalNonAdminClicks ?? 0);
+    const totalNonAdminClicks = Number.isFinite(totalRaw) ? Math.max(0, Math.floor(totalRaw)) : 0;
+    return { sites, totalNonAdminClicks };
+  } catch {
+    return null;
+  }
+}
+
 function populateSiteSelect(select: HTMLSelectElement, sites: DemoSite[]): void {
   if (sites.length === 0) {
-    select.innerHTML = '<option value="">Aucun site démo</option>';
+    select.innerHTML = '<option value="">Aucun site demo</option>';
     return;
   }
 
@@ -375,11 +669,35 @@ function populateSiteSelect(select: HTMLSelectElement, sites: DemoSite[]): void 
 
 function renderSiteZone(node: HTMLElement, sites: DemoSite[]): void {
   if (sites.length === 0) {
-    node.innerHTML = '<li>Aucun site démo disponible.</li>';
+    node.innerHTML = '<li>Aucun site demo disponible.</li>';
     return;
   }
 
-  node.innerHTML = sites.map((site) => `<li><strong>${escapeHtml(site.name)}</strong> <span>${escapeHtml(site.path)}</span></li>`).join('');
+  node.innerHTML = sites
+    .map(
+      (site) => `
+        <li>
+          <div class="site-row">
+            <div class="site-row-text">
+              <strong>${escapeHtml(site.name)}</strong>
+              <span>${escapeHtml(site.path)}</span>
+            </div>
+            <div class="site-row-actions">
+              <a class="site-view-btn" href="${escapeHtml(site.path)}" target="_blank" rel="noopener">Voir site</a>
+              <button
+                type="button"
+                class="site-delete-btn"
+                data-site-delete-id="${escapeHtml(site.id)}"
+                data-site-name="${escapeHtml(site.name)}"
+              >
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </li>
+      `
+    )
+    .join('');
 }
 
 async function fetchAdminSession(): Promise<{ authenticated: boolean }> {
@@ -418,6 +736,10 @@ function formatDateTime(value: string): string {
     hour: '2-digit',
     minute: '2-digit'
   }).format(date);
+}
+
+function formatNumber(value: number): string {
+  return new Intl.NumberFormat('fr-FR').format(value);
 }
 
 function setupRevealAnimation(): void {

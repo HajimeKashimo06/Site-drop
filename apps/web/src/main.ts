@@ -26,18 +26,73 @@ app.innerHTML = `
     </header>
 
     <section class="hero reveal" id="apropos">
-      <article>
-        <p class="kicker">Prestataire web</p>
-        <h1>Des sites internet qui convertissent vos visiteurs en clients.</h1>
-        <ul>
-          <li>Message clair et design professionnel</li>
-          <li>Site rapide, responsive et simple à gérer</li>
-          <li>Mise en ligne accompagnée de A à Z</li>
-        </ul>
-        <div class="hero-actions">
-          <a class="btn solid" href="#offres">Découvrir nos offres</a>
-        </div>
-      </article>
+      <div class="hero-track" id="hero-track">
+        <article class="hero-slide is-active">
+          <img
+            src="/coiffure1/photoia.png"
+            alt="Aperçu d’un site professionnel pour salon de coiffure"
+            loading="eager"
+            decoding="async"
+          />
+          <div class="hero-overlay">
+            <p class="hero-kicker">Prestataire web</p>
+            <h1>Des sites internet qui convertissent vos visiteurs en clients.</h1>
+            <p class="hero-lead">
+              Un accompagnement complet pour lancer un site professionnel, rapide et orienté résultats.
+            </p>
+            <ul class="hero-list">
+              <li>Message clair et design professionnel</li>
+              <li>Site rapide, responsive et simple à gérer</li>
+              <li>Mise en ligne accompagnée de A à Z</li>
+            </ul>
+            <div class="hero-actions">
+              <a class="btn solid" href="#offres">Découvrir nos offres</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="hero-slide hero-slide-promo">
+          <img
+            class="promo-backdrop"
+            src="/coiffure1/promo2.png"
+            alt=""
+            aria-hidden="true"
+            loading="eager"
+            decoding="async"
+          />
+          <div class="promo-canvas">
+            <div class="promo-visual-wrap">
+              <img
+                class="promo-visual"
+                src="/coiffure1/promo2.png"
+                alt="Visuel promotionnel pour une offre de création de site"
+                loading="eager"
+                decoding="async"
+              />
+              <a class="btn solid promo-cta" href="#offres">Voir les offres</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="hero-slide">
+          <img
+            src="/coiffure1/appel.png"
+            alt="Visuel de prise de contact et accompagnement personnalisé"
+            loading="eager"
+            decoding="async"
+          />
+          <div class="hero-overlay">
+            <p class="hero-kicker">Accompagnement humain</p>
+            <h1>Un échange rapide pour cadrer votre projet sereinement.</h1>
+            <p class="hero-lead">
+              Vous gagnez du temps avec un interlocuteur dédié et des réponses concrètes dès le premier contact.
+            </p>
+            <div class="hero-actions">
+              <a class="btn solid" href="/contact.html">Être rappelé</a>
+            </div>
+          </div>
+        </article>
+      </div>
     </section>
 
     <section class="stats reveal" aria-label="Indicateurs de service">
@@ -52,14 +107,72 @@ app.innerHTML = `
         <p>Offres</p>
         <h2>Trois niveaux, une qualité premium à chaque étape.</h2>
       </div>
+      <aside class="market-claim" aria-label="Comparatif du marché">
+        <p class="market-claim-kicker">Comparatif du marché</p>
+        <h3>Le bon choix pour votre site web</h3>
+        <div class="market-table-wrap">
+          <table class="market-table">
+            <thead>
+              <tr>
+                <th scope="col">Critère</th>
+                <th scope="col">Abonnement (Wix / Shopify)</th>
+                <th scope="col">Achat classique (Agence)</th>
+                <th scope="col">Hproweb (Nous)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Paiement</th>
+                <td>
+                  <strong>10 à 500 EUR / mois</strong>
+                  <span class="market-note no"><span class="market-mark no" aria-hidden="true">✖</span> Revient cher à l'année.</span>
+                </td>
+                <td>
+                  <strong>1500 à plus de 10 000 EUR</strong>
+                  <span class="market-note no"><span class="market-mark no" aria-hidden="true">✖</span> Paiement unique élevé.</span>
+                </td>
+                <td>
+                  <strong>89,99 EUR</strong>
+                  <span class="market-note yes"><span class="market-mark yes" aria-hidden="true">✔</span> Puis seulement 30 EUR tous les 6 mois.</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Propriété du site</th>
+                <td><span class="market-state no"><span class="market-mark no" aria-hidden="true">✖</span> Non</span></td>
+                <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">✔</span> Oui</span></td>
+                <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">✔</span> Oui</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Personnalisation</th>
+                <td><span class="market-state no"><span class="market-mark no" aria-hidden="true">✖</span> Limitée</span></td>
+                <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">✔</span> Sur-mesure</span></td>
+                <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">✔</span> Sur-mesure</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Accompagnement</th>
+                <td><span class="market-state no"><span class="market-mark no" aria-hidden="true">✖</span> Faible</span></td>
+                <td><span class="market-state warn"><span class="market-mark warn" aria-hidden="true">!</span> Selon budget</span></td>
+                <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">✔</span> Humain + suivi</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Coût maîtrisé à l'année</th>
+                <td><span class="market-state no"><span class="market-mark no" aria-hidden="true">✖</span> Non</span></td>
+                <td><span class="market-state no"><span class="market-mark no" aria-hidden="true">✖</span> Non</span></td>
+                <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">✔</span> Oui</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="market-claim-highlight">Prix clair, image pro, et un vrai suivi dans la durée.</p>
+      </aside>
       <div class="grid">
         <article class="offer-card">
           <p class="offer-tier">Starter</p>
           <h3>Site Essentiel</h3>
           <p class="offer-summary">Un site élégant, rapide et prêt à convertir vos visiteurs en clients.</p>
           <div class="offer-pricing">
-            <p><span>Création</span><strong>150 EUR</strong></p>
-            <p><span>Entretien</span><strong>30 EUR / 6 mois</strong></p>
+            <p><span>Création</span><strong><em class="offer-discount">-35%</em> 89,99 EUR</strong></p>
+            <p><span>Entretien</span><strong>30 EUR tous les 6 mois</strong></p>
           </div>
           <ul class="offer-list">
             <li>Site vitrine de qualité professionnelle</li>
@@ -73,9 +186,9 @@ app.innerHTML = `
           <h3>Site Pro Gestion</h3>
           <p class="offer-summary">Un site complet avec espace d’administration et paiement intégré.</p>
           <div class="offer-pricing">
-            <p><span>Création</span><strong>300 EUR</strong></p>
-            <p><span>Admin en plus</span><strong>+50 EUR / compte</strong></p>
-            <p><span>Entretien</span><strong>60 EUR / 6 mois</strong></p>
+            <p><span>Création</span><strong><em class="offer-discount">-35%</em> 239,99 EUR</strong></p>
+            <p><span>Admin en plus</span><strong>+20 EUR par compte</strong></p>
+            <p><span>Entretien</span><strong>60 EUR tous les 6 mois</strong></p>
           </div>
           <ul class="offer-list">
             <li>Onglet de connexion pour compte admin</li>
@@ -89,8 +202,8 @@ app.innerHTML = `
           <h3>Site Grand Format</h3>
           <p class="offer-summary">La solution la plus complète pour un vrai site de niveau professionnel.</p>
           <div class="offer-pricing">
-            <p><span>Création</span><strong>700 EUR</strong></p>
-            <p><span>Entretien</span><strong>120 EUR / 6 mois</strong></p>
+            <p><span>Création</span><strong><em class="offer-discount">-35%</em> 550 EUR</strong></p>
+            <p><span>Entretien</span><strong>120 EUR tous les 6 mois</strong></p>
           </div>
           <ul class="offer-list">
             <li>Comptes admin illimités</li>
@@ -134,24 +247,25 @@ app.innerHTML = `
     </section>
 
     <footer class="site-footer reveal" aria-label="Informations du site">
-      <article>
-        <h3>INFORMATIONS</h3>
-        <a href="#">Mentions légales du site</a>
-        <a href="#">Politique en matière de cookies</a>
-        <a href="#">Conditions Générales de Vente</a>
-      </article>
-      <article>
-        <h3>NOTRE ENTREPRISE</h3>
-        <a href="#">Qui sommes-nous ?</a>
-        <a href="#">Éditeurs Partenaires</a>
-        <a href="#">Newsletter</a>
-      </article>
+      <div class="site-footer-top">
+        <p>Hproweb</p>
+        <span>Création de sites internet professionnels - AY</span>
+      </div>
+      <nav class="site-footer-nav">
+        <a href="/mentions-legales.html">Mentions légales</a>
+        <a href="/cgv.html">Conditions Générales de Vente</a>
+        <a href="/qui-sommes-nous.html">Qui sommes-nous</a>
+        <a href="/contact.html">Nous contacter / Être rappelé</a>
+      </nav>
     </footer>
   </main>
 `;
 
 setupRevealAnimation();
 setupCenteredTabs();
+setupHeroSlider();
+
+const HERO_ROTATION_MS = 5_000;
 
 function setupRevealAnimation(): void {
   const nodes = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
@@ -193,6 +307,63 @@ function setupCenteredTabs(): void {
       window.history.replaceState({}, '', hash);
     });
   });
+}
+
+function setupHeroSlider(): void {
+  const hero = mustElement<HTMLElement>('.hero');
+  const track = mustElement<HTMLElement>('#hero-track');
+  const slides = Array.from(track.querySelectorAll<HTMLElement>('.hero-slide'));
+  if (slides.length === 0) {
+    return;
+  }
+
+  const preloadImageNodes = slides
+    .map((slide) => slide.querySelector<HTMLImageElement>('img'))
+    .filter((img): img is HTMLImageElement => img !== null);
+  preloadImageNodes.forEach((imgNode) => {
+    const preload = new Image();
+    preload.src = imgNode.src;
+  });
+
+  let activeIndex = 0;
+  let intervalId: number | null = null;
+  let startTimeoutId: number | null = null;
+  const render = (): void => {
+    track.style.transform = `translateX(-${activeIndex * 100}%)`;
+    slides.forEach((slide, index) => {
+      slide.classList.toggle('is-active', index === activeIndex);
+    });
+  };
+
+  const showNextSlide = (): void => {
+    activeIndex = (activeIndex + 1) % slides.length;
+    render();
+  };
+
+  const startAutoRotation = (): void => {
+    if (intervalId !== null) {
+      return;
+    }
+    intervalId = window.setInterval(showNextSlide, HERO_ROTATION_MS);
+  };
+
+  const startAfterInitialHold = (): void => {
+    if (startTimeoutId !== null || intervalId !== null) {
+      return;
+    }
+    startTimeoutId = window.setTimeout(() => {
+      startTimeoutId = null;
+      startAutoRotation();
+    }, HERO_ROTATION_MS);
+  };
+
+  render();
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
+      hero.classList.add('is-ready');
+    });
+  });
+  startAfterInitialHold();
 }
 
 function mustElement<T extends Element>(selector: string): T {

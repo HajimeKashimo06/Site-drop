@@ -2,6 +2,12 @@ import './demo-site.css';
 
 const FALLBACK_TARGET_PATH = '/page-test.html';
 
+type DemoSite = {
+  id: string;
+  name: string;
+  path: string;
+};
+
 document.title = 'Hproweb | Connexion démo site';
 
 const app = mustElement<HTMLDivElement>('#app');
@@ -83,7 +89,7 @@ async function bootstrapAuth(): Promise<void> {
 
   const session = await getSession();
   if (session.authenticated) {
-    const redirectPath = resolveRedirectPath(session.redirectPath);
+    const redirectPath = resolveSessionRedirectPath(session);
     openSiteLink.href = redirectPath;
     openSiteLink.hidden = false;
     logoutButton.hidden = false;
@@ -171,23 +177,38 @@ function setupLoginForm(): void {
   });
 }
 
-async function getSession(): Promise<{ authenticated: boolean; redirectPath: string | null }> {
+async function getSession(): Promise<{ authenticated: boolean; redirectPath: string | null; sites: DemoSite[] }> {
   try {
     const response = await fetch('/api/auth/session', {
       method: 'GET',
       credentials: 'include'
     });
     if (!response.ok) {
-      return { authenticated: false, redirectPath: null };
+      return { authenticated: false, redirectPath: null, sites: [] };
     }
-    const payload = (await response.json()) as { authenticated?: boolean; redirectPath?: unknown };
+    const payload = (await response.json()) as {
+      authenticated?: boolean;
+      redirectPath?: unknown;
+      sites?: DemoSite[];
+    };
     return {
       authenticated: payload.authenticated === true,
-      redirectPath: typeof payload.redirectPath === 'string' ? payload.redirectPath : null
+      redirectPath: typeof payload.redirectPath === 'string' ? payload.redirectPath : null,
+      sites: Array.isArray(payload.sites) ? payload.sites : []
     };
   } catch {
-    return { authenticated: false, redirectPath: null };
+    return { authenticated: false, redirectPath: null, sites: [] };
   }
+}
+
+function resolveSessionRedirectPath(session: { redirectPath: string | null; sites: DemoSite[] }): string {
+  const directPath = resolveRedirectPath(session.redirectPath);
+  if (directPath !== '/admin.html') {
+    return directPath;
+  }
+
+  const firstSitePath = session.sites.find((site) => typeof site.path === 'string' && site.path.startsWith('/'))?.path;
+  return firstSitePath ?? FALLBACK_TARGET_PATH;
 }
 
 function resolveRedirectPath(rawPath: unknown): string {

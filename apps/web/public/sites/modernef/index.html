@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moderne F | Salon feminin</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=Parisienne&display=swap');
+
+      :root {
+        --pink-50: #fff7fb;
+        --pink-100: #ffeaf5;
+        --pink-200: #ffd8eb;
+        --pink-300: #fbb7d9;
+        --pink-400: #f48bc0;
+        --pink-500: #ec62a8;
+        --ink: #52253d;
+        --ink-soft: #8b5f75;
+        --line: #f3cde1;
+        --white: #ffffff;
+        --radius: 22px;
+        --mx: 50%;
+        --my: 50%;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+
+      body {
+        font-family: 'Manrope', sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 12% -8%, rgba(236, 98, 168, 0.2), transparent 42%),
+          radial-gradient(circle at 88% 10%, rgba(244, 139, 192, 0.2), transparent 40%),
+          linear-gradient(180deg, #fffdfd, var(--pink-50));
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle 260px at var(--mx) var(--my), rgba(244, 139, 192, 0.18), transparent 70%);
+        z-index: 0;
+      }
+
+      .preloader {
+        position: fixed;
+        inset: 0;
+        z-index: 120;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(180deg, #fff7fc, #ffeef7);
+        transition: opacity 520ms ease, visibility 520ms ease;
+      }
+
+      .preloader.is-hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .preloader-box {
+        width: min(400px, calc(100% - 2rem));
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.88);
+        box-shadow: 0 18px 38px rgba(202, 85, 146, 0.2);
+        padding: 1rem 0.9rem 0.9rem;
+      }
+
+      .preloader-box p {
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.22em;
+        font-size: 0.68rem;
+        color: #aa6d8b;
+      }
+
+      .preloader-box strong {
+        margin-top: 0.52rem;
+        display: block;
+        font-family: 'Parisienne', cursive;
+        font-size: clamp(2rem, 8vw, 3rem);
+        line-height: 0.92;
+      }
+
+      .preloader-line {
+        margin-top: 0.75rem;
+        height: 7px;
+        border-radius: 999px;
+        background: var(--pink-100);
+        border: 1px solid #f3c8df;
+        overflow: hidden;
+      }
+
+      .preloader-line i {
+        display: block;
+        width: 35%;
+        height: 100%;
+        background: linear-gradient(90deg, var(--pink-500), var(--pink-300));
+        border-radius: inherit;
+        animation: loaderMove 1.2s ease-in-out infinite;
+      }
+
+      .progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        width: 0;
+        background: linear-gradient(90deg, var(--pink-500), var(--pink-300));
+        z-index: 90;
+      }
+
+      .site-shell {
+        position: relative;
+        z-index: 2;
+        width: min(1180px, calc(100% - 2rem));
+        margin: 0 auto;
+        padding: 1rem 0 3.5rem;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0.7rem;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.9rem;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 12px 30px rgba(226, 140, 185, 0.2);
+        padding: 0.62rem 0.8rem;
+      }
+
+      .brand {
+        text-decoration: none;
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.45rem;
+      }
+
+      .brand strong {
+        font-family: 'Parisienne', cursive;
+        font-size: 2rem;
+        line-height: 1;
+        color: #bb4f89;
+      }
+
+      .brand span {
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        font-size: 0.66rem;
+        color: #9a6d83;
+        font-weight: 700;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.34rem;
+      }
+
+      nav a {
+        text-decoration: none;
+        color: #88556f;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        padding: 0.4rem 0.7rem;
+        transition: color 220ms ease, border-color 220ms ease, background 220ms ease;
+      }
+
+      nav a:hover {
+        color: #7b2f58;
+        border-color: #efc2da;
+        background: #fff7fb;
+      }
+
+      .book-link {
+        color: #fff;
+        background: linear-gradient(120deg, #df589b, #f08cc2);
+        border-color: #df589b;
+      }
+
+      .book-link:hover {
+        color: #fff;
+        border-color: #cf4b8f;
+        background: linear-gradient(120deg, #cf4b8f, #e87ab5);
+      }
+
+      .hero {
+        margin-top: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background:
+          radial-gradient(circle at 70% 20%, rgba(244, 139, 192, 0.24), transparent 42%),
+          radial-gradient(circle at 15% 88%, rgba(246, 182, 214, 0.26), transparent 40%),
+          linear-gradient(160deg, #fff9fd, #fff2f9);
+        overflow: hidden;
+        min-height: min(82vh, 710px);
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 0.9rem;
+        padding: clamp(1rem, 2.4vw, 1.7rem);
+      }
+
+      .kicker {
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        font-size: 0.68rem;
+        color: #a6708a;
+      }
+
+      h1 {
+        margin: 0.6rem 0 0;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(2.2rem, 7vw, 4.8rem);
+        line-height: 0.88;
+        color: #6a2f4d;
+      }
+
+      h1 span {
+        display: block;
+        margin-top: 0.65rem;
+        font-family: 'Manrope', sans-serif;
+        font-size: clamp(0.9rem, 1.9vw, 1.06rem);
+        line-height: 1.5;
+        color: #885b71;
+        max-width: 36ch;
+      }
+
+      .hero-actions {
+        margin-top: 0.9rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.52rem;
+      }
+
+      .btn-main,
+      .btn-alt {
+        min-height: 44px;
+        border-radius: 999px;
+        padding: 0.56rem 1rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.82rem;
+        font-weight: 800;
+        border: 1px solid transparent;
+      }
+
+      .btn-main {
+        color: #fff;
+        background: linear-gradient(120deg, #de579b, #f08fc3);
+      }
+
+      .btn-alt {
+        color: #8a4d6a;
+        border-color: #f1c2dd;
+        background: rgba(255, 255, 255, 0.84);
+      }
+
+      .hero-stats {
+        margin-top: 0.95rem;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.5rem;
+      }
+
+      .hero-stat {
+        border: 1px solid #efc7de;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 0.56rem;
+      }
+
+      .hero-stat strong {
+        display: block;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.4rem;
+        line-height: 1;
+      }
+
+      .hero-stat span {
+        font-size: 0.75rem;
+        color: #94637b;
+      }
+
+      .hero-media {
+        position: relative;
+        min-height: 430px;
+      }
+
+      .media-frame {
+        position: absolute;
+        inset: 0;
+        border-radius: 18px;
+        border: 1px solid #edc5dc;
+        background:
+          radial-gradient(circle at 82% 18%, rgba(255, 255, 255, 0.8), transparent 35%),
+          linear-gradient(160deg, #fddff0, #f5cce3 48%, #efb7d6);
+        overflow: hidden;
+        box-shadow: 0 18px 36px rgba(219, 120, 169, 0.22);
+      }
+
+      .hero-photo-trigger {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .hero-photo-trigger img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        opacity: 0.88;
+      }
+
+      .media-frame::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(115, 31, 70, 0.24));
+        pointer-events: none;
+      }
+
+      .floating-chip {
+        position: absolute;
+        border: 1px solid #efcbe0;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        padding: 0.5rem 0.58rem;
+        box-shadow: 0 10px 24px rgba(205, 107, 157, 0.2);
+      }
+
+      .floating-chip strong {
+        display: block;
+        font-size: 0.78rem;
+      }
+
+      .floating-chip span {
+        font-size: 0.7rem;
+        color: #8b5f75;
+      }
+
+      .chip-a {
+        top: 14%;
+        left: -4%;
+      }
+
+      .chip-b {
+        right: -3%;
+        bottom: 16%;
+      }
+
+      .marquee-wrap {
+        margin-top: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.88);
+      }
+
+      .marquee {
+        display: flex;
+        gap: 2.5rem;
+        width: max-content;
+        padding: 0.52rem 0.8rem;
+        animation: marqueeMove 20s linear infinite;
+      }
+
+      .marquee span {
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        font-size: 0.72rem;
+        color: #a05f7e;
+        white-space: nowrap;
+      }
+
+      section {
+        margin-top: 1rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 12px 30px rgba(231, 153, 192, 0.18);
+        padding: clamp(0.9rem, 2.2vw, 1.3rem);
+        transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease;
+      }
+
+      section:hover {
+        border-color: #edbdd8;
+        box-shadow: 0 20px 36px rgba(223, 129, 177, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .section-head p {
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.17em;
+        font-size: 0.66rem;
+        color: #9a6d83;
+      }
+
+      .section-head h2 {
+        margin: 0.5rem 0 0;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(1.9rem, 5.6vw, 3.7rem);
+        line-height: 0.88;
+        color: #6f2e4f;
+      }
+
+      .price-grid {
+        margin-top: 0.85rem;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.6rem;
+      }
+
+      .price-card {
+        border: 1px solid #efd1e1;
+        border-radius: 14px;
+        background: #fff9fd;
+        padding: 0.72rem;
+      }
+
+      .price-card strong {
+        display: block;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.2rem;
+      }
+
+      .price-card span {
+        margin-top: 0.45rem;
+        display: inline-flex;
+        border: 1px solid #f1c8df;
+        border-radius: 999px;
+        padding: 0.24rem 0.5rem;
+        font-size: 0.72rem;
+        color: #8b5871;
+      }
+
+      .gallery {
+        margin-top: 0.85rem;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.58rem;
+      }
+
+      .shot {
+        border-radius: 14px;
+        border: 1px solid #efcce0;
+        overflow: hidden;
+        aspect-ratio: 4 / 5;
+        background: #fbe8f3;
+      }
+
+      .shot button {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .shot img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 420ms ease;
+      }
+
+      .shot:hover img {
+        transform: scale(1.05);
+      }
+
+      .review-wrap {
+        margin-top: 0.82rem;
+        overflow: hidden;
+      }
+
+      .review-track {
+        display: flex;
+        gap: 0.58rem;
+        width: max-content;
+        will-change: transform;
+      }
+
+      .review-card {
+        width: min(320px, calc(100vw - 3rem));
+        border: 1px solid #efcce0;
+        border-radius: 14px;
+        background: #fff8fc;
+        padding: 0.68rem;
+      }
+
+      .review-card strong {
+        display: block;
+        font-size: 0.82rem;
+      }
+
+      .review-card p {
+        margin: 0.36rem 0 0;
+        font-size: 0.78rem;
+        color: #885b71;
+        line-height: 1.5;
+      }
+
+      .review-card span {
+        margin-top: 0.48rem;
+        display: block;
+        color: #e56aa8;
+        font-size: 0.76rem;
+        letter-spacing: 0.06em;
+      }
+
+      .booking-panel {
+        margin-top: 0.85rem;
+        border: 1px solid #efcde1;
+        border-radius: 16px;
+        background:
+          radial-gradient(circle at 86% 14%, rgba(245, 173, 209, 0.35), transparent 38%),
+          #fff7fb;
+        padding: 0.85rem;
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 0.7rem;
+      }
+
+      .booking-form {
+        display: grid;
+        gap: 0.52rem;
+      }
+
+      .booking-form label {
+        display: grid;
+        gap: 0.28rem;
+        font-size: 0.78rem;
+        color: #8f6077;
+      }
+
+      .booking-form input,
+      .booking-form select {
+        width: 100%;
+        min-height: 42px;
+        border-radius: 10px;
+        border: 1px solid #efcce0;
+        background: #fff;
+        color: #64374e;
+        padding: 0.52rem 0.64rem;
+        font: inherit;
+      }
+
+      .booking-feedback {
+        margin: 0;
+        min-height: 1.2em;
+        font-size: 0.78rem;
+        color: #8b5f75;
+      }
+
+      .booking-feedback.success {
+        color: #2e8a59;
+      }
+
+      .booking-feedback.error {
+        color: #ad3d66;
+      }
+
+      .booking-side {
+        border: 1px solid #efcede;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.84);
+        padding: 0.72rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 0.6rem;
+      }
+
+      .booking-side p {
+        margin: 0;
+        font-size: 0.83rem;
+        color: #8d6076;
+      }
+
+      .contact-chip {
+        text-decoration: none;
+        border: 1px solid #efc3dc;
+        border-radius: 999px;
+        color: #7d315b;
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 0.52rem 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+      }
+
+      .contact-chip:hover {
+        background: #fff3fa;
+      }
+
+      footer {
+        margin-top: 1rem;
+        border-top: 1px solid #f1cfe2;
+        padding-top: 0.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        font-size: 0.72rem;
+        color: #9b7187;
+      }
+
+      .photo-lightbox {
+        position: fixed;
+        inset: 0;
+        z-index: 112;
+        background: rgba(63, 30, 47, 0.78);
+        display: grid;
+        place-items: center;
+        padding: 1rem;
+      }
+
+      .photo-lightbox[hidden] {
+        display: none;
+      }
+
+      .photo-lightbox img {
+        width: min(1080px, 100%);
+        max-height: calc(100vh - 4rem);
+        object-fit: contain;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+      }
+
+      .lightbox-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 999px;
+        background: rgba(115, 37, 81, 0.72);
+        color: #fff;
+        font: inherit;
+        font-size: 0.8rem;
+        padding: 0.44rem 0.8rem;
+        cursor: pointer;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(20px) scale(0.988);
+        filter: blur(4px);
+        transition: opacity 560ms ease, transform 560ms ease, filter 560ms ease;
+      }
+
+      .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+
+      @keyframes marqueeMove {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      @keyframes loaderMove {
+        0% {
+          transform: translateX(-120%);
+        }
+        100% {
+          transform: translateX(320%);
+        }
+      }
+
+      @media (max-width: 1000px) {
+        .hero-grid,
+        .booking-panel {
+          grid-template-columns: 1fr;
+        }
+
+        .price-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .gallery {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .hero-media {
+          min-height: 340px;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .site-shell {
+          width: min(1180px, calc(100% - 1rem));
+          padding-top: 0.68rem;
+        }
+
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        nav {
+          width: 100%;
+        }
+
+        nav a {
+          flex: 1 1 auto;
+          text-align: center;
+        }
+
+        .hero-stats {
+          grid-template-columns: 1fr;
+        }
+
+        .price-grid,
+        .gallery {
+          grid-template-columns: 1fr;
+        }
+
+        .booking-form .btn-main,
+        .contact-chip {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="preloader" id="preloader">
+      <div class="preloader-box">
+        <p>Moderne f studio</p>
+        <strong>Beauty Loading</strong>
+        <div class="preloader-line"><i></i></div>
+      </div>
+    </div>
+
+    <div class="progress" id="progress"></div>
+
+    <main class="site-shell" id="accueil">
+      <header class="topbar reveal">
+        <a class="brand" href="#accueil">
+          <strong>Moderne F</strong>
+          <span>salon</span>
+        </a>
+        <nav>
+          <a href="#prix">Prix</a>
+          <a href="#photos">Photos</a>
+          <a href="#avis">Avis</a>
+          <a class="book-link" href="#reservation">Reserver</a>
+        </nav>
+      </header>
+
+      <section class="hero reveal" id="hero">
+        <div class="hero-grid">
+          <article>
+            <p class="kicker">Salon feminin - Nantes</p>
+            <h1>
+              Douceur.
+              <br />
+              Style.
+              <span>Coiffure feminine chic, ambiance rose et blanche.</span>
+            </h1>
+            <div class="hero-actions">
+              <a class="btn-main" href="#reservation">Prendre rendez-vous</a>
+              <a class="btn-alt" href="#photos">Voir les photos</a>
+            </div>
+            <div class="hero-stats">
+              <article class="hero-stat">
+                <strong>4,7/5</strong>
+                <span>Note moyenne</span>
+              </article>
+              <article class="hero-stat">
+                <strong>115</strong>
+                <span>Avis</span>
+              </article>
+              <article class="hero-stat">
+                <strong>6/7</strong>
+                <span>Jours ouverts</span>
+              </article>
+            </div>
+          </article>
+
+          <figure class="hero-media">
+            <div class="media-frame" data-parallax data-depth="12">
+              <button type="button" class="hero-photo-trigger photo-trigger" data-src="/sites/betaimagi/images/p2.png" data-alt="Photo principale Moderne F">
+                <img src="/sites/betaimagi/images/p2.png" alt="Photo principale Moderne F" loading="eager" />
+              </button>
+            </div>
+            <figcaption class="floating-chip chip-a" data-parallax data-depth="20">
+              <strong>Finition nette</strong>
+              <span>Look feminin</span>
+            </figcaption>
+            <figcaption class="floating-chip chip-b" data-parallax data-depth="16">
+              <strong>Ambiance chic</strong>
+              <span>Detail pro</span>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <div class="marquee-wrap reveal" aria-hidden="true">
+        <div class="marquee">
+          <span>Coiffure feminine</span>
+          <span>Brushing chic</span>
+          <span>Coloration lumineuse</span>
+          <span>Soin premium</span>
+          <span>Coiffure feminine</span>
+          <span>Brushing chic</span>
+          <span>Coloration lumineuse</span>
+          <span>Soin premium</span>
+        </div>
+      </div>
+
+      <section class="reveal" id="prix">
+        <div class="section-head">
+          <p>Tarifs</p>
+          <h2>Prix du salon</h2>
+        </div>
+        <div class="price-grid">
+          <article class="price-card">
+            <strong>Coupe femme</strong>
+            <span>A partir de 25 EUR</span>
+          </article>
+          <article class="price-card">
+            <strong>Brushing</strong>
+            <span>A partir de 20 EUR</span>
+          </article>
+          <article class="price-card">
+            <strong>Coloration</strong>
+            <span>A partir de 39 EUR</span>
+          </article>
+          <article class="price-card">
+            <strong>Coiffure evenement</strong>
+            <span>A partir de 45 EUR</span>
+          </article>
+          <article class="price-card">
+            <strong>Soin profond</strong>
+            <span>A partir de 14 EUR</span>
+          </article>
+          <article class="price-card">
+            <strong>Shampoing + coiffage</strong>
+            <span>A partir de 8 EUR</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="reveal" id="photos">
+        <div class="section-head">
+          <p>Galerie</p>
+          <h2>Photos du salon</h2>
+        </div>
+        <div class="gallery">
+          <figure class="shot">
+            <button type="button" class="photo-trigger" data-src="/sites/betaimagi/images/p1.png" data-alt="Photo salon 1">
+              <img src="/sites/betaimagi/images/p1.png" alt="Photo salon 1" loading="lazy" />
+            </button>
+          </figure>
+          <figure class="shot">
+            <button type="button" class="photo-trigger" data-src="/sites/betaimagi/images/p2.png" data-alt="Photo salon 2">
+              <img src="/sites/betaimagi/images/p2.png" alt="Photo salon 2" loading="lazy" />
+            </button>
+          </figure>
+          <figure class="shot">
+            <button type="button" class="photo-trigger" data-src="/sites/betaimagi/images/p3.png" data-alt="Photo salon 3">
+              <img src="/sites/betaimagi/images/p3.png" alt="Photo salon 3" loading="lazy" />
+            </button>
+          </figure>
+          <figure class="shot">
+            <button type="button" class="photo-trigger" data-src="/sites/betaimagi/images/p4.png" data-alt="Photo salon 4">
+              <img src="/sites/betaimagi/images/p4.png" alt="Photo salon 4" loading="lazy" />
+            </button>
+          </figure>
+        </div>
+      </section>
+
+      <section class="reveal" id="avis">
+        <div class="section-head">
+          <p>Avis</p>
+          <h2>Resume des avis</h2>
+        </div>
+        <div class="review-wrap">
+          <div class="review-track" id="review-track">
+            <article class="review-card">
+              <strong>Sabrina L.</strong>
+              <p>Tres beau salon, coupe et brushing top.</p>
+              <span>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            </article>
+            <article class="review-card">
+              <strong>Lea N.</strong>
+              <p>Equipe douce et resultat propre.</p>
+              <span>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            </article>
+            <article class="review-card">
+              <strong>Ines K.</strong>
+              <p>Coloration parfaite, ambiance feminine.</p>
+              <span>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            </article>
+            <article class="review-card">
+              <strong>Camille R.</strong>
+              <p>Rapide, pro, et super accueil.</p>
+              <span>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            </article>
+            <article class="review-card">
+              <strong>Sarah B.</strong>
+              <p>Je recommande pour un style net et chic.</p>
+              <span>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="reveal" id="reservation">
+        <div class="section-head">
+          <p>Reservation</p>
+          <h2>Reserve ton creneau</h2>
+        </div>
+        <div class="booking-panel">
+          <form id="booking-form" class="booking-form" novalidate>
+            <label>
+              Date
+              <input type="date" id="booking-date" name="date" required />
+            </label>
+            <label>
+              Service
+              <select name="service" required>
+                <option value="">Choisir</option>
+                <option value="Coupe femme">Coupe femme</option>
+                <option value="Brushing">Brushing</option>
+                <option value="Coloration">Coloration</option>
+                <option value="Soin profond">Soin profond</option>
+              </select>
+            </label>
+            <label>
+              Telephone
+              <input type="tel" name="phone" placeholder="06 00 00 00 00" required />
+            </label>
+            <button type="submit" class="btn-main">Envoyer</button>
+            <p id="booking-feedback" class="booking-feedback" aria-live="polite"></p>
+          </form>
+
+          <aside class="booking-side">
+            <p>Lun: 10:00-19:00</p>
+            <p>Mar: 10:00-19:00</p>
+            <p>Mer: 10:00-19:00</p>
+            <p>Jeu: 09:00-19:00</p>
+            <p>Ven: 09:00-19:00</p>
+            <p>Sam: 09:00-19:00</p>
+            <p>Dim: Ferme</p>
+            <a class="contact-chip" href="tel:+33000000000">Appeler le salon</a>
+          </aside>
+        </div>
+      </section>
+
+      <footer>
+        <span>MODERNE F STUDIO</span>
+        <span id="year"></span>
+      </footer>
+    </main>
+
+    <div class="photo-lightbox" id="photo-lightbox" hidden>
+      <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Fermer">Fermer</button>
+      <img id="lightbox-image" src="" alt="" />
+    </div>
+
+    <script>
+      void bootstrapProtectedPage();
+
+      async function bootstrapProtectedPage() {
+        const hasAccess = await hasValidSession();
+        if (!hasAccess) {
+          window.location.replace('/demo-site.html');
+          return;
+        }
+
+        await playIntroLoader();
+        document.getElementById('year').textContent = `© ${new Date().getFullYear()} - Tous droits reserves`;
+        setupAmbientGlow();
+        setupRevealAnimation();
+        setupSmoothAnchors();
+        setupScrollProgress();
+        setupParallax();
+        setupPhotoLightbox();
+        setupReviewTicker();
+        setupBookingForm();
+      }
+
+      async function hasValidSession() {
+        try {
+          const response = await fetch('/api/auth/session?site=modernef', {
+            method: 'GET',
+            credentials: 'include'
+          });
+          return response.ok;
+        } catch {
+          return false;
+        }
+      }
+
+      async function playIntroLoader() {
+        const loader = document.getElementById('preloader');
+        if (!loader) {
+          return;
+        }
+
+        const wait = (ms) =>
+          new Promise((resolve) => {
+            window.setTimeout(resolve, ms);
+          });
+
+        const waitForLoad = new Promise((resolve) => {
+          if (document.readyState === 'complete') {
+            resolve();
+            return;
+          }
+          window.addEventListener('load', () => resolve(), { once: true });
+        });
+
+        await Promise.all([waitForLoad, wait(950)]);
+        loader.classList.add('is-hidden');
+        await wait(520);
+      }
+
+      function setupAmbientGlow() {
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduced) {
+          return;
+        }
+
+        window.addEventListener(
+          'mousemove',
+          (event) => {
+            document.documentElement.style.setProperty('--mx', `${event.clientX}px`);
+            document.documentElement.style.setProperty('--my', `${event.clientY}px`);
+          },
+          { passive: true }
+        );
+      }
+
+      function setupRevealAnimation() {
+        const nodes = Array.from(document.querySelectorAll('.reveal'));
+        if (!('IntersectionObserver' in window)) {
+          nodes.forEach((node) => node.classList.add('is-visible'));
+          return;
+        }
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.14, rootMargin: '0px 0px -8% 0px' }
+        );
+
+        nodes.forEach((node) => observer.observe(node));
+      }
+
+      function setupSmoothAnchors() {
+        const links = Array.from(document.querySelectorAll('a[href^="#"]'));
+        links.forEach((link) => {
+          link.addEventListener('click', (event) => {
+            const hash = link.getAttribute('href');
+            if (!hash) {
+              return;
+            }
+
+            const target = document.querySelector(hash);
+            if (!target) {
+              return;
+            }
+
+            event.preventDefault();
+            const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            target.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+            window.history.replaceState({}, '', hash);
+          });
+        });
+      }
+
+      function setupScrollProgress() {
+        const progress = document.getElementById('progress');
+        if (!progress) {
+          return;
+        }
+
+        const update = () => {
+          const doc = document.documentElement;
+          const scrollable = doc.scrollHeight - window.innerHeight;
+          if (scrollable <= 0) {
+            progress.style.width = '0';
+            return;
+          }
+
+          const ratio = Math.max(0, Math.min(1, window.scrollY / scrollable));
+          progress.style.width = `${ratio * 100}%`;
+        };
+
+        update();
+        window.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update);
+      }
+
+      function setupParallax() {
+        const items = Array.from(document.querySelectorAll('[data-parallax]'));
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (items.length === 0 || reduced) {
+          return;
+        }
+
+        let mouseX = 0;
+        let mouseY = 0;
+        let rafId = 0;
+
+        const animate = () => {
+          items.forEach((item) => {
+            const depthRaw = Number(item.getAttribute('data-depth') || '10');
+            const depth = Number.isFinite(depthRaw) ? depthRaw : 10;
+            const tx = mouseX * (depth / 420);
+            const ty = mouseY * (depth / 420);
+            item.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
+          });
+          rafId = 0;
+        };
+
+        window.addEventListener('mousemove', (event) => {
+          const cx = window.innerWidth / 2;
+          const cy = window.innerHeight / 2;
+          mouseX = event.clientX - cx;
+          mouseY = event.clientY - cy;
+          if (!rafId) {
+            rafId = window.requestAnimationFrame(animate);
+          }
+        });
+      }
+
+      function setupPhotoLightbox() {
+        const lightbox = document.getElementById('photo-lightbox');
+        const image = document.getElementById('lightbox-image');
+        const closeButton = document.getElementById('lightbox-close');
+        const triggers = Array.from(document.querySelectorAll('.photo-trigger'));
+
+        if (!lightbox || !image || !closeButton || triggers.length === 0) {
+          return;
+        }
+
+        const close = () => {
+          lightbox.hidden = true;
+          document.body.style.overflow = '';
+        };
+
+        const open = (src, alt) => {
+          image.src = src;
+          image.alt = alt;
+          lightbox.hidden = false;
+          document.body.style.overflow = 'hidden';
+        };
+
+        triggers.forEach((trigger) => {
+          trigger.addEventListener('click', () => {
+            open(trigger.dataset.src || '', trigger.dataset.alt || '');
+          });
+        });
+
+        closeButton.addEventListener('click', close);
+        lightbox.addEventListener('click', (event) => {
+          if (event.target === lightbox) {
+            close();
+          }
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && !lightbox.hidden) {
+            close();
+          }
+        });
+      }
+
+      function setupReviewTicker() {
+        const track = document.getElementById('review-track');
+        if (!track) {
+          return;
+        }
+
+        const clone = track.cloneNode(true);
+        track.parentElement.appendChild(clone);
+
+        const nodes = Array.from(track.parentElement.querySelectorAll('.review-track'));
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduced) {
+          return;
+        }
+
+        let offset = 0;
+        const speed = 0.34;
+        const width = track.scrollWidth + 12;
+
+        const tick = () => {
+          offset -= speed;
+          if (Math.abs(offset) >= width) {
+            offset = 0;
+          }
+          nodes[0].style.transform = `translateX(${offset}px)`;
+          nodes[1].style.transform = `translateX(${offset + width}px)`;
+          window.requestAnimationFrame(tick);
+        };
+
+        nodes[1].setAttribute('aria-hidden', 'true');
+        window.requestAnimationFrame(tick);
+      }
+
+      function setupBookingForm() {
+        const form = document.getElementById('booking-form');
+        const dateInput = document.getElementById('booking-date');
+        const feedback = document.getElementById('booking-feedback');
+
+        if (!form || !dateInput || !feedback) {
+          return;
+        }
+
+        dateInput.min = toIsoDate(new Date());
+        dateInput.value = toIsoDate(new Date());
+
+        form.addEventListener('submit', (event) => {
+          event.preventDefault();
+
+          if (!form.checkValidity()) {
+            feedback.textContent = 'Merci de remplir les champs.';
+            feedback.className = 'booking-feedback error';
+            return;
+          }
+
+          feedback.textContent = 'Demande envoyee. On vous rappelle rapidement.';
+          feedback.className = 'booking-feedback success';
+          form.reset();
+          dateInput.value = toIsoDate(new Date());
+        });
+      }
+
+      function toIsoDate(date) {
+        const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+        return local.toISOString().slice(0, 10);
+      }
+    </script>
+  </body>
+</html>

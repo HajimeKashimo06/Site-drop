@@ -1,0 +1,80 @@
+[
+  {
+    "id": "page-test",
+    "name": "Site test barber",
+    "path": "/page-test.html",
+    "active": true
+  },
+  {
+    "id": "testcoiffure1",
+    "name": "testcoiffure1",
+    "path": "/sites/testcoiffure1/index.html",
+    "active": true
+  },
+  {
+    "id": "betacoiffure2",
+    "name": "betacoiffure2",
+    "path": "/sites/betacoiffure2/index.html",
+    "active": true
+  },
+  {
+    "id": "betaimagi",
+    "name": "betaimagi",
+    "path": "/sites/betaimagi/index.html",
+    "active": true
+  },
+  {
+    "id": "moderne",
+    "name": "moderne",
+    "path": "/sites/moderne/index.html",
+    "active": true
+  },
+  {
+    "id": "modernef",
+    "name": "modernef",
+    "path": "/sites/modernef/index.html",
+    "active": true
+  },
+  {
+    "id": "modernemix",
+    "name": "modernemix",
+    "path": "/sites/modernemix/index.html",
+    "active": true
+  },
+  {
+    "id": "avocattest",
+    "name": "avocattest",
+    "path": "/sites/avocattest/index.html",
+    "active": true
+  },
+  {
+    "id": "avocattest2",
+    "name": "avocattest2",
+    "path": "/sites/avocattest2/index.html",
+    "active": true
+  },
+  {
+    "id": "avocattest3",
+    "name": "avocattest3",
+    "path": "/sites/avocattest3/index.html",
+    "active": true
+  },
+  {
+    "id": "avocattest4",
+    "name": "avocattest4",
+    "path": "/sites/avocattest4/index.html",
+    "active": true
+  },
+  {
+    "id": "avocattest5",
+    "name": "avocattest5",
+    "path": "/sites/avocattest5/index.html",
+    "active": true
+  },
+  {
+    "id": "avocattest6",
+    "name": "avocattest6",
+    "path": "/sites/avocattest6/index.html",
+    "active": true
+  }
+]

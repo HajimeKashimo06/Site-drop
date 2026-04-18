@@ -13,7 +13,10 @@ export default defineConfig({
         devis: resolve(rootDir, 'devis.html'),
         pageTest: resolve(rootDir, 'page-test.html'),
         demoSite: resolve(rootDir, 'demo-site.html'),
-        admin: resolve(rootDir, 'admin.html')
+        admin: resolve(rootDir, 'admin.html'),
+        mentionsLegales: resolve(rootDir, 'mentions-legales.html'),
+        cgv: resolve(rootDir, 'cgv.html'),
+        quiSommesNous: resolve(rootDir, 'qui-sommes-nous.html')
       }
     }
   },

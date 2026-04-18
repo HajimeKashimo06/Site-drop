@@ -1,0 +1,1324 @@
+﻿<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nabil Coiffure | Page test client</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Teko:wght@500;600;700&display=swap');
+
+      :root {
+        --bg: #f3efe7;
+        --bg-soft: #fbf8f2;
+        --ink: #1d1815;
+        --ink-soft: #605247;
+        --wood: #4f311d;
+        --wood-soft: #7a4d2e;
+        --accent: #ca8f55;
+        --line: #d9cbb9;
+        --radius: 20px;
+        --shadow: 0 22px 44px rgba(38, 23, 14, 0.14);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+
+      body {
+        font-family: 'Sora', sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(1200px 560px at 14% -10%, rgba(202, 143, 85, 0.2), transparent 65%),
+          linear-gradient(180deg, var(--bg-soft) 0%, var(--bg) 100%);
+      }
+
+      .site-shell {
+        width: min(1160px, 100% - 2rem);
+        margin: 0 auto;
+        padding: 1.1rem 0 3rem;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0.6rem;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.7rem 0.95rem;
+        border: 1px solid rgba(79, 49, 29, 0.22);
+        border-radius: calc(var(--radius) - 4px);
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(4px);
+        box-shadow: 0 10px 22px rgba(35, 21, 12, 0.12);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        text-decoration: none;
+      }
+
+      .brand-badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        font-family: 'Teko', sans-serif;
+        font-size: 1.15rem;
+        letter-spacing: 0.05em;
+        color: #fff;
+        background: linear-gradient(140deg, #5f3b24, #97653f);
+      }
+
+      .brand-copy {
+        display: grid;
+      }
+
+      .brand-copy p {
+        margin: 0;
+        font-family: 'Teko', sans-serif;
+        letter-spacing: 0.04em;
+        font-size: 1.45rem;
+        line-height: 1;
+      }
+
+      .brand-copy span {
+        color: var(--ink-soft);
+        font-size: 0.76rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .topbar nav {
+        display: flex;
+        align-items: center;
+        gap: 0.95rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .topbar nav a {
+        text-decoration: none;
+        font-size: 0.88rem;
+        font-weight: 500;
+        color: #312620;
+        transition: color 140ms ease;
+      }
+
+      .topbar nav a:hover {
+        color: var(--wood-soft);
+      }
+
+      .book-link {
+        border: 1px solid rgba(79, 49, 29, 0.28);
+        border-radius: 999px;
+        padding: 0.45rem 0.95rem;
+        background: rgba(255, 255, 255, 0.96);
+      }
+
+      .hero {
+        margin-top: 1.2rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.97);
+        box-shadow: var(--shadow);
+        padding: clamp(1rem, 2vw, 1.45rem);
+      }
+
+      .hero-layout {
+        display: grid;
+        grid-template-columns: 1fr minmax(320px, 430px);
+        gap: 0.95rem;
+        align-items: stretch;
+      }
+
+      .hero-copy {
+        min-width: 0;
+      }
+
+      .hero-tagline {
+        margin: 0;
+        display: inline-flex;
+        width: fit-content;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #fff;
+        background: linear-gradient(130deg, #5f3b24, #97653f);
+        border-radius: 999px;
+        padding: 0.32rem 0.72rem;
+        font-size: 0.68rem;
+        font-weight: 600;
+      }
+
+      .hero h1 {
+        margin: 0.6rem 0 0;
+        font-family: 'Teko', sans-serif;
+        font-size: clamp(2.3rem, 6.4vw, 4.3rem);
+        line-height: 0.9;
+        letter-spacing: 0.02em;
+      }
+
+      .hero h1 span {
+        display: block;
+        color: var(--wood-soft);
+        font-size: clamp(1.2rem, 3.1vw, 1.8rem);
+        margin-top: 0.35rem;
+      }
+
+      .hero-badges {
+        margin-top: 0.75rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.42rem;
+      }
+
+      .hero-badges span {
+        border: 1px solid rgba(79, 49, 29, 0.22);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.82);
+        padding: 0.36rem 0.64rem;
+        font-size: 0.74rem;
+        color: #3c2f26;
+        font-weight: 500;
+      }
+
+      .hero-stars {
+        margin: 0.62rem 0 0;
+        letter-spacing: 0.16em;
+        font-size: 0.9rem;
+        color: #d28e2e;
+        text-shadow: 0 2px 8px rgba(188, 126, 31, 0.35);
+      }
+
+      .hero-photo {
+        margin: 0;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(79, 49, 29, 0.22);
+        min-height: 260px;
+        box-shadow: 0 12px 24px rgba(38, 23, 14, 0.16);
+      }
+
+      .hero-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .hero-thumbs {
+        margin-top: 0.85rem;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.45rem;
+        max-width: 420px;
+      }
+
+      .hero-thumbs figure {
+        margin: 0;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid rgba(79, 49, 29, 0.2);
+        aspect-ratio: 1 / 1;
+        background: #fff;
+      }
+
+      .hero-photo-trigger,
+      .thumb-trigger {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+      }
+
+      .hero-thumbs img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .hero-actions {
+        margin-top: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+      }
+
+      .primary-btn,
+      .ghost-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        border-radius: 999px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        min-height: 44px;
+        padding: 0.62rem 1.15rem;
+        border: 0;
+        cursor: pointer;
+      }
+
+      .primary-btn {
+        background: linear-gradient(132deg, #5e3a22, #a06b45 56%, #c88f59);
+        color: #fff;
+        box-shadow: 0 12px 28px rgba(104, 65, 41, 0.28);
+      }
+
+      .primary-btn:hover {
+        filter: brightness(1.06);
+      }
+
+      .ghost-btn {
+        border: 1px solid rgba(79, 49, 29, 0.24);
+        color: var(--wood);
+        background: #fff;
+      }
+
+      section {
+        margin-top: 1.2rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: clamp(1rem, 2.2vw, 1.55rem);
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: var(--shadow);
+      }
+
+      .section-head p {
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.11em;
+        color: var(--wood-soft);
+        font-size: 0.72rem;
+      }
+
+      .section-head h2 {
+        margin: 0.55rem 0 0;
+        font-family: 'Teko', sans-serif;
+        font-size: clamp(1.8rem, 4.6vw, 3rem);
+        line-height: 0.95;
+      }
+
+      .service-grid {
+        margin-top: 1rem;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.8rem;
+      }
+
+      .service-card {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 0.9rem;
+        background: linear-gradient(180deg, #fff, #fbf8f2);
+      }
+
+      .service-card h3 {
+        margin: 0;
+        font-family: 'Teko', sans-serif;
+        font-size: 1.6rem;
+        letter-spacing: 0.01em;
+      }
+
+      .service-card ul {
+        list-style: none;
+        margin: 0.35rem 0 0;
+        padding: 0;
+      }
+
+      .service-card li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.7rem;
+        padding: 0.62rem 0;
+        border-bottom: 1px solid rgba(79, 49, 29, 0.15);
+      }
+
+      .service-card li:last-child {
+        border-bottom: 0;
+      }
+
+      .service-card span {
+        color: #3a302a;
+        font-size: 0.92rem;
+      }
+
+      .service-card strong {
+        white-space: nowrap;
+        color: var(--wood);
+        font-size: 0.9rem;
+      }
+
+      .hours-grid {
+        margin-top: 1rem;
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 0.55rem;
+      }
+
+      .hours-grid article {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 0.66rem;
+        background: var(--bg-soft);
+      }
+
+      .hours-grid h3 {
+        margin: 0;
+        font-size: 0.93rem;
+      }
+
+      .hours-grid p {
+        margin: 0.32rem 0 0;
+        color: var(--ink-soft);
+        font-size: 0.8rem;
+        line-height: 1.45;
+      }
+
+      .booking-panel {
+        margin-top: 1rem;
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 0.85rem;
+      }
+
+      .booking form {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 0.95rem;
+        background: linear-gradient(180deg, #fff, #fcfaf4);
+      }
+
+      .booking label {
+        display: grid;
+        gap: 0.4rem;
+        margin-top: 0.66rem;
+        font-size: 0.82rem;
+        font-weight: 500;
+      }
+
+      .booking label:first-child {
+        margin-top: 0;
+      }
+
+      .booking input,
+      .booking select {
+        width: 100%;
+        min-height: 42px;
+        border-radius: 10px;
+        border: 1px solid rgba(79, 49, 29, 0.28);
+        padding: 0.58rem 0.7rem;
+        font: inherit;
+        background: #fff;
+      }
+
+      .field-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.55rem;
+      }
+
+      .slot-title {
+        margin: 0.85rem 0 0;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #2d241f;
+      }
+
+      .slot-list {
+        margin-top: 0.45rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.44rem;
+      }
+
+      .slot-btn {
+        min-height: 40px;
+        border-radius: 10px;
+        border: 1px solid rgba(79, 49, 29, 0.2);
+        background: #fff;
+        color: #2f261f;
+        padding: 0.5rem 0.7rem;
+        font: inherit;
+        font-size: 0.84rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .slot-btn.is-active {
+        border-color: var(--wood-soft);
+        background: #5f3b24;
+        color: #fff;
+      }
+
+      .slots-empty {
+        margin: 0;
+        color: var(--ink-soft);
+        font-size: 0.82rem;
+      }
+
+      .full {
+        width: 100%;
+        margin-top: 0.95rem;
+      }
+
+      .booking-feedback {
+        margin: 0.62rem 0 0;
+        min-height: 1.25em;
+        font-size: 0.82rem;
+        color: var(--ink-soft);
+        line-height: 1.45;
+      }
+
+      .booking-feedback.success {
+        color: #205f3e;
+      }
+
+      .booking-feedback.error {
+        color: #8f3328;
+      }
+
+      .booking aside {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 1rem;
+        background: linear-gradient(180deg, #432917, #6d442a 64%, #9a633d);
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+
+      .booking aside p {
+        margin: 0;
+        font-family: 'Teko', sans-serif;
+        font-size: 2rem;
+        line-height: 1;
+      }
+
+      .booking aside span {
+        margin-top: 0.3rem;
+        text-transform: uppercase;
+        letter-spacing: 0.11em;
+        font-size: 0.72rem;
+        opacity: 0.9;
+      }
+
+      .booking aside small {
+        margin-top: 0.9rem;
+        max-width: 26ch;
+        line-height: 1.6;
+        font-size: 0.8rem;
+        opacity: 0.92;
+      }
+
+      .review-card {
+        margin-top: 0.95rem;
+        border: 1px solid rgba(79, 49, 29, 0.2);
+        border-radius: 18px;
+        padding: 1rem;
+        background:
+          radial-gradient(520px 180px at 10% 0%, rgba(202, 143, 85, 0.16), transparent 72%),
+          linear-gradient(180deg, #fff, #faf4ea);
+        box-shadow: 0 16px 34px rgba(52, 31, 18, 0.14);
+      }
+
+      .review-header h3 {
+        margin: 0;
+        font-family: 'Teko', sans-serif;
+        font-size: 2rem;
+        line-height: 0.95;
+      }
+
+      .review-header p {
+        margin: 0.22rem 0 0;
+        color: var(--ink-soft);
+        font-size: 0.9rem;
+      }
+
+      .review-rating {
+        margin-top: 0.7rem;
+        display: flex;
+        align-items: baseline;
+        gap: 0.55rem;
+        flex-wrap: wrap;
+      }
+
+      .review-score {
+        margin: 0;
+        font-family: 'Teko', sans-serif;
+        font-size: 2.4rem;
+        line-height: 0.85;
+        color: #2e2018;
+      }
+
+      .stars {
+        margin: 0;
+        letter-spacing: 0.16em;
+        color: #d28e2e;
+        text-shadow: 0 2px 8px rgba(188, 126, 31, 0.35);
+      }
+
+      .review-count {
+        margin: 0;
+        color: var(--ink-soft);
+        font-size: 0.86rem;
+      }
+
+      .review-legend {
+        margin-top: 0.55rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+
+      .review-pill {
+        border: 1px solid rgba(79, 49, 29, 0.2);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 0.34rem 0.62rem;
+        font-size: 0.76rem;
+        font-weight: 600;
+        color: #3a2b20;
+      }
+
+      .review-scale {
+        margin-top: 0.8rem;
+        border: 1px solid rgba(79, 49, 29, 0.15);
+        border-radius: 12px;
+        padding: 0.65rem;
+        background: rgba(255, 255, 255, 0.72);
+        display: grid;
+        gap: 0.42rem;
+      }
+
+      .scale-row {
+        display: grid;
+        grid-template-columns: 64px 1fr 44px;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .scale-row span {
+        font-size: 0.75rem;
+        color: #49372b;
+      }
+
+      .scale-row strong {
+        justify-self: end;
+        font-size: 0.74rem;
+        color: #2f231b;
+      }
+
+      .scale-track {
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(79, 49, 29, 0.16);
+        overflow: hidden;
+      }
+
+      .scale-track i {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, #c57b33, #e1aa5d);
+        border-radius: inherit;
+      }
+
+      .review-info {
+        margin-top: 0.82rem;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        flex-wrap: wrap;
+      }
+
+      .review-info span,
+      .review-info a {
+        text-decoration: none;
+        font-size: 0.84rem;
+        color: #37281f;
+        border: 1px solid rgba(79, 49, 29, 0.2);
+        border-radius: 999px;
+        padding: 0.46rem 0.7rem;
+        background: rgba(255, 255, 255, 0.8);
+      }
+
+      .review-info a:hover {
+        border-color: rgba(79, 49, 29, 0.38);
+      }
+
+      .photo-lightbox {
+        position: fixed;
+        inset: 0;
+        z-index: 90;
+        background: rgba(19, 12, 8, 0.88);
+        display: grid;
+        place-items: center;
+        padding: 1rem;
+      }
+
+      .photo-lightbox[hidden] {
+        display: none;
+      }
+
+      .photo-lightbox img {
+        width: min(1000px, 100%);
+        max-height: calc(100vh - 4rem);
+        object-fit: contain;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 20px 36px rgba(0, 0, 0, 0.46);
+      }
+
+      .lightbox-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        min-height: 40px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        background: rgba(27, 20, 16, 0.75);
+        color: #fff;
+        font: inherit;
+        font-size: 0.82rem;
+        padding: 0.45rem 0.8rem;
+        cursor: pointer;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 520ms ease, transform 520ms ease;
+      }
+
+      .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 1024px) {
+        .hero-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .service-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .hours-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .booking-panel {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .site-shell {
+          width: min(1160px, 100% - 1rem);
+          padding-top: 0.7rem;
+        }
+
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .topbar nav {
+          gap: 0.55rem;
+        }
+
+        .topbar nav a {
+          font-size: 0.82rem;
+        }
+
+        .hero-tagline {
+          font-size: 0.62rem;
+        }
+
+        .hero-badges span {
+          font-size: 0.68rem;
+          padding: 0.32rem 0.56rem;
+        }
+
+        .hero-stars {
+          font-size: 0.78rem;
+          letter-spacing: 0.1em;
+        }
+
+        .hero-thumbs {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          max-width: 220px;
+        }
+
+        .hours-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .field-row {
+          grid-template-columns: 1fr;
+        }
+
+        .review-header h3 {
+          font-size: 1.7rem;
+        }
+
+        .review-score {
+          font-size: 2rem;
+        }
+
+        .scale-row {
+          grid-template-columns: 58px 1fr 40px;
+          gap: 0.38rem;
+        }
+
+        .scale-row span,
+        .scale-row strong {
+          font-size: 0.7rem;
+        }
+
+        .stars {
+          letter-spacing: 0.1em;
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="site-shell" id="accueil">
+      <header class="topbar reveal">
+        <a class="brand" href="#accueil" aria-label="Retour accueil">
+          <span class="brand-badge">NC</span>
+          <span class="brand-copy">
+            <p>Nabil Coiffure</p>
+            <span>Coiffeur - Barbier</span>
+          </span>
+        </a>
+        <nav>
+          <a href="/">Accueil pro</a>
+          <a href="#services">Services</a>
+          <a href="#horaires">Horaires</a>
+          <a class="book-link" href="#reserver">Reserver</a>
+          <a href="#avis">Avis</a>
+        </nav>
+      </header>
+
+      <section class="hero reveal">
+        <div class="hero-layout">
+          <article class="hero-copy">
+            <p class="hero-tagline">L'un des salons les mieux notes a Nantes</p>
+            <h1>
+              Nabil Coiffure
+              <span>4,6/5 - 183 avis</span>
+            </h1>
+            <div class="hero-badges" aria-label="Points forts du salon">
+              <span>Coiffeur-barbier premium</span>
+              <span>Reservation rapide</span>
+              <span>Ouvert de 09:00 a 19:45 du lundi au samedi</span>
+            </div>
+            <p class="hero-stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+            <div class="hero-thumbs" aria-label="Photos du salon">
+              <figure>
+                <button
+                  type="button"
+                  class="thumb-trigger photo-trigger"
+                  data-src="images/p1.png"
+                  data-alt="Barbiers en service dans le salon"
+                  aria-label="Ouvrir la photo 1"
+                >
+                  <img src="images/p1.png" alt="Barbiers en service dans le salon" loading="lazy" />
+                </button>
+              </figure>
+              <figure>
+                <button
+                  type="button"
+                  class="thumb-trigger photo-trigger"
+                  data-src="images/p2.png"
+                  data-alt="Interieur du salon de coiffure"
+                  aria-label="Ouvrir la photo 2"
+                >
+                  <img src="images/p2.png" alt="Interieur du salon de coiffure" loading="lazy" />
+                </button>
+              </figure>
+              <figure>
+                <button
+                  type="button"
+                  class="thumb-trigger photo-trigger"
+                  data-src="images/p3.png"
+                  data-alt="Coupe degrade vue arriere"
+                  aria-label="Ouvrir la photo 3"
+                >
+                  <img src="images/p3.png" alt="Coupe degrade vue arriere" loading="lazy" />
+                </button>
+              </figure>
+              <figure>
+                <button
+                  type="button"
+                  class="thumb-trigger photo-trigger"
+                  data-src="images/p4.png"
+                  data-alt="Coupe avec design sur le cote"
+                  aria-label="Ouvrir la photo 4"
+                >
+                  <img src="images/p4.png" alt="Coupe avec design sur le cote" loading="lazy" />
+                </button>
+              </figure>
+            </div>
+            <div class="hero-actions">
+              <a href="#reserver" class="primary-btn">Prendre rendez-vous</a>
+              <a href="#services" class="ghost-btn">Voir les services</a>
+            </div>
+          </article>
+          <figure class="hero-photo">
+            <button
+              type="button"
+              class="hero-photo-trigger photo-trigger"
+              data-src="images/p1.png"
+              data-alt="Equipe de barbiers au travail"
+              aria-label="Ouvrir la photo principale"
+            >
+              <img src="images/p1.png" alt="Equipe de barbiers au travail" loading="eager" />
+            </button>
+          </figure>
+        </div>
+      </section>
+
+      <section class="services reveal" id="services">
+        <div class="section-head">
+          <p>Tarifs</p>
+          <h2>Services du salon</h2>
+        </div>
+        <div class="service-grid">
+          <article class="service-card">
+            <h3>Coiffure</h3>
+            <ul>
+              <li><span>Enfants</span><strong>10,00 EUR</strong></li>
+              <li><span>Cheveux courts</span><strong>11,00 EUR</strong></li>
+              <li><span>Cheveux longs</span><strong>13,00 EUR</strong></li>
+              <li><span>Degrade rasoir</span><strong>12,00 EUR</strong></li>
+              <li><span>Shampoing</span><strong>2,00 EUR</strong></li>
+            </ul>
+          </article>
+          <article class="service-card">
+            <h3>Barbier</h3>
+            <ul>
+              <li><span>Rasage traditionnel</span><strong>6,00 EUR</strong></li>
+              <li><span>Taille de barbe + moustache</span><strong>7,00 EUR</strong></li>
+              <li><span>Colliers</span><strong>7,00 EUR</strong></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="hours reveal" id="horaires">
+        <div class="section-head">
+          <p>Ouverture</p>
+          <h2>Horaires du salon</h2>
+        </div>
+        <div class="hours-grid">
+          <article><h3>Lundi</h3><p>09:00 - 19:45</p></article>
+          <article><h3>Mardi</h3><p>09:00 - 19:45</p></article>
+          <article><h3>Mercredi</h3><p>09:00 - 19:45</p></article>
+          <article><h3>Jeudi</h3><p>09:00 - 19:45</p></article>
+          <article><h3>Vendredi</h3><p>09:00 - 19:45</p></article>
+          <article><h3>Samedi</h3><p>09:00 - 19:45</p></article>
+          <article><h3>Dimanche</h3><p>Ferme</p></article>
+        </div>
+      </section>
+
+      <section class="booking reveal" id="reserver">
+        <div class="section-head">
+          <p>Reservation</p>
+          <h2>Choisissez votre creneau</h2>
+        </div>
+        <div class="booking-panel">
+          <form id="booking-form" novalidate>
+            <label>
+              Date
+              <input type="date" id="booking-date" name="date" required />
+            </label>
+
+            <p class="slot-title">Creneaux disponibles</p>
+            <div class="slot-list" id="slot-list"></div>
+            <input type="hidden" id="booking-slot" name="slot" required />
+
+            <label>
+              Service
+              <select name="service" required>
+                <option value="">Choisir un service</option>
+                <option value="Enfants">Enfants</option>
+                <option value="Cheveux courts">Cheveux courts</option>
+                <option value="Cheveux longs">Cheveux longs</option>
+                <option value="Degrade rasoir">Degrade rasoir</option>
+                <option value="Shampoing">Shampoing</option>
+                <option value="Rasage traditionnel">Rasage traditionnel</option>
+                <option value="Taille de barbe + moustache">Taille de barbe + moustache</option>
+                <option value="Colliers">Colliers</option>
+              </select>
+            </label>
+
+            <div class="field-row">
+              <label>
+                Nom
+                <input type="text" name="name" placeholder="Votre nom" required />
+              </label>
+              <label>
+                Telephone
+                <input type="tel" name="phone" placeholder="06 00 00 00 00" required />
+              </label>
+            </div>
+
+            <button type="submit" class="primary-btn full">Confirmer la demande</button>
+            <p id="booking-feedback" class="booking-feedback" aria-live="polite"></p>
+          </form>
+
+          <aside>
+            <p>Nabil Coiffure</p>
+            <span>Coiffeur - Barbier</span>
+            <small>Reservation rapide, confirmation par telephone, equipe disponible du lundi au samedi.</small>
+          </aside>
+        </div>
+      </section>
+
+      <section class="reviews reveal" id="avis">
+        <div class="section-head">
+          <p>Avis client</p>
+          <h2>Resume des avis</h2>
+        </div>
+        <article class="review-card">
+          <div class="review-header">
+            <h3>Coiffeur Nabil Coiffure</h3>
+            <p>Les avis ne sont pas verifies</p>
+          </div>
+          <div class="review-rating" aria-label="Note 4,6 sur 5">
+            <p class="review-score">4,6</p>
+            <p class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9734;</p>
+            <p class="review-count">(183 avis)</p>
+          </div>
+          <div class="review-legend" aria-label="Niveau de satisfaction">
+            <span class="review-pill">Moyenne generale: 4,6 / 5</span>
+            <span class="review-pill">183 avis</span>
+          </div>
+          <div class="review-scale" aria-label="Bareme de notes">
+            <div class="scale-row">
+              <span>5 etoiles</span>
+              <div class="scale-track"><i style="width: 96%"></i></div>
+              <strong>96%</strong>
+            </div>
+            <div class="scale-row">
+              <span>4 etoiles</span>
+              <div class="scale-track"><i style="width: 12%"></i></div>
+              <strong>12%</strong>
+            </div>
+            <div class="scale-row">
+              <span>3 etoiles</span>
+              <div class="scale-track"><i style="width: 1.5%"></i></div>
+              <strong>1%</strong>
+            </div>
+            <div class="scale-row">
+              <span>2 etoiles</span>
+              <div class="scale-track"><i style="width: 1%"></i></div>
+              <strong>&lt;1%</strong>
+            </div>
+            <div class="scale-row">
+              <span>1 etoile</span>
+              <div class="scale-track"><i style="width: 7%"></i></div>
+              <strong>7%</strong>
+            </div>
+          </div>
+          <div class="review-info">
+            <span>Dimanche ferme</span>
+            <span>09:00 - 19:45 du lundi au samedi</span>
+            <a href="tel:+33666734713">06 66 73 47 13</a>
+          </div>
+        </article>
+      </section>
+
+      <div class="photo-lightbox" id="photo-lightbox" hidden>
+        <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Fermer">Fermer</button>
+        <img id="lightbox-image" src="" alt="" />
+      </div>
+    </main>
+
+    <script>
+      const openingByDayIndex = new Map([
+        [1, [['09:00', '19:45']]],
+        [2, [['09:00', '19:45']]],
+        [3, [['09:00', '19:45']]],
+        [4, [['09:00', '19:45']]],
+        [5, [['09:00', '19:45']]],
+        [6, [['09:00', '19:45']]],
+        [0, []]
+      ]);
+
+      void bootstrapProtectedPage();
+
+      async function bootstrapProtectedPage() {
+        const hasAccess = await hasValidSession();
+        if (!hasAccess) {
+          window.location.replace('/demo-site.html');
+          return;
+        }
+
+        setupRevealAnimation();
+        setupCenteredTabs();
+        setupBookingForm();
+        setupPhotoLightbox();
+      }
+
+      async function hasValidSession() {
+        try {
+          const response = await fetch('/api/auth/session?site=betacoiffure2', {
+            method: 'GET',
+            credentials: 'include'
+          });
+          return response.ok;
+        } catch {
+          return false;
+        }
+      }
+
+      function setupRevealAnimation() {
+        const nodes = Array.from(document.querySelectorAll('.reveal'));
+        if (!('IntersectionObserver' in window)) {
+          nodes.forEach((node) => node.classList.add('is-visible'));
+          return;
+        }
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+        );
+
+        nodes.forEach((node) => observer.observe(node));
+      }
+
+      function setupCenteredTabs() {
+        const tabLinks = Array.from(document.querySelectorAll('.topbar nav a[href^="#"]'));
+
+        tabLinks.forEach((link) => {
+          link.addEventListener('click', (event) => {
+            const hash = link.getAttribute('href');
+            if (!hash) {
+              return;
+            }
+
+            const target = document.querySelector(hash);
+            if (!target) {
+              return;
+            }
+
+            event.preventDefault();
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            target.scrollIntoView({
+              behavior: prefersReducedMotion ? 'auto' : 'smooth',
+              block: 'center',
+              inline: 'nearest'
+            });
+            window.history.replaceState({}, '', hash);
+          });
+        });
+      }
+
+      function setupBookingForm() {
+        const form = document.querySelector('#booking-form');
+        const dateInput = document.querySelector('#booking-date');
+        const slotList = document.querySelector('#slot-list');
+        const slotInput = document.querySelector('#booking-slot');
+        const feedback = document.querySelector('#booking-feedback');
+
+        if (!form || !dateInput || !slotList || !slotInput || !feedback) {
+          return;
+        }
+
+        dateInput.min = toIsoDate(new Date());
+        dateInput.value = findNextOpenDate();
+
+        const refreshSlots = () => {
+          renderSlots(slotList, slotInput, feedback, dateInput.value);
+        };
+
+        dateInput.addEventListener('change', refreshSlots);
+        refreshSlots();
+
+        form.addEventListener('submit', (event) => {
+          event.preventDefault();
+
+          if (!form.checkValidity()) {
+            feedback.textContent = 'Merci de remplir tous les champs.';
+            feedback.className = 'booking-feedback error';
+            return;
+          }
+
+          const formData = new FormData(form);
+          const name = String(formData.get('name') || '').trim();
+          const phone = String(formData.get('phone') || '').trim();
+          const service = String(formData.get('service') || '').trim();
+          const slot = String(formData.get('slot') || '').trim();
+          const date = String(formData.get('date') || '').trim();
+
+          if (!slot) {
+            feedback.textContent = 'Selectionnez un creneau avant de confirmer.';
+            feedback.className = 'booking-feedback error';
+            return;
+          }
+
+          feedback.textContent = `Demande envoyee: ${name}, ${service}, le ${formatDate(date)} a ${slot}. Nous vous rappelons au ${phone}.`;
+          feedback.className = 'booking-feedback success';
+          form.reset();
+          dateInput.value = findNextOpenDate();
+          slotInput.value = '';
+          refreshSlots();
+        });
+      }
+
+      function setupPhotoLightbox() {
+        const lightbox = document.querySelector('#photo-lightbox');
+        const lightboxImage = document.querySelector('#lightbox-image');
+        const closeButton = document.querySelector('#lightbox-close');
+        const triggers = Array.from(document.querySelectorAll('.photo-trigger'));
+
+        if (!lightbox || !lightboxImage || !closeButton || triggers.length === 0) {
+          return;
+        }
+
+        const close = () => {
+          lightbox.hidden = true;
+          document.body.style.overflow = '';
+        };
+
+        const open = (src, alt) => {
+          lightboxImage.src = src;
+          lightboxImage.alt = alt;
+          lightbox.hidden = false;
+          document.body.style.overflow = 'hidden';
+        };
+
+        triggers.forEach((trigger) => {
+          trigger.addEventListener('click', () => {
+            open(trigger.dataset.src || '', trigger.dataset.alt || '');
+          });
+        });
+
+        closeButton.addEventListener('click', close);
+        lightbox.addEventListener('click', (event) => {
+          if (event.target === lightbox) {
+            close();
+          }
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && !lightbox.hidden) {
+            close();
+          }
+        });
+      }
+
+      function renderSlots(slotList, slotInput, feedback, isoDate) {
+        const date = new Date(`${isoDate}T12:00:00`);
+        const ranges = Number.isNaN(date.getTime()) ? [] : openingByDayIndex.get(date.getDay()) || [];
+        const slots = ranges.flatMap((range) => createSlots(range[0], range[1], 30));
+        slotInput.value = '';
+
+        if (slots.length === 0) {
+          slotList.innerHTML = '<p class="slots-empty">Salon ferme ce jour-la. Choisissez une autre date.</p>';
+          feedback.textContent = '';
+          feedback.className = 'booking-feedback';
+          return;
+        }
+
+        slotList.innerHTML = slots
+          .map((slot) => `<button type="button" class="slot-btn" data-slot="${slot}">${slot}</button>`)
+          .join('');
+
+        const buttons = Array.from(slotList.querySelectorAll('.slot-btn'));
+        buttons.forEach((button) => {
+          button.addEventListener('click', () => {
+            buttons.forEach((item) => item.classList.remove('is-active'));
+            button.classList.add('is-active');
+            slotInput.value = button.dataset.slot || '';
+            feedback.textContent = '';
+            feedback.className = 'booking-feedback';
+          });
+        });
+      }
+
+      function createSlots(start, end, step) {
+        const startMinutes = toMinutes(start);
+        const endMinutes = toMinutes(end);
+        const slots = [];
+        for (let time = startMinutes; time + step <= endMinutes; time += step) {
+          slots.push(fromMinutes(time));
+        }
+        return slots;
+      }
+
+      function toMinutes(value) {
+        const [hoursRaw, minutesRaw] = value.split(':');
+        return Number(hoursRaw || '0') * 60 + Number(minutesRaw || '0');
+      }
+
+      function fromMinutes(value) {
+        const hours = String(Math.floor(value / 60)).padStart(2, '0');
+        const minutes = String(value % 60).padStart(2, '0');
+        return `${hours}:${minutes}`;
+      }
+
+      function findNextOpenDate() {
+        const probe = new Date();
+        for (let index = 0; index < 14; index += 1) {
+          const ranges = openingByDayIndex.get(probe.getDay()) || [];
+          if (ranges.length > 0) {
+            return toIsoDate(probe);
+          }
+          probe.setDate(probe.getDate() + 1);
+        }
+        return toIsoDate(new Date());
+      }
+
+      function formatDate(isoDate) {
+        const value = new Date(`${isoDate}T12:00:00`);
+        if (Number.isNaN(value.getTime())) {
+          return isoDate;
+        }
+
+        return new Intl.DateTimeFormat('fr-FR', {
+          weekday: 'long',
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric'
+        }).format(value);
+      }
+
+      function toIsoDate(date) {
+        const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+        return local.toISOString().slice(0, 10);
+      }
+    </script>
+  </body>
+</html>
