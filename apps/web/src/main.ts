@@ -53,29 +53,6 @@ app.innerHTML = `
           </div>
         </article>
 
-        <article class="hero-slide hero-slide-promo">
-          <img
-            class="promo-backdrop"
-            src="/coiffure1/promo3.png"
-            alt=""
-            aria-hidden="true"
-            loading="eager"
-            decoding="async"
-          />
-          <div class="promo-canvas">
-            <div class="promo-visual-wrap">
-              <img
-                class="promo-visual"
-                src="/coiffure1/promo3.png"
-                alt="Visuel promotionnel pour une offre de création de site"
-                loading="eager"
-                decoding="async"
-              />
-              <a class="btn solid promo-cta" href="#offres">Voir les offres</a>
-            </div>
-          </div>
-        </article>
-
         <article class="hero-slide">
           <img
             src="/coiffure1/appel.png"
