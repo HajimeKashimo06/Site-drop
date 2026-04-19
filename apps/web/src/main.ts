@@ -4,6 +4,8 @@ document.title = 'Hproweb | Création de sites internet professionnels';
 
 const app = mustElement<HTMLDivElement>('#app');
 app.innerHTML = `
+  <div class="ambient-hail" aria-hidden="true"></div>
+
   <main class="pro-shell" id="accueil">
     <header class="pro-header reveal">
       <div class="brand">
@@ -54,7 +56,7 @@ app.innerHTML = `
         <article class="hero-slide hero-slide-promo">
           <img
             class="promo-backdrop"
-            src="/coiffure1/promo2.png"
+            src="/coiffure1/promo3.png"
             alt=""
             aria-hidden="true"
             loading="eager"
@@ -64,7 +66,7 @@ app.innerHTML = `
             <div class="promo-visual-wrap">
               <img
                 class="promo-visual"
-                src="/coiffure1/promo2.png"
+                src="/coiffure1/promo3.png"
                 alt="Visuel promotionnel pour une offre de création de site"
                 loading="eager"
                 decoding="async"
@@ -132,7 +134,7 @@ app.innerHTML = `
                   <span class="market-note no"><span class="market-mark no" aria-hidden="true">✖</span> Paiement unique élevé.</span>
                 </td>
                 <td>
-                  <strong>89,99 EUR</strong>
+                  <strong>99,99 EUR</strong>
                   <span class="market-note yes"><span class="market-mark yes" aria-hidden="true">✔</span> Puis seulement 30 EUR tous les 6 mois.</span>
                 </td>
               </tr>
@@ -171,7 +173,7 @@ app.innerHTML = `
           <h3>Site Essentiel</h3>
           <p class="offer-summary">Un site élégant, rapide et prêt à convertir vos visiteurs en clients.</p>
           <div class="offer-pricing">
-            <p><span>Création</span><strong><em class="offer-discount">-35%</em> 89,99 EUR</strong></p>
+            <p><span>Création</span><strong><em class="offer-discount">-35%</em> 99,99 EUR</strong></p>
             <p><span>Entretien</span><strong>30 EUR tous les 6 mois</strong></p>
           </div>
           <ul class="offer-list">
@@ -202,7 +204,7 @@ app.innerHTML = `
           <h3>Site Grand Format</h3>
           <p class="offer-summary">La solution la plus complète pour un vrai site de niveau professionnel.</p>
           <div class="offer-pricing">
-            <p><span>Création</span><strong><em class="offer-discount">-35%</em> 550 EUR</strong></p>
+            <p><span>Création</span><strong><em class="offer-discount">-35%</em> 549.99 EUR</strong></p>
             <p><span>Entretien</span><strong>120 EUR tous les 6 mois</strong></p>
           </div>
           <ul class="offer-list">
@@ -261,14 +263,82 @@ app.innerHTML = `
   </main>
 `;
 
+setupAmbientHail();
+setupStaggeredElements();
 setupRevealAnimation();
 setupCenteredTabs();
 setupHeroSlider();
+setupHeaderScrollState();
+setupOfferCardTilt();
+setupHeroPointerMotion();
+setupStatsCounters();
 
 const HERO_ROTATION_MS = 5_000;
 
+function setupAmbientHail(): void {
+  const layer = document.querySelector<HTMLElement>('.ambient-hail');
+  if (!layer) {
+    return;
+  }
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  layer.innerHTML = '';
+  if (prefersReducedMotion) {
+    return;
+  }
+
+  const isMobile = window.matchMedia('(max-width: 680px)').matches;
+  const count = isMobile ? 52 : 88;
+  const bluePalette = ['#00beff', '#25b4ff', '#42c8ff', '#63d7ff'];
+  const greenPalette = ['#3fd85a', '#57df4f', '#6fe861', '#49d979'];
+
+  const randomBetween = (min: number, max: number): number => min + Math.random() * (max - min);
+
+  for (let i = 0; i < count; i += 1) {
+    const particle = document.createElement('span');
+    particle.className = 'hail-particle';
+
+    const startX = randomBetween(-8, 106);
+    const sway = randomBetween(2, 17) * (Math.random() < 0.5 ? -1 : 1);
+    const drift = randomBetween(4, 26) * (Math.random() < 0.5 ? -1 : 1);
+    const x1 = startX + sway * 0.4;
+    const x2 = startX - sway * 0.26;
+    const x3 = startX + sway * 0.55;
+    const x4 = startX + drift;
+
+    const size = randomBetween(isMobile ? 2.2 : 2.1, isMobile ? 5.1 : 5.8);
+    const duration = randomBetween(14, 24);
+    const delay = -randomBetween(0, 22);
+    const startY = randomBetween(-130, -8);
+    const opacity = randomBetween(0.62, 0.9);
+    const blur = randomBetween(0, 0.22);
+    const useGreen = Math.random() < 0.46;
+    const palette = useGreen ? greenPalette : bluePalette;
+    const color = palette[Math.floor(Math.random() * palette.length)] ?? '#7ed1ff';
+
+    particle.style.setProperty('--x0', `${startX.toFixed(2)}vw`);
+    particle.style.setProperty('--x1', `${x1.toFixed(2)}vw`);
+    particle.style.setProperty('--x2', `${x2.toFixed(2)}vw`);
+    particle.style.setProperty('--x3', `${x3.toFixed(2)}vw`);
+    particle.style.setProperty('--x4', `${x4.toFixed(2)}vw`);
+    particle.style.setProperty('--y0', `${startY.toFixed(2)}vh`);
+    particle.style.setProperty('--size', `${size.toFixed(2)}px`);
+    particle.style.setProperty('--dur', `${duration.toFixed(2)}s`);
+    particle.style.setProperty('--delay', `${delay.toFixed(2)}s`);
+    particle.style.setProperty('--opacity', opacity.toFixed(3));
+    particle.style.setProperty('--blur', `${blur.toFixed(2)}px`);
+    particle.style.setProperty('--particle-color', color);
+
+    if (Math.random() < 0.34) {
+      particle.classList.add('is-bright');
+    }
+
+    layer.appendChild(particle);
+  }
+}
+
 function setupRevealAnimation(): void {
-  const nodes = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
+  const nodes = Array.from(document.querySelectorAll<HTMLElement>('.reveal, .reveal-stagger'));
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -281,6 +351,21 @@ function setupRevealAnimation(): void {
     { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
   );
   nodes.forEach((node) => observer.observe(node));
+}
+
+function setupStaggeredElements(): void {
+  applyStagger('.stats article', 80);
+  applyStagger('.offres .offer-card', 95);
+  applyStagger('.process ol li', 90);
+  applyStagger('.site-footer-nav a', 70);
+}
+
+function applyStagger(selector: string, stepMs: number): void {
+  const nodes = Array.from(document.querySelectorAll<HTMLElement>(selector));
+  nodes.forEach((node, index) => {
+    node.classList.add('reveal-stagger');
+    node.style.setProperty('--reveal-delay', `${index * stepMs}ms`);
+  });
 }
 
 function setupCenteredTabs(): void {
@@ -364,6 +449,154 @@ function setupHeroSlider(): void {
     });
   });
   startAfterInitialHold();
+}
+
+function setupHeaderScrollState(): void {
+  const header = document.querySelector<HTMLElement>('.pro-header');
+  if (!header) {
+    return;
+  }
+
+  const syncState = (): void => {
+    header.classList.toggle('is-scrolled', window.scrollY > 18);
+  };
+
+  syncState();
+  window.addEventListener('scroll', syncState, { passive: true });
+}
+
+function setupOfferCardTilt(): void {
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.offer-card'));
+  if (cards.length === 0) {
+    return;
+  }
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const supportsFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (prefersReducedMotion || !supportsFinePointer) {
+    return;
+  }
+
+  cards.forEach((card) => {
+    card.addEventListener('pointermove', (event) => {
+      const bounds = card.getBoundingClientRect();
+      const x = Math.min(Math.max((event.clientX - bounds.left) / bounds.width, 0), 1);
+      const y = Math.min(Math.max((event.clientY - bounds.top) / bounds.height, 0), 1);
+      const rotateY = (x - 0.5) * 8;
+      const rotateX = (0.5 - y) * 6;
+
+      card.style.setProperty('--spotlight-x', `${(x * 100).toFixed(2)}%`);
+      card.style.setProperty('--spotlight-y', `${(y * 100).toFixed(2)}%`);
+      card.style.transform = `translateY(-8px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
+    });
+
+    card.addEventListener('pointerleave', () => {
+      card.style.removeProperty('--spotlight-x');
+      card.style.removeProperty('--spotlight-y');
+      card.style.transform = '';
+    });
+  });
+}
+
+function setupHeroPointerMotion(): void {
+  const hero = document.querySelector<HTMLElement>('.hero');
+  if (!hero) {
+    return;
+  }
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const supportsFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (prefersReducedMotion || !supportsFinePointer) {
+    return;
+  }
+
+  const setMotion = (event: PointerEvent): void => {
+    const bounds = hero.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
+    const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+
+    hero.style.setProperty('--hero-overlay-x', `${(x * 12).toFixed(2)}px`);
+    hero.style.setProperty('--hero-overlay-y', `${(y * 8).toFixed(2)}px`);
+    hero.style.setProperty('--hero-image-x', `${(x * -18).toFixed(2)}px`);
+    hero.style.setProperty('--hero-image-y', `${(y * -12).toFixed(2)}px`);
+  };
+
+  const resetMotion = (): void => {
+    hero.style.setProperty('--hero-overlay-x', '0px');
+    hero.style.setProperty('--hero-overlay-y', '0px');
+    hero.style.setProperty('--hero-image-x', '0px');
+    hero.style.setProperty('--hero-image-y', '0px');
+  };
+
+  hero.addEventListener('pointermove', setMotion);
+  hero.addEventListener('pointerleave', resetMotion);
+}
+
+function setupStatsCounters(): void {
+  const stats = document.querySelector<HTMLElement>('.stats');
+  if (!stats) {
+    return;
+  }
+
+  const counters = Array.from(stats.querySelectorAll<HTMLElement>('strong'))
+    .map((node) => {
+      const source = node.textContent?.trim() ?? '';
+      const match = source.match(/^([^0-9]*)(\d+)(.*)$/);
+      if (!match) {
+        return null;
+      }
+      return {
+        node,
+        prefix: match[1],
+        target: Number(match[2]),
+        suffix: match[3]
+      };
+    })
+    .filter((item): item is { node: HTMLElement; prefix: string; target: number; suffix: string } => item !== null);
+
+  if (counters.length === 0) {
+    return;
+  }
+
+  let hasAnimated = false;
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting || hasAnimated) {
+          return;
+        }
+        hasAnimated = true;
+        observer.disconnect();
+        counters.forEach((counter, index) => animateCounter(counter, 950 + index * 180));
+      });
+    },
+    { threshold: 0.35 }
+  );
+
+  observer.observe(stats);
+}
+
+function animateCounter(
+  counter: { node: HTMLElement; prefix: string; target: number; suffix: string },
+  durationMs: number
+): void {
+  const start = performance.now();
+  const { node, prefix, target, suffix } = counter;
+
+  const tick = (now: number): void => {
+    const progress = Math.min((now - start) / durationMs, 1);
+    const eased = 1 - (1 - progress) ** 3;
+    const value = Math.round(target * eased);
+    node.textContent = `${prefix}${value}${suffix}`;
+
+    if (progress < 1) {
+      window.requestAnimationFrame(tick);
+    } else {
+      node.textContent = `${prefix}${target}${suffix}`;
+    }
+  };
+
+  window.requestAnimationFrame(tick);
 }
 
 function mustElement<T extends Element>(selector: string): T {
