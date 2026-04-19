@@ -1,4 +1,4 @@
-import './admin.css';
+﻿import './admin.css';
 
 type UserRole = 'admin' | 'client';
 
@@ -50,7 +50,7 @@ app.innerHTML = `
   <main class="admin-shell">
     <header class="admin-header reveal">
       <div class="brand">
-        <img class="brand-logo" src="/hplogo.png" alt="HP logo" />
+        <img class="brand-logo" src="/hplogo.png?v=20260419m1" alt="HP logo" />
         <span>Espace connexion</span>
       </div>
       <div class="header-actions">
@@ -877,3 +877,4 @@ function escapeHtml(value: string): string {
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
 }
+

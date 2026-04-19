@@ -1,4 +1,4 @@
-import './demo-site.css';
+﻿import './demo-site.css';
 
 const FALLBACK_TARGET_PATH = '/page-test.html';
 
@@ -8,28 +8,28 @@ type DemoSite = {
   path: string;
 };
 
-document.title = 'Hproweb | Connexion démo site';
+document.title = 'Hproweb | Connexion dÃ©mo site';
 
 const app = mustElement<HTMLDivElement>('#app');
 app.innerHTML = `
   <main class="login-shell">
     <header class="login-header reveal">
       <div class="brand">
-        <img class="brand-logo" src="/hplogo.png" alt="HP logo" />
-        <span>Création de sites internet</span>
+        <img class="brand-logo" src="/hplogo.png?v=20260419m1" alt="HP logo" />
+        <span>CrÃ©ation de sites internet</span>
       </div>
       <div class="header-actions">
         <a class="back-link" href="/">Retour accueil</a>
-        <a class="reserve-link" href="/contact.html">Réserver votre démo</a>
+        <a class="reserve-link" href="/contact.html">RÃ©server votre dÃ©mo</a>
       </div>
     </header>
 
     <section class="login-hero reveal">
       <article>
-        <p class="kicker">Démo site</p>
+        <p class="kicker">DÃ©mo site</p>
         <h1>Connexion au site client</h1>
         <p class="lead">
-          Entrez les identifiants que vous avez créés pour ouvrir votre site dédié.
+          Entrez les identifiants que vous avez crÃ©Ã©s pour ouvrir votre site dÃ©diÃ©.
         </p>
       </article>
 
@@ -56,7 +56,7 @@ app.innerHTML = `
 
         <button type="submit">Se connecter</button>
         <a id="open-site-link" class="secondary-btn" href="${FALLBACK_TARGET_PATH}" hidden>Ouvrir mon site</a>
-        <button id="logout-btn" class="secondary-btn" type="button" hidden>Se déconnecter</button>
+        <button id="logout-btn" class="secondary-btn" type="button" hidden>Se dÃ©connecter</button>
         <p id="login-feedback" class="login-feedback" aria-live="polite"></p>
       </form>
     </section>
@@ -93,7 +93,7 @@ async function bootstrapAuth(): Promise<void> {
     openSiteLink.href = redirectPath;
     openSiteLink.hidden = false;
     logoutButton.hidden = false;
-    feedback.textContent = 'Session déjà active. Vous pouvez ouvrir votre site ou vous déconnecter.';
+    feedback.textContent = 'Session dÃ©jÃ  active. Vous pouvez ouvrir votre site ou vous dÃ©connecter.';
     feedback.className = 'login-feedback success';
   }
 
@@ -116,10 +116,10 @@ function setupLoginForm(): void {
       });
       openSiteLink.hidden = true;
       logoutButton.hidden = true;
-      feedback.textContent = 'Session fermée. Vous pouvez vous reconnecter.';
+      feedback.textContent = 'Session fermÃ©e. Vous pouvez vous reconnecter.';
       feedback.className = 'login-feedback success';
     } catch {
-      feedback.textContent = 'Déconnexion impossible pour le moment.';
+      feedback.textContent = 'DÃ©connexion impossible pour le moment.';
       feedback.className = 'login-feedback error';
     } finally {
       logoutButton.disabled = false;
@@ -154,7 +154,7 @@ function setupLoginForm(): void {
       const payload = await readJsonResponse(response);
       if (response.ok) {
         const redirectPath = resolveRedirectPath(payload?.redirectPath);
-        feedback.textContent = 'Connexion validée. Redirection en cours...';
+        feedback.textContent = 'Connexion validÃ©e. Redirection en cours...';
         feedback.className = 'login-feedback success';
         openSiteLink.href = redirectPath;
         openSiteLink.hidden = false;
@@ -169,7 +169,7 @@ function setupLoginForm(): void {
       feedback.textContent = errorMessage;
       feedback.className = 'login-feedback error';
     } catch {
-      feedback.textContent = 'Connexion impossible pour le moment. Réessayez.';
+      feedback.textContent = 'Connexion impossible pour le moment. RÃ©essayez.';
       feedback.className = 'login-feedback error';
     } finally {
       submitButton.disabled = false;
@@ -237,3 +237,4 @@ function mustElement<T extends Element>(selector: string): T {
   }
   return node;
 }
+

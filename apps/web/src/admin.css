@@ -51,7 +51,7 @@ body {
 .brand-logo {
   display: block;
   width: auto;
-  height: 140px;
+  height: 152px;
   object-fit: contain;
 }
 
@@ -475,7 +475,7 @@ th {
   }
 
   .brand-logo {
-    height: 112px;
+    height: 124px;
   }
 
   .site-row {
@@ -488,3 +488,4 @@ th {
     flex-direction: column;
   }
 }
+

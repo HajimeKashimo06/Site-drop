@@ -1,19 +1,19 @@
-import './contact.css';
+﻿import './contact.css';
 
-document.title = 'Hproweb | Être rappelé';
+document.title = 'Hproweb | ÃŠtre rappelÃ©';
 
 const app = mustElement<HTMLDivElement>('#app');
 app.innerHTML = `
   <main class="contact-shell">
     <header class="contact-header">
       <a class="brand-link" href="/index.html">
-        <img class="brand-logo" src="/hplogo.png" alt="HP logo" />
-        <span>Création de sites internet</span>
+        <img class="brand-logo" src="/hplogo.png?v=20260419m1" alt="HP logo" />
+        <span>CrÃ©ation de sites internet</span>
       </a>
       <nav>
         <a href="/index.html#offres">Offres</a>
-        <a href="/index.html#process">Méthode</a>
-        <a href="/demo-site.html">Démo site</a>
+        <a href="/index.html#process">MÃ©thode</a>
+        <a href="/demo-site.html">DÃ©mo site</a>
         <a href="/admin.html">Connexion</a>
       </nav>
     </header>
@@ -21,33 +21,33 @@ app.innerHTML = `
     <section class="contact-grid">
       <article class="intro-card">
         <p class="kicker">Demande de rappel</p>
-        <h1>Laissez vos coordonnées et nous vous contactons rapidement.</h1>
+        <h1>Laissez vos coordonnÃ©es et nous vous contactons rapidement.</h1>
         <p>
-          Ce formulaire envoie votre demande directement à l'adresse
+          Ce formulaire envoie votre demande directement Ã  l'adresse
           <strong>contact@hproweb.fr</strong>.
         </p>
         <ul>
-          <li>Réservation de démo 100% gratuite</li>
-          <li>Réponse sous 24h en général</li>
-          <li>Échange clair sur vos besoins</li>
+          <li>RÃ©servation de dÃ©mo 100% gratuite</li>
+          <li>RÃ©ponse sous 24h en gÃ©nÃ©ral</li>
+          <li>Ã‰change clair sur vos besoins</li>
           <li>Aucun engagement au premier contact</li>
         </ul>
       </article>
 
       <section class="form-card" aria-label="Fiche contact">
         <h2>Fiche contact</h2>
-        <p>Complétez les champs puis cliquez sur Envoyer. La réservation de démo est gratuite.</p>
+        <p>ComplÃ©tez les champs puis cliquez sur Envoyer. La rÃ©servation de dÃ©mo est gratuite.</p>
         <form id="callback-form" novalidate>
           <label for="contact-name">Nom complet</label>
           <input id="contact-name" name="name" type="text" required maxlength="120" autocomplete="name" />
 
-          <label for="contact-phone">Téléphone</label>
+          <label for="contact-phone">TÃ©lÃ©phone</label>
           <input id="contact-phone" name="phone" type="tel" required maxlength="30" autocomplete="tel" />
 
           <label for="contact-email">Email</label>
           <input id="contact-email" name="email" type="email" required maxlength="160" autocomplete="email" />
 
-          <label for="contact-company">Société (optionnel)</label>
+          <label for="contact-company">SociÃ©tÃ© (optionnel)</label>
           <input id="contact-company" name="company" type="text" maxlength="160" autocomplete="organization" />
 
           <label for="contact-window">Plage de rappel (optionnel)</label>
@@ -70,7 +70,7 @@ app.innerHTML = `
             minlength="10"
             maxlength="3000"
             rows="5"
-            placeholder="Décrivez votre besoin en quelques lignes."
+            placeholder="DÃ©crivez votre besoin en quelques lignes."
           ></textarea>
 
           <input
@@ -85,7 +85,7 @@ app.innerHTML = `
 
           <label class="consent-row" for="contact-consent">
             <input id="contact-consent" name="consent" type="checkbox" />
-            <span>J'accepte d'être contacté au sujet de ma demande.</span>
+            <span>J'accepte d'Ãªtre contactÃ© au sujet de ma demande.</span>
           </label>
 
           <button id="contact-submit" type="submit">Envoyer la demande</button>
@@ -107,7 +107,7 @@ form.addEventListener('submit', async (event) => {
   feedback.className = '';
 
   if (!consentCheckbox.checked) {
-    setFeedback('Vous devez accepter d’être contacté pour envoyer la demande.', 'error');
+    setFeedback('Vous devez accepter dâ€™Ãªtre contactÃ© pour envoyer la demande.', 'error');
     return;
   }
 
@@ -125,7 +125,7 @@ form.addEventListener('submit', async (event) => {
   };
 
   if (!payload.name || !payload.phone || !payload.email || !payload.message) {
-    setFeedback('Nom, téléphone, email et message sont obligatoires.', 'error');
+    setFeedback('Nom, tÃ©lÃ©phone, email et message sont obligatoires.', 'error');
     return;
   }
 
@@ -151,11 +151,11 @@ form.addEventListener('submit', async (event) => {
     const okMessage =
       data && typeof data.message === 'string' && data.message.trim()
         ? data.message
-        : 'Demande envoyée. Merci.';
+        : 'Demande envoyÃ©e. Merci.';
     setFeedback(okMessage, 'success');
     form.reset();
   } catch {
-    setFeedback('Erreur réseau. Veuillez réessayer dans un instant.', 'error');
+    setFeedback('Erreur rÃ©seau. Veuillez rÃ©essayer dans un instant.', 'error');
   } finally {
     submitButton.disabled = false;
   }
@@ -178,3 +178,4 @@ function mustElement<T extends Element>(selector: string): T {
   }
   return node;
 }
+

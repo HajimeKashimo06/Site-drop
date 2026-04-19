@@ -60,7 +60,7 @@ a {
 .brand-logo {
   display: block;
   width: auto;
-  height: 120px;
+  height: 136px;
   object-fit: contain;
 }
 
@@ -233,7 +233,7 @@ a {
   }
 
   .brand-logo {
-    height: 104px;
+    height: 110px;
   }
 
   .info-header nav a {

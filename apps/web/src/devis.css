@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root {
   --bg: #edf2f7;
@@ -61,7 +61,7 @@ a {
 .brand-logo {
   display: block;
   width: auto;
-  height: 140px;
+  height: 152px;
   object-fit: contain;
 }
 
@@ -151,7 +151,7 @@ a {
 }
 
 .intro-card li::before {
-  content: '✓';
+  content: 'âœ“';
   flex: 0 0 22px;
   width: 22px;
   height: 22px;
@@ -311,6 +311,7 @@ button[type='submit']:disabled {
   }
 
   .brand-logo {
-    height: 112px;
+    height: 124px;
   }
 }
+

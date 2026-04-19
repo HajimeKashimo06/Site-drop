@@ -7,7 +7,7 @@ app.innerHTML = `
   <main class="info-shell">
     <header class="info-header">
       <a class="brand-link" href="/index.html">
-        <img class="brand-logo" src="/hplogo.png" alt="HP logo" />
+        <img class="brand-logo" src="/hplogo.png?v=20260419m1" alt="HP logo" />
         <span>Création de sites internet</span>
       </a>
       <nav>
@@ -98,3 +98,4 @@ function mustElement<T extends Element>(selector: string): T {
   }
   return node;
 }
+
