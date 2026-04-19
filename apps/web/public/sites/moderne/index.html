@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Moderne | Studio coiffure</title>
+    <title>999 STUDIO | Tattoo, Piercing & Content</title>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
@@ -70,11 +70,24 @@
 
       .preloader-inner {
         width: min(420px, calc(100% - 2rem));
-        border: 1px solid rgba(255, 255, 255, 0.16);
+        border: 0;
         border-radius: 16px;
-        background: rgba(10, 10, 14, 0.74);
-        backdrop-filter: blur(8px);
+        background: transparent;
+        backdrop-filter: none;
         padding: 1rem 0.9rem 0.8rem;
+      }
+
+      .preloader-logo {
+        width: 180px;
+        height: 180px;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto 0.45rem;
+        background: transparent !important;
+        border: 0 !important;
+        outline: 0 !important;
+        box-shadow: none !important;
+        filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.4));
       }
 
       .preloader-kicker {
@@ -196,15 +209,27 @@
       .logo {
         text-decoration: none;
         display: inline-flex;
-        align-items: baseline;
+        align-items: center;
         gap: 0.5rem;
+      }
+
+      .logo img {
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+        border-radius: 0;
+        border: 0;
+        background: transparent;
+        outline: 0;
+        box-shadow: none;
       }
 
       .logo strong {
         font-family: 'Bebas Neue', sans-serif;
-        font-size: 1.5rem;
-        letter-spacing: 0.07em;
-        color: var(--ink);
+        font-size: clamp(2.4rem, 4vw, 3.2rem);
+        letter-spacing: 0.04em;
+        line-height: 0.9;
+        color: #ffffff;
       }
 
       .logo span {
@@ -395,11 +420,24 @@
         border-radius: 18px;
         border: 1px solid rgba(255, 255, 255, 0.14);
         overflow: hidden;
+        background: #0d0d14;
+      }
+
+      .media-frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        filter: saturate(0.9) contrast(1.06);
+      }
+
+      .media-frame::before {
+        content: '';
+        position: absolute;
+        inset: 0;
         background:
-          linear-gradient(150deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.02)),
-          radial-gradient(circle at 84% 18%, rgba(255, 255, 255, 0.34), transparent 38%),
-          radial-gradient(circle at 18% 80%, rgba(255, 255, 255, 0.12), transparent 44%),
-          #0d0d14;
+          linear-gradient(170deg, rgba(8, 8, 13, 0.12), rgba(8, 8, 13, 0.74)),
+          radial-gradient(circle at 84% 18%, rgba(255, 255, 255, 0.18), transparent 38%);
       }
 
       .media-frame::after {
@@ -617,6 +655,74 @@
         overflow: hidden;
       }
 
+      .review-summary {
+        margin-top: 0.72rem;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 14px;
+        padding: 0.72rem;
+        background: rgba(7, 7, 11, 0.58);
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 0.8rem;
+        align-items: end;
+      }
+
+      .review-note {
+        margin: 0;
+        font-size: 0.74rem;
+        color: #aeb5c1;
+      }
+
+      .review-bars {
+        margin-top: 0.54rem;
+        display: grid;
+        gap: 0.3rem;
+      }
+
+      .review-bar {
+        display: grid;
+        grid-template-columns: 16px 1fr;
+        align-items: center;
+        gap: 0.45rem;
+      }
+
+      .review-bar b {
+        font-size: 0.76rem;
+        color: #cfd5de;
+      }
+
+      .review-bar span {
+        display: block;
+        height: 7px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.15);
+        overflow: hidden;
+      }
+
+      .review-bar span i {
+        display: block;
+        width: var(--fill, 0%);
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #f5c23e, #ffdf7a);
+      }
+
+      .review-score {
+        text-align: right;
+      }
+
+      .review-score strong {
+        display: block;
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: clamp(2.2rem, 6.2vw, 4rem);
+        line-height: 0.9;
+      }
+
+      .review-score span {
+        font-size: 0.84rem;
+        color: #e0e5ec;
+      }
+
       .review-track {
         display: flex;
         gap: 0.62rem;
@@ -766,14 +872,146 @@
         line-height: 1.45;
       }
 
+      .insta-card {
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 12px;
+        background: rgba(5, 5, 10, 0.64);
+        padding: 0.62rem;
+        display: grid;
+        gap: 0.52rem;
+      }
+
+      .insta-head {
+        display: grid;
+        grid-template-columns: 56px 1fr;
+        gap: 0.58rem;
+        align-items: center;
+      }
+
+      .insta-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .insta-user {
+        margin: 0;
+        font-size: 0.94rem;
+        font-weight: 700;
+        color: #f4f6f8;
+        line-height: 1.2;
+      }
+
+      .insta-handle {
+        margin: 0.16rem 0 0;
+        font-size: 0.8rem;
+        color: #e1e6ee;
+      }
+
+      .insta-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+      }
+
+      .insta-stats span {
+        font-size: 0.76rem;
+        color: #c6ceda;
+      }
+
+      .insta-stats strong {
+        color: #fff;
+      }
+
+      .booking-meta {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.32rem;
+      }
+
+      .booking-meta li {
+        font-size: 0.79rem;
+        color: #d1d7df;
+      }
+
+      .address-note {
+        margin: 0;
+        font-size: 0.79rem;
+        color: #9ea7b5;
+      }
+
+      .hours-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.34rem;
+      }
+
+      .hours-list li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+        font-size: 0.79rem;
+        color: #d1d7df;
+      }
+
+      .hours-list span {
+        color: #9ea7b5;
+      }
+
       .contact-chip {
         border: 1px solid rgba(255, 255, 255, 0.24);
         border-radius: 999px;
         color: var(--ink);
         text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.48rem;
         padding: 0.6rem 0.94rem;
         font-size: 0.82rem;
         font-weight: 700;
+      }
+
+      .instagram-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.42rem;
+      }
+
+      .header-insta-link {
+        text-decoration: none;
+        color: var(--ink-soft);
+        border: 1px solid transparent;
+        border-radius: 999px;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        padding: 0.62rem 1.04rem;
+        transition: border-color 220ms ease, color 220ms ease, background 220ms ease;
+      }
+
+      .header-insta-link:hover {
+        color: var(--ink);
+        border-color: var(--line);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .instagram-icon {
+        width: 18px;
+        height: 18px;
+        object-fit: contain;
+        display: block;
+      }
+
+      nav .instagram-icon {
+        width: 14px;
+        height: 14px;
       }
 
       .contact-chip:hover {
@@ -925,6 +1163,14 @@
           grid-template-columns: 1fr;
           justify-items: flex-start;
         }
+
+        .review-summary {
+          grid-template-columns: 1fr;
+        }
+
+        .review-score {
+          text-align: left;
+        }
       }
 
       @media (max-width: 760px) {
@@ -979,8 +1225,9 @@
   <body>
     <div class="preloader" id="preloader">
       <div class="preloader-inner">
-        <p class="preloader-kicker">Moderne studio</p>
-        <div class="preloader-title">Loading style</div>
+        <img class="preloader-logo" src="./tattoo2.png" alt="Logo 999 STUDIO" />
+        <p class="preloader-kicker">999 STUDIO</p>
+        <div class="preloader-title">Chargement</div>
         <div class="preloader-bar"><i></i></div>
       </div>
     </div>
@@ -993,65 +1240,70 @@
     <main class="site-shell" id="accueil">
       <header class="topbar reveal">
         <a class="logo" href="#accueil">
-          <strong>MODERNE</strong>
-          <span>studio</span>
+          <img src="./tattoo2.png" alt="Logo 999 STUDIO" />
+          <strong>999 STUDIO</strong>
+        </a>
+        <a class="instagram-link header-insta-link" href="https://instagram.com/studio_9.9.9" target="_blank" rel="noopener noreferrer">
+          <img class="instagram-icon" src="./insta.png" alt="" aria-hidden="true" />
+          Cliquer ici pour accéder à Insta
         </a>
         <nav>
-          <a href="#services">Prix</a>
           <a href="#photos">Photos</a>
+          <a href="#services">Prestations</a>
           <a href="#avis">Avis</a>
-          <a class="btn-book magnetic" href="#reservation">Reserver</a>
+          <a class="btn-book magnetic" href="#reservation">Réserver</a>
         </nav>
       </header>
 
       <section class="hero reveal" id="concept">
         <div class="hero-grid">
           <article>
-            <p class="kicker">Salon premium - Nantes</p>
+            <p class="kicker">Tattoo | Piercing & Content - Rémire</p>
             <h1>
-              Une vision nette.
+              999 STUDIO
               <br />
-              Un style precis.
-              <span>Coupe propre. Ambiance premium.</span>
+              atelier d'encre.
+              <span>Tatouage, piercing et création de contenu visuel. Réservation en DM pour vos projets.</span>
             </h1>
             <div class="hero-actions">
-              <a class="btn-main magnetic" href="#reservation">Prendre rendez-vous</a>
-              <a class="btn-alt magnetic" href="#photos">Voir les photos</a>
+              <a class="btn-main magnetic" href="#reservation">Réservation / Booking</a>
+              <a class="btn-alt magnetic" href="#photos">Voir les réalisations</a>
             </div>
             <div class="hero-stats">
               <article class="hero-stat">
-                <strong>4,8/5</strong>
-                <span>Satisfaction Google</span>
+                <strong>12</strong>
+                <span>Publications</span>
               </article>
               <article class="hero-stat">
-                <strong>+1 200</strong>
-                <span>Clients suivis</span>
+                <strong>18,3 k</strong>
+                <span>Followers</span>
               </article>
               <article class="hero-stat">
-                <strong>6/7</strong>
-                <span>Jours d'ouverture</span>
+                <strong>5</strong>
+                <span>Suivi(e)s</span>
               </article>
             </div>
           </article>
 
           <figure class="hero-media">
             <div class="media-frame" data-parallax data-depth="14">
+              <img src="./p4.png" alt="Tatoueur en session chez 999 STUDIO" />
               <div class="beam"></div>
               <div class="beam beam-b"></div>
               <div class="orb orb-a"></div>
               <div class="orb orb-b"></div>
               <div class="media-label">
-                <p>Ambiance "all black" et design minimal</p>
-                <span>niveau premium</span>
+                <p>Session en cours au studio</p>
+                <span>hygiène et précision</span>
               </div>
             </div>
             <figcaption class="floating-card floating-a" data-parallax data-depth="24">
-              <strong>Visual DNA</strong>
-              <span>Textures, contrastes, lumieres</span>
+              <strong>Styles</strong>
+              <span>Réalisme, blackwork, fine line</span>
             </figcaption>
             <figcaption class="floating-card floating-b" data-parallax data-depth="18">
-              <strong>Expert Team</strong>
-              <span>Techniques adaptees a chaque profil</span>
+              <strong>Process propre</strong>
+              <span>Écoute, traçage, exécution</span>
             </figcaption>
           </figure>
         </div>
@@ -1059,111 +1311,150 @@
 
       <div class="marquee-wrap reveal" aria-hidden="true">
         <div class="marquee">
-          <span>Coiffure moderne</span>
-          <span>Barbering precis</span>
-          <span>Rituel soin</span>
-          <span>Ambiance immersive</span>
-          <span>Design minimal</span>
-          <span>Coiffure moderne</span>
-          <span>Barbering precis</span>
-          <span>Rituel soin</span>
-          <span>Ambiance immersive</span>
-          <span>Design minimal</span>
+          <span>Tatouage sur-mesure</span>
+          <span>Piercing</span>
+          <span>Création de contenu</span>
+          <span>Fine line</span>
+          <span>Blackwork</span>
+          <span>Réalisme</span>
+          <span>Flash et projets perso</span>
+          <span>Tatouage sur-mesure</span>
+          <span>Piercing</span>
+          <span>Création de contenu</span>
+          <span>Fine line</span>
+          <span>Blackwork</span>
+          <span>Réalisme</span>
+          <span>Flash et projets perso</span>
         </div>
       </div>
-
-      <section class="reveal" id="services">
-        <div class="section-head">
-          <p>Tarifs</p>
-          <h2>Prix du salon</h2>
-        </div>
-        <div class="service-grid">
-          <article class="service-card tilt">
-            <strong>Coupe classique</strong>
-            <span>A partir de 24 EUR</span>
-          </article>
-          <article class="service-card tilt">
-            <strong>Degrade premium</strong>
-            <span>A partir de 28 EUR</span>
-          </article>
-          <article class="service-card tilt">
-            <strong>Barbe clean</strong>
-            <span>A partir de 14 EUR</span>
-          </article>
-          <article class="service-card tilt">
-            <strong>Etudiant</strong>
-            <span>A partir de 18 EUR</span>
-          </article>
-          <article class="service-card tilt">
-            <strong>Coupe + barbe</strong>
-            <span>A partir de 34 EUR</span>
-          </article>
-          <article class="service-card tilt">
-            <strong>Shampoing + soin</strong>
-            <span>A partir de 9 EUR</span>
-          </article>
-        </div>
-      </section>
 
       <section class="reveal" id="photos">
         <div class="section-head">
           <p>Galerie</p>
-          <h2>Photos du salon</h2>
+          <h2>Photos du studio</h2>
         </div>
         <div class="gallery">
           <figure class="shot" data-parallax data-depth="12">
-            <button type="button" class="shot-btn photo-trigger" data-src="/sites/betacoiffure2/images/p1.png" data-alt="Photo salon 1">
-              <img src="/sites/betacoiffure2/images/p1.png" alt="Photo salon 1" loading="lazy" />
+            <button type="button" class="shot-btn photo-trigger" data-src="./p1.png" data-alt="Tatouage dos réalisme">
+              <img src="./p1.png" alt="Tatouage dos réalisme" loading="lazy" />
             </button>
           </figure>
           <figure class="shot" data-parallax data-depth="8">
-            <button type="button" class="shot-btn photo-trigger" data-src="/sites/betacoiffure2/images/p2.png" data-alt="Photo salon 2">
-              <img src="/sites/betacoiffure2/images/p2.png" alt="Photo salon 2" loading="lazy" />
+            <button type="button" class="shot-btn photo-trigger" data-src="./p2.png" data-alt="Tatouage cou lettering">
+              <img src="./p2.png" alt="Tatouage cou lettering" loading="lazy" />
             </button>
           </figure>
           <figure class="shot" data-parallax data-depth="14">
-            <button type="button" class="shot-btn photo-trigger" data-src="/sites/betacoiffure2/images/p3.png" data-alt="Photo salon 3">
-              <img src="/sites/betacoiffure2/images/p3.png" alt="Photo salon 3" loading="lazy" />
+            <button type="button" class="shot-btn photo-trigger" data-src="./p3.png" data-alt="Tatouage avant-bras linework">
+              <img src="./p3.png" alt="Tatouage avant-bras linework" loading="lazy" />
             </button>
           </figure>
           <figure class="shot" data-parallax data-depth="10">
-            <button type="button" class="shot-btn photo-trigger" data-src="/sites/betacoiffure2/images/p4.png" data-alt="Photo salon 4">
-              <img src="/sites/betacoiffure2/images/p4.png" alt="Photo salon 4" loading="lazy" />
+            <button type="button" class="shot-btn photo-trigger" data-src="./p4.png" data-alt="Session tatouage en studio">
+              <img src="./p4.png" alt="Session tatouage en studio" loading="lazy" />
             </button>
           </figure>
+        </div>
+      </section>
+
+      <section class="reveal" id="services">
+        <div class="section-head">
+          <p>Prestations</p>
+          <h2>Ce qu'on propose</h2>
+        </div>
+        <div class="service-grid">
+          <article class="service-card tilt">
+            <strong>Tatouage personnalisé</strong>
+            <span>Sur devis</span>
+          </article>
+          <article class="service-card tilt">
+            <strong>Fine line</strong>
+            <span>Sur devis</span>
+          </article>
+          <article class="service-card tilt">
+            <strong>Blackwork</strong>
+            <span>Sur devis</span>
+          </article>
+          <article class="service-card tilt">
+            <strong>Réalisme</strong>
+            <span>Sur devis</span>
+          </article>
+          <article class="service-card tilt">
+            <strong>Projet grande piece</strong>
+            <span>Sur devis</span>
+          </article>
+          <article class="service-card tilt">
+            <strong>Retouche / reprise</strong>
+            <span>Selon projet</span>
+          </article>
+          <article class="service-card tilt">
+            <strong>Piercing</strong>
+            <span>Sur devis</span>
+          </article>
+          <article class="service-card tilt">
+            <strong>Création de contenu</strong>
+            <span>Sur demande</span>
+          </article>
         </div>
       </section>
 
       <section class="reveal" id="avis">
         <div class="section-head">
-          <p>Retours clients</p>
-          <h2>Avis du salon</h2>
+          <p>Avis clients</p>
+          <h2>Résumé des avis</h2>
         </div>
+        <article class="review-summary">
+          <div>
+            <p class="review-note">Les avis ne sont pas vérifiés</p>
+            <div class="review-bars" aria-hidden="true">
+              <div class="review-bar"><b>5</b><span><i style="--fill: 100%"></i></span></div>
+              <div class="review-bar"><b>4</b><span><i style="--fill: 0%"></i></span></div>
+              <div class="review-bar"><b>3</b><span><i style="--fill: 0%"></i></span></div>
+              <div class="review-bar"><b>2</b><span><i style="--fill: 0%"></i></span></div>
+              <div class="review-bar"><b>1</b><span><i style="--fill: 0%"></i></span></div>
+            </div>
+          </div>
+          <div class="review-score">
+            <strong>5,0</strong>
+            <span>★★★★★</span>
+            <p class="review-note">7 avis</p>
+          </div>
+        </article>
         <div class="review-wrap">
           <div class="review-track" id="review-track">
             <article class="review-card">
-              <strong>Yanis M.</strong>
-              <p>Super cadre. Coupe tres propre.</p>
+              <strong>Client 1</strong>
+              <p>Studio propre, équipe à l'écoute et résultat ultra net.</p>
               <span>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
             </article>
             <article class="review-card">
-              <strong>Hugo D.</strong>
-              <p>Resultat constant, gros niveau.</p>
+              <strong>Client 2</strong>
+              <p>Très bon accueil, traçage précis et exécution impeccable.</p>
               <span>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
             </article>
             <article class="review-card">
-              <strong>Ilyes B.</strong>
-              <p>Equipe pro, rythme parfait.</p>
+              <strong>Client 3</strong>
+              <p>Le style correspond exactement à ce que je voulais.</p>
               <span>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
             </article>
             <article class="review-card">
-              <strong>Karim L.</strong>
-              <p>Execution propre. Je recommande.</p>
+              <strong>Client 4</strong>
+              <p>Top du début à la fin, très bonne ambiance au studio.</p>
               <span>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
             </article>
             <article class="review-card">
-              <strong>Noah R.</strong>
-              <p>Ambiance top, service solide.</p>
+              <strong>Client 5</strong>
+              <p>Tatoueur patient, conseils clairs, rendu super propre.</p>
+              <span>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            </article>
+            <article class="review-card">
+              <strong>Client 6</strong>
+              <p>Mon projet a été respecté dans les détails, je valide.</p>
+              <span>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            </article>
+            <article class="review-card">
+              <strong>Client 7</strong>
+              <p>Qualité premium, je reviens pour une prochaine pièce.</p>
               <span>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
             </article>
           </div>
@@ -1172,8 +1463,8 @@
 
       <section class="reveal" id="reservation">
         <div class="section-head">
-          <p>Reservation</p>
-          <h2>Reserve ton creneau</h2>
+          <p>Rendez-vous</p>
+          <h2>Réservation / Booking</h2>
         </div>
         <div class="booking-panel">
           <form id="booking-form" class="booking-form" novalidate>
@@ -1185,13 +1476,14 @@
               Service
               <select name="service" required>
                 <option value="">Choisir</option>
-                <option value="Coupe classique">Coupe classique</option>
-                <option value="Degrade premium">Degrade premium</option>
-                <option value="Coupe + barbe">Coupe + barbe</option>
+                <option value="Tatouage personnalisé">Tatouage personnalisé</option>
+                <option value="Fine line">Fine line</option>
+                <option value="Blackwork">Blackwork</option>
+                <option value="Réalisme">Réalisme</option>
               </select>
             </label>
             <label>
-              Telephone
+              Téléphone
               <input type="tel" name="phone" placeholder="06 00 00 00 00" required />
             </label>
             <button type="submit" class="btn-main magnetic">Envoyer</button>
@@ -1199,14 +1491,45 @@
           </form>
 
           <div class="booking-side">
-            <p>Lun-sam: 09:00 - 19:30</p>
-            <a class="contact-chip magnetic" href="tel:+33000000000">Appeler le salon</a>
+            <article class="insta-card" aria-label="Profil Instagram 999 STUDIO">
+              <div class="insta-head">
+                <img class="insta-avatar" src="./logotattoo.jpg" alt="Logo 999 STUDIO" />
+                <div>
+                  <p class="insta-user">999 STUDIO <span aria-hidden="true">...</span></p>
+                  <p class="insta-handle">9.9.9</p>
+                </div>
+              </div>
+              <div class="insta-stats" aria-label="Statistiques Instagram">
+                <span><strong>12</strong> publications</span>
+                <span><strong>18,3 k</strong> followers</span>
+                <span><strong>5</strong> suivi(e)s</span>
+              </div>
+            </article>
+            <ul class="booking-meta">
+              <li>TATTOO | PIERCING & CONTENT</li>
+              <li>LUNDI - SAMEDI. 9h-21h</li>
+              <li>RÉSERVATION / BOOKING</li>
+            </ul>
+            <p class="address-note">1301 ROUTE DE REMIRE</p>
+            <ul class="hours-list">
+              <li><strong>dimanche</strong><span>Ferme</span></li>
+              <li><strong>lundi</strong><span>09:00 - 21:00</span></li>
+              <li><strong>mardi</strong><span>09:00 - 21:00</span></li>
+              <li><strong>mercredi</strong><span>09:00 - 21:00</span></li>
+              <li><strong>jeudi</strong><span>09:00 - 21:00</span></li>
+              <li><strong>vendredi</strong><span>09:00 - 21:00</span></li>
+              <li><strong>samedi</strong><span>09:00 - 21:00</span></li>
+            </ul>
+            <a class="contact-chip magnetic instagram-link" href="https://instagram.com/studio_9.9.9" target="_blank" rel="noopener noreferrer">
+              <img class="instagram-icon" src="./insta.png" alt="" aria-hidden="true" />
+              Ouvrir Instagram
+            </a>
           </div>
         </div>
       </section>
 
       <footer>
-        <span>MODERNE STUDIO</span>
+        <span>999 STUDIO</span>
         <span id="year"></span>
       </footer>
     </main>
@@ -1217,17 +1540,11 @@
     </div>
 
     <script>
-      void bootstrapProtectedPage();
+      void bootstrapPage();
 
-      async function bootstrapProtectedPage() {
-        const hasAccess = await hasValidSession();
-        if (!hasAccess) {
-          window.location.replace('/demo-site.html');
-          return;
-        }
-
+      async function bootstrapPage() {
         await playIntroLoader();
-        document.getElementById('year').textContent = `© ${new Date().getFullYear()} - Tous droits reserves`;
+        document.getElementById('year').textContent = `© ${new Date().getFullYear()} - Tous droits réservés`;
         setupAmbientLight();
         setupRevealAnimation();
         setupSmoothAnchors();
@@ -1263,18 +1580,6 @@
         await Promise.all([waitForWindow, wait(1050)]);
         loader.classList.add('is-hidden');
         await wait(560);
-      }
-
-      async function hasValidSession() {
-        try {
-          const response = await fetch('/api/auth/session?site=moderne', {
-            method: 'GET',
-            credentials: 'include'
-          });
-          return response.ok;
-        } catch {
-          return false;
-        }
       }
 
       function setupRevealAnimation() {
@@ -1395,12 +1700,12 @@
           event.preventDefault();
 
           if (!form.checkValidity()) {
-            feedback.textContent = 'Merci de remplir les champs.';
+            feedback.textContent = 'Merci de remplir tous les champs.';
             feedback.className = 'booking-feedback error';
             return;
           }
 
-          feedback.textContent = 'Demande envoyee. On vous recontacte vite.';
+          feedback.textContent = 'Demande envoyée. Nous vous recontactons rapidement.';
           feedback.className = 'booking-feedback success';
           form.reset();
           dateInput.value = toIsoDate(new Date());

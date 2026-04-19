@@ -266,7 +266,7 @@ async function bootstrapAdmin(): Promise<void> {
             <td>${escapeHtml(site.path)}</td>
             <td>${formatNumber(site.nonAdminClicks)}</td>
             <td>${escapeHtml(lastClickLabel)}</td>
-            <td><a class="table-link" href="${escapeHtml(site.path)}" target="_blank" rel="noopener">Voir site</a></td>
+            <td><a class="table-link" href="${escapeHtml(withCacheBuster(site.path))}" target="_blank" rel="noopener">Voir site</a></td>
           </tr>
         `;
       })
@@ -786,7 +786,7 @@ function renderSiteZone(node: HTMLElement, sites: DemoSite[]): void {
               <span>${escapeHtml(site.path)}</span>
             </div>
             <div class="site-row-actions">
-              <a class="site-view-btn" href="${escapeHtml(site.path)}" target="_blank" rel="noopener">Voir site</a>
+              <a class="site-view-btn" href="${escapeHtml(withCacheBuster(site.path))}" target="_blank" rel="noopener">Voir site</a>
               <button
                 type="button"
                 class="site-delete-btn"
@@ -867,6 +867,14 @@ function mustElement<T extends Element>(selector: string): T {
     throw new Error(`Missing element: ${selector}`);
   }
   return node;
+}
+
+function withCacheBuster(path: string): string {
+  if (!path.startsWith('/')) {
+    return path;
+  }
+  const separator = path.includes('?') ? '&' : '?';
+  return `${path}${separator}v=${Date.now()}`;
 }
 
 function escapeHtml(value: string): string {

@@ -20,7 +20,7 @@ app.innerHTML = `
       </nav>
       <div class="header-actions">
         <a class="btn solid header-cta-main" href="/contact.html">Être rappelé</a>
-        <a class="btn solid header-cta-demo" href="/demo-site.html">Démo site</a>
+        <a class="btn solid header-cta-demo" href="/demo-site.html">Site démo</a>
         <a class="btn ghost account-btn" href="/admin.html" aria-label="Connexion">
           <span aria-hidden="true">Compte</span>
         </a>
@@ -107,7 +107,7 @@ app.innerHTML = `
               <tr>
                 <th scope="row">Paiement</th>
                 <td>
-                  <strong>99,99 EUR</strong>
+                  <strong>119.99 EUR</strong>
                   <span class="market-note yes"><span class="market-mark yes" aria-hidden="true">OK</span> Puis 30 EUR tous les 6 mois.</span>
                 </td>
                 <td>
@@ -157,7 +157,7 @@ app.innerHTML = `
           <h3>Site Essentiel</h3>
           <p class="offer-summary">Un site élégant, rapide et prêt à convertir les visiteurs en clients.</p>
           <div class="offer-pricing">
-            <p><span>Création</span><strong><em class="offer-discount">-35%</em> 99,99 EUR</strong></p>
+            <p><span>Création</span><strong><em class="offer-discount">-35%</em> 119.99 EUR</strong></p>
             <p><span>Entretien</span><strong>30 EUR tous les 6 mois</strong></p>
           </div>
           <ul class="offer-list">
@@ -224,7 +224,7 @@ app.innerHTML = `
     <section class="contact reveal" id="contact">
       <div>
         <p>Parlons de ton futur site</p>
-        <h2>Réserve ta démo maintenant</h2>
+        <h2>Réservez votre démo maintenant</h2>
       </div>
       <div class="contact-actions">
         <a class="btn solid" href="/contact.html">Remplir la fiche de contact</a>
