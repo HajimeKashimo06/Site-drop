@@ -1188,7 +1188,11 @@
         }
 
         .hero-avatar {
-          display: none;
+          display: block;
+          height: clamp(180px, 56vw, 260px);
+          aspect-ratio: auto;
+          object-position: center 22%;
+          margin-bottom: 0.62rem;
         }
 
         .hero-card strong {
@@ -1270,7 +1274,7 @@
         </div>
         <aside class="hero-aside">
           <article class="hero-card">
-            <img class="hero-avatar" src="./avocate.png" alt="Portrait de l'avocate" loading="lazy" />
+            <img class="hero-avatar" src="./p2.png" alt="Portrait de Caroline Rodriguez" loading="lazy" />
             <p>Contact direct</p>
             <strong>Droit immobilier</strong>
             <ul>

@@ -834,8 +834,24 @@
     </main>
 
     <script>
-      setupRevealAnimation();
-      setupSmoothAnchors();
+      (async () => {
+        try {
+          const response = await fetch('/api/auth/session?site=testcoiffure1', {
+            method: 'GET',
+            credentials: 'include'
+          });
+          if (!response.ok) {
+            window.location.replace('/demo-site.html');
+            return;
+          }
+        } catch {
+          window.location.replace('/demo-site.html');
+          return;
+        }
+
+        setupRevealAnimation();
+        setupSmoothAnchors();
+      })();
 
       function setupRevealAnimation() {
         const items = Array.from(document.querySelectorAll('.reveal'));

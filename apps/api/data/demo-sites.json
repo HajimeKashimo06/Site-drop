@@ -88,5 +88,11 @@
     "name": "avocattest8",
     "path": "/sites/avocattest8/index.html",
     "active": true
+  },
+  {
+    "id": "tattoo1",
+    "name": "tattoo1",
+    "path": "/sites/tattoo1/index.html",
+    "active": true
   }
 ]
