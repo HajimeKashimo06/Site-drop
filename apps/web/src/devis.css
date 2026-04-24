@@ -151,7 +151,7 @@ a {
 }
 
 .intro-card li::before {
-  content: 'âœ“';
+  content: '\2713';
   flex: 0 0 22px;
   width: 22px;
   height: 22px;

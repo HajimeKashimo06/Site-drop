@@ -444,7 +444,15 @@ async function bootstrapAdmin(): Promise<void> {
       });
 
       if (!response.ok) {
-        loginFeedback.textContent = 'Connexion invalide.';
+        if (response.status >= 500) {
+          loginFeedback.textContent = 'Connexion impossible pour le moment.';
+          loginFeedback.className = 'feedback error';
+          return;
+        }
+
+        const payload = (await readJson(response)) as { error?: unknown } | null;
+        const errorMessage = typeof payload?.error === 'string' ? payload.error : 'Connexion invalide.';
+        loginFeedback.textContent = errorMessage;
         loginFeedback.className = 'feedback error';
         return;
       }

@@ -150,7 +150,7 @@ const authSessionSecret = process.env.AUTH_SESSION_SECRET ?? randomBytes(32).toS
 const rawSessionTtl = Number(process.env.AUTH_SESSION_TTL_SECONDS ?? 8 * 60 * 60);
 const authSessionTtlSeconds = Number.isFinite(rawSessionTtl) ? Math.max(300, Math.round(rawSessionTtl)) : 8 * 60 * 60;
 const authSessionCookie = 'site_drop_session';
-const secureCookie = process.env.AUTH_COOKIE_SECURE === 'true' || appOrigin.startsWith('https://');
+const authCookieSecureMode = normalizeAuthCookieSecureMode(process.env.AUTH_COOKIE_SECURE);
 const passwordHashRounds = 12;
 
 const checkoutProductName = process.env.CHECKOUT_PRODUCT_NAME ?? 'Machine a glacons Signature';
@@ -239,7 +239,7 @@ app.post('/api/auth/login', async (req, res) => {
   }
 
   const sessionToken = signSession(result.user.username);
-  setAuthCookie(res, sessionToken);
+  setAuthCookie(req, res, sessionToken);
   res.json({
     ok: true,
     role,
@@ -256,7 +256,7 @@ app.post('/api/auth/admin-login', async (req, res) => {
   }
 
   const sessionToken = signSession(result.user.username);
-  setAuthCookie(res, sessionToken);
+  setAuthCookie(req, res, sessionToken);
   res.json({
     ok: true,
     role: 'admin',
@@ -282,7 +282,7 @@ app.get('/api/auth/session', async (req, res) => {
       return;
     }
 
-    clearAuthCookie(res);
+    clearAuthCookie(req, res);
     res.status(401).json({ authenticated: false });
     return;
   }
@@ -316,7 +316,7 @@ app.get('/api/auth/session', async (req, res) => {
 app.get('/api/auth/admin-session', async (req, res) => {
   const user = await getAuthenticatedUser(req);
   if (!user || getEffectiveRole(user) !== 'admin') {
-    clearAuthCookie(res);
+    clearAuthCookie(req, res);
     res.status(401).json({ authenticated: false });
     return;
   }
@@ -328,8 +328,8 @@ app.get('/api/auth/admin-session', async (req, res) => {
   });
 });
 
-app.post('/api/auth/logout', (_req, res) => {
-  clearAuthCookie(res);
+app.post('/api/auth/logout', (req, res) => {
+  clearAuthCookie(req, res);
   res.json({ ok: true });
 });
 
@@ -863,8 +863,13 @@ async function startServer(): Promise<void> {
   try {
     await usersCollectionPromise;
     if (mailTransporter) {
-      await mailTransporter.verify();
-      console.log(`[api] smtp ready on ${smtpHost}:${smtpPort}`);
+      try {
+        await mailTransporter.verify();
+        console.log(`[api] smtp ready on ${smtpHost}:${smtpPort}`);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Erreur SMTP inconnue';
+        console.warn(`[api] SMTP indisponible au demarrage: ${message}`);
+      }
     } else {
       console.warn('[api] SMTP non configure: /api/contact-request repondra 503.');
     }
@@ -1016,7 +1021,7 @@ async function getAuthenticatedUser(req: Request): Promise<SiteUserDoc | null> {
 async function requireAdmin(req: Request, res: Response): Promise<SiteUserDoc | null> {
   const user = await getAuthenticatedUser(req);
   if (!user || getEffectiveRole(user) !== 'admin') {
-    clearAuthCookie(res);
+    clearAuthCookie(req, res);
     res.status(403).json({ ok: false, error: 'Accès admin refusé.' });
     return null;
   }
@@ -1084,7 +1089,8 @@ function readAuthCookie(req: Request): string | null {
   return cookies[authSessionCookie] ?? null;
 }
 
-function setAuthCookie(res: Response, token: string): void {
+function setAuthCookie(req: Request, res: Response, token: string): void {
+  const secureCookie = shouldUseSecureCookie(req);
   res.cookie(authSessionCookie, token, {
     httpOnly: true,
     sameSite: 'lax',
@@ -1094,13 +1100,41 @@ function setAuthCookie(res: Response, token: string): void {
   });
 }
 
-function clearAuthCookie(res: Response): void {
+function clearAuthCookie(req: Request, res: Response): void {
+  const secureCookie = shouldUseSecureCookie(req);
   res.clearCookie(authSessionCookie, {
     httpOnly: true,
     sameSite: 'lax',
     secure: secureCookie,
     path: '/'
   });
+}
+
+function shouldUseSecureCookie(req: Request): boolean {
+  if (authCookieSecureMode === 'always') {
+    return true;
+  }
+  if (authCookieSecureMode === 'never') {
+    return false;
+  }
+
+  // Auto mode: secure cookie on non-local hosts, non-secure on localhost dev.
+  const hostRaw = req.headers.host ?? '';
+  const hostPart = hostRaw.split(':')[0] ?? '';
+  const host = hostPart.trim().toLowerCase();
+  const isLocalHost = host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]';
+  return !isLocalHost;
+}
+
+function normalizeAuthCookieSecureMode(value: string | undefined): 'always' | 'never' | 'auto' {
+  const normalized = (value ?? '').trim().toLowerCase();
+  if (['1', 'true', 'yes', 'on', 'always', 'force'].includes(normalized)) {
+    return 'always';
+  }
+  if (['0', 'false', 'no', 'off', 'never'].includes(normalized)) {
+    return 'never';
+  }
+  return 'auto';
 }
 
 function parseCookieHeader(cookieHeader: string | undefined): Record<string, string> {

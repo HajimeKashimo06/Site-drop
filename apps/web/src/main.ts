@@ -266,288 +266,788 @@ async function setupAmbientFluidScene(): Promise<void> {
   if (!host) {
     return;
   }
+  const ambientRevision = '2026-04-24-galaxy-systems-v4-supernova-boost';
+  host.setAttribute('data-ambient-rev', ambientRevision);
+  console.info(`[ambient] revision ${ambientRevision}`);
 
   const THREE = await import('three');
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = window.matchMedia('(max-width: 820px)').matches;
+  const randomBetween = (min: number, max: number): number => min + Math.random() * (max - min);
 
   let width = Math.max(window.innerWidth, 1);
   let height = Math.max(window.innerHeight, 1);
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(34, width / height, 0.1, 100);
-  camera.position.set(0, 0, 10.6);
+  scene.fog = new THREE.FogExp2(0x060913, isMobile ? 0.05 : 0.038);
+  const camera = new THREE.PerspectiveCamera(isMobile ? 42 : 46, width / height, 0.1, 140);
+  camera.position.set(0, 0, isMobile ? 12.2 : 13.4);
 
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     alpha: true,
     powerPreference: 'high-performance'
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.35));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.1 : 1.28));
   renderer.setSize(width, height, false);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.06;
+  renderer.toneMappingExposure = 1.12;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.domElement.classList.add('ambient-fluid-canvas');
   host.appendChild(renderer.domElement);
 
-  const hemiLight = new THREE.HemisphereLight(0xe8f8ff, 0x3b4d62, 1.14);
+  const hemiLight = new THREE.HemisphereLight(0xdaf0ff, 0x161b33, 0.9);
   scene.add(hemiLight);
 
-  const keyLight = new THREE.DirectionalLight(0xffffff, 1.05);
-  keyLight.position.set(4.8, 3.4, 5.4);
+  const keyLight = new THREE.DirectionalLight(0xcbe3ff, 0.86);
+  keyLight.position.set(5.2, 3.8, 6.2);
   scene.add(keyLight);
 
-  const fillLight = new THREE.DirectionalLight(0x73c6ff, 0.92);
-  fillLight.position.set(-4.2, -1.2, 3.2);
+  const fillLight = new THREE.DirectionalLight(0x6ebdff, 0.64);
+  fillLight.position.set(-4.6, -1.4, 4.1);
   scene.add(fillLight);
 
-  const mintLight = new THREE.PointLight(0x78e6a7, 9.5, 19, 2);
-  mintLight.position.set(-2.6, 1.6, 2.5);
-  scene.add(mintLight);
+  const cosmicRoot = new THREE.Group();
+  cosmicRoot.scale.setScalar(isMobile ? 1.08 : 1.24);
+  scene.add(cosmicRoot);
 
-  const warmLight = new THREE.PointLight(0xffba78, 8.8, 18, 2);
-  warmLight.position.set(3.6, -0.8, 2.1);
-  scene.add(warmLight);
-
-  const fluidGroup = new THREE.Group();
-  scene.add(fluidGroup);
-
-  const makeBlobMaterial = (color: number): InstanceType<typeof THREE.MeshPhysicalMaterial> =>
-    new THREE.MeshPhysicalMaterial({
-      color,
-      metalness: 0.52,
-      roughness: 0.21,
-      transmission: 0.68,
-      thickness: 1.7,
-      transparent: true,
-      opacity: 0.62,
-      clearcoat: 1,
-      clearcoatRoughness: 0.12,
-      envMapIntensity: 1.05
-    });
-
-  type FluidBlob = {
-    mesh: InstanceType<typeof THREE.Mesh>;
-    glow: InstanceType<typeof THREE.Mesh>;
-    anchorX: number;
-    anchorY: number;
-    orbitRadius: number;
-    orbitSpeed: number;
-    orbitPhase: number;
-    floatPhase: number;
-    wobbleSpeed: number;
-    wobbleAmp: number;
+  const disposeBag: Array<() => void> = [];
+  const disposeMaterial = (material: any): void => {
+    if (!material) {
+      return;
+    }
+    if (Array.isArray(material)) {
+      material.forEach((item) => item?.dispose?.());
+      return;
+    }
+    material.dispose?.();
+  };
+  const registerMeshDisposable = (mesh: any): void => {
+    disposeBag.push(() => mesh.geometry?.dispose?.());
+    disposeBag.push(() => disposeMaterial(mesh.material));
   };
 
-  const createBlob = (config: {
-    color: number;
-    glow: number;
-    radius: number;
-    anchorX: number;
-    anchorY: number;
-    orbitRadius: number;
-    orbitSpeed: number;
-    wobbleSpeed: number;
-    wobbleAmp: number;
-  }): FluidBlob => {
-    const geometry = new THREE.IcosahedronGeometry(config.radius, 4);
-    const mesh = new THREE.Mesh(geometry, makeBlobMaterial(config.color));
-    mesh.position.set(config.anchorX, config.anchorY, -1.2);
-    fluidGroup.add(mesh);
+  const makeNebulaTexture = (inner: string, outer: string): InstanceType<typeof THREE.CanvasTexture> => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 320;
+    canvas.height = 320;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      return new THREE.CanvasTexture(canvas);
+    }
+    const gradient = ctx.createRadialGradient(160, 160, 12, 160, 160, 158);
+    gradient.addColorStop(0, inner);
+    gradient.addColorStop(0.5, outer);
+    gradient.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 320, 320);
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    return texture;
+  };
 
+  type NebulaSheet = {
+    mesh: InstanceType<typeof THREE.Mesh>;
+    material: InstanceType<typeof THREE.MeshBasicMaterial>;
+    baseOpacity: number;
+    pulseSpeed: number;
+    pulsePhase: number;
+  };
+  const nebulaSheets: NebulaSheet[] = [];
+  const nebulaConfigs = [
+    {
+      inner: 'rgba(164, 203, 255, 0.4)',
+      outer: 'rgba(99, 148, 255, 0.2)',
+      scaleX: 15.8,
+      scaleY: 10.4,
+      x: -7.4,
+      y: 2.9,
+      z: -8.2,
+      rot: 0.42,
+      opacity: 0.38,
+      speed: 0.2
+    },
+    {
+      inner: 'rgba(177, 255, 221, 0.36)',
+      outer: 'rgba(96, 210, 170, 0.18)',
+      scaleX: 14.2,
+      scaleY: 9.2,
+      x: 7.6,
+      y: -1.5,
+      z: -8.5,
+      rot: -0.36,
+      opacity: 0.33,
+      speed: 0.16
+    },
+    {
+      inner: 'rgba(255, 210, 168, 0.3)',
+      outer: 'rgba(255, 166, 120, 0.14)',
+      scaleX: 12.6,
+      scaleY: 8.2,
+      x: 0.4,
+      y: -4.1,
+      z: -9.2,
+      rot: 0.18,
+      opacity: 0.28,
+      speed: 0.14
+    },
+    {
+      inner: 'rgba(184, 203, 255, 0.28)',
+      outer: 'rgba(111, 142, 255, 0.1)',
+      scaleX: 11.4,
+      scaleY: 7.1,
+      x: -10.8,
+      y: -0.9,
+      z: -9.6,
+      rot: -0.18,
+      opacity: 0.2,
+      speed: 0.12
+    },
+    {
+      inner: 'rgba(192, 255, 228, 0.26)',
+      outer: 'rgba(86, 201, 172, 0.1)',
+      scaleX: 11.2,
+      scaleY: 6.9,
+      x: 10.4,
+      y: 1.2,
+      z: -9.6,
+      rot: 0.22,
+      opacity: 0.18,
+      speed: 0.11
+    }
+  ];
+
+  nebulaConfigs.forEach((config, index) => {
+    const texture = makeNebulaTexture(config.inner, config.outer);
+    const material = new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true,
+      opacity: config.opacity,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    });
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(config.scaleX, config.scaleY), material);
+    mesh.position.set(config.x, config.y, config.z);
+    mesh.rotation.z = config.rot;
+    cosmicRoot.add(mesh);
+    disposeBag.push(() => texture.dispose());
+    registerMeshDisposable(mesh);
+    nebulaSheets.push({
+      mesh,
+      material,
+      baseOpacity: config.opacity,
+      pulseSpeed: config.speed,
+      pulsePhase: index * 0.7
+    });
+  });
+
+  type StarCloud = {
+    points: InstanceType<typeof THREE.Points>;
+    spinSpeed: number;
+    swaySpeed: number;
+    depthFactor: number;
+  };
+  const createStarCloud = (count: number, size: number, opacity: number, radius: number, depth: number): StarCloud => {
+    const positions = new Float32Array(count * 3);
+    for (let i = 0; i < count; i += 1) {
+      const ptr = i * 3;
+      const theta = randomBetween(0, Math.PI * 2);
+      const radial = Math.sqrt(Math.random()) * radius;
+      const y = randomBetween(-depth, depth);
+      positions[ptr] = Math.cos(theta) * radial + randomBetween(-1.6, 1.6);
+      positions[ptr + 1] = y;
+      positions[ptr + 2] = -randomBetween(0.8, 11.5);
+    }
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const material = new THREE.PointsMaterial({
+      color: 0xf4fbff,
+      size,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity,
+      depthWrite: false
+    });
+    const points = new THREE.Points(geometry, material);
+    cosmicRoot.add(points);
+    disposeBag.push(() => geometry.dispose());
+    disposeBag.push(() => material.dispose());
+    return {
+      points,
+      spinSpeed: randomBetween(0.0004, 0.0012),
+      swaySpeed: randomBetween(0.12, 0.3),
+      depthFactor: randomBetween(0.08, 0.28)
+    };
+  };
+
+  const starClouds: StarCloud[] = [
+    createStarCloud(isMobile ? 1100 : 2100, isMobile ? 0.028 : 0.034, 0.78, 17.5, 6.2),
+    createStarCloud(isMobile ? 560 : 980, isMobile ? 0.04 : 0.05, 0.48, 15.2, 5.2),
+    createStarCloud(isMobile ? 320 : 620, isMobile ? 0.016 : 0.022, 0.34, 19.8, 7.4)
+  ];
+
+  type OrbitLine = {
+    line: InstanceType<typeof THREE.LineLoop>;
+    material: InstanceType<typeof THREE.LineBasicMaterial>;
+    pulseSpeed: number;
+    pulsePhase: number;
+    baseOpacity: number;
+  };
+  const createOrbitLine = (
+    radiusX: number,
+    radiusY: number,
+    z: number,
+    color: number,
+    opacity: number
+  ): OrbitLine => {
+    const points: InstanceType<typeof THREE.Vector3>[] = [];
+    const segments = 140;
+    for (let i = 0; i < segments; i += 1) {
+      const a = (i / segments) * Math.PI * 2;
+      points.push(new THREE.Vector3(Math.cos(a) * radiusX, Math.sin(a) * radiusY, z));
+    }
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const material = new THREE.LineBasicMaterial({
+      color,
+      transparent: true,
+      opacity
+    });
+    const line = new THREE.LineLoop(geometry, material);
+    disposeBag.push(() => geometry.dispose());
+    disposeBag.push(() => material.dispose());
+    return {
+      line,
+      material,
+      pulseSpeed: randomBetween(0.22, 0.56),
+      pulsePhase: Math.random() * Math.PI * 2,
+      baseOpacity: opacity
+    };
+  };
+
+  type OrbitPlanet = {
+    mesh: InstanceType<typeof THREE.Mesh>;
+    glow: InstanceType<typeof THREE.Mesh>;
+    ring: InstanceType<typeof THREE.Mesh> | null;
+    orbitX: number;
+    orbitY: number;
+    speed: number;
+    phase: number;
+    bobAmp: number;
+    bobSpeed: number;
+    depthAmp: number;
+    rotX: number;
+    rotY: number;
+  };
+
+  const solarRoot = new THREE.Group();
+  solarRoot.position.set(isMobile ? 0.8 : 0.9, isMobile ? 0.22 : 0.06, -2.6);
+  solarRoot.scale.setScalar(isMobile ? 1.12 : 1.42);
+  solarRoot.rotation.x = isMobile ? -0.42 : -0.52;
+  solarRoot.rotation.z = -0.1;
+  cosmicRoot.add(solarRoot);
+
+  const sunLight = new THREE.PointLight(0xffc787, 13.4, 23, 2);
+  sunLight.position.set(0, 0, 0.4);
+  solarRoot.add(sunLight);
+
+  const sun = new THREE.Mesh(
+    new THREE.SphereGeometry(isMobile ? 0.5 : 0.64, 40, 36),
+    new THREE.MeshStandardMaterial({
+      color: 0xffaf57,
+      emissive: 0xff8a2b,
+      emissiveIntensity: 1.22,
+      metalness: 0.06,
+      roughness: 0.34
+    })
+  );
+  solarRoot.add(sun);
+  registerMeshDisposable(sun);
+
+  const sunHalo = new THREE.Mesh(
+    new THREE.SphereGeometry(isMobile ? 1.06 : 1.34, 30, 24),
+    new THREE.MeshBasicMaterial({
+      color: 0xffb46a,
+      transparent: true,
+      opacity: 0.24,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    })
+  );
+  solarRoot.add(sunHalo);
+  registerMeshDisposable(sunHalo);
+
+  const orbitLines: OrbitLine[] = [];
+  const mainOrbitRadii = [1.5, 2.05, 2.68, 3.34, 4.08, 4.9, 5.74];
+  mainOrbitRadii.forEach((radius, index) => {
+    const line = createOrbitLine(radius, radius * 0.62, 0, 0xd8e9ff, 0.12 + index * 0.012);
+    solarRoot.add(line.line);
+    orbitLines.push(line);
+  });
+
+  const createPlanet = (config: {
+    radius: number;
+    color: number;
+    emissive: number;
+    orbitX: number;
+    orbitY: number;
+    speed: number;
+    phase: number;
+    hasRing?: boolean;
+    ringColor?: number;
+  }): OrbitPlanet => {
+    const mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(config.radius, 24, 20),
+      new THREE.MeshStandardMaterial({
+        color: config.color,
+        emissive: config.emissive,
+        emissiveIntensity: 0.1,
+        roughness: 0.54,
+        metalness: 0.04
+      })
+    );
     const glow = new THREE.Mesh(
-      new THREE.SphereGeometry(config.radius * 1.34, 36, 36),
+      new THREE.SphereGeometry(config.radius * 1.72, 18, 16),
       new THREE.MeshBasicMaterial({
-        color: config.glow,
+        color: config.color,
         transparent: true,
-        opacity: 0.18,
+        opacity: 0.14,
         blending: THREE.AdditiveBlending,
         depthWrite: false
       })
     );
-    glow.position.copy(mesh.position);
-    fluidGroup.add(glow);
+    solarRoot.add(mesh);
+    solarRoot.add(glow);
+    registerMeshDisposable(mesh);
+    registerMeshDisposable(glow);
+
+    let ring: InstanceType<typeof THREE.Mesh> | null = null;
+    if (config.hasRing) {
+      ring = new THREE.Mesh(
+        new THREE.RingGeometry(config.radius * 1.4, config.radius * 2.08, 56),
+        new THREE.MeshBasicMaterial({
+          color: config.ringColor ?? 0xe9ddb9,
+          transparent: true,
+          opacity: 0.46,
+          side: THREE.DoubleSide,
+          depthWrite: false
+        })
+      );
+      ring.rotation.x = Math.PI / 2.2;
+      solarRoot.add(ring);
+      registerMeshDisposable(ring);
+    }
 
     return {
       mesh,
       glow,
-      anchorX: config.anchorX,
-      anchorY: config.anchorY,
-      orbitRadius: config.orbitRadius,
-      orbitSpeed: config.orbitSpeed,
-      orbitPhase: Math.random() * Math.PI * 2,
-      floatPhase: Math.random() * Math.PI * 2,
-      wobbleSpeed: config.wobbleSpeed,
-      wobbleAmp: config.wobbleAmp
+      ring,
+      orbitX: config.orbitX,
+      orbitY: config.orbitY,
+      speed: config.speed,
+      phase: config.phase,
+      bobAmp: randomBetween(0.02, 0.08),
+      bobSpeed: randomBetween(0.7, 1.6),
+      depthAmp: randomBetween(0.04, 0.22),
+      rotX: randomBetween(0.0022, 0.0068),
+      rotY: randomBetween(0.0024, 0.0082)
     };
   };
 
-  const blobs: FluidBlob[] = [
-    createBlob({
-      color: 0x78c6ff,
-      glow: 0x78c6ff,
-      radius: 1.5,
-      anchorX: -3.8,
-      anchorY: 1.4,
-      orbitRadius: 1.2,
-      orbitSpeed: 0.24,
-      wobbleSpeed: 1.2,
-      wobbleAmp: 0.18
+  const planets: OrbitPlanet[] = [
+    createPlanet({ radius: 0.09, color: 0xa7b6d8, emissive: 0x324463, orbitX: 1.5, orbitY: 0.94, speed: 1.56, phase: 0.6 }),
+    createPlanet({ radius: 0.12, color: 0xffd19f, emissive: 0x5f3e2a, orbitX: 2.05, orbitY: 1.27, speed: 1.24, phase: 1.7 }),
+    createPlanet({ radius: 0.15, color: 0x75b2ff, emissive: 0x274a7c, orbitX: 2.68, orbitY: 1.66, speed: 0.94, phase: 2.9 }),
+    createPlanet({ radius: 0.13, color: 0xdc8e71, emissive: 0x633524, orbitX: 3.34, orbitY: 2.06, speed: 0.8, phase: 0.9 }),
+    createPlanet({ radius: 0.24, color: 0xd8b389, emissive: 0x5b3f24, orbitX: 4.08, orbitY: 2.52, speed: 0.54, phase: 1.45 }),
+    createPlanet({
+      radius: 0.23,
+      color: 0xc8b495,
+      emissive: 0x5a4e3d,
+      orbitX: 4.9,
+      orbitY: 3.02,
+      speed: 0.44,
+      phase: 3.1,
+      hasRing: true,
+      ringColor: 0xf4dfb0
     }),
-    createBlob({
-      color: 0xffbc81,
-      glow: 0xffbc81,
-      radius: 1.28,
-      anchorX: 3.9,
-      anchorY: 0.1,
-      orbitRadius: 1.05,
-      orbitSpeed: 0.3,
-      wobbleSpeed: 1.05,
-      wobbleAmp: 0.21
-    }),
-    createBlob({
-      color: 0x72dea5,
-      glow: 0x72dea5,
-      radius: 1.12,
-      anchorX: -1.2,
-      anchorY: -1.8,
-      orbitRadius: 0.92,
-      orbitSpeed: 0.34,
-      wobbleSpeed: 1.36,
-      wobbleAmp: 0.19
-    })
+    createPlanet({ radius: 0.2, color: 0x7ee7ee, emissive: 0x27556f, orbitX: 5.74, orbitY: 3.54, speed: 0.34, phase: 4.1 })
   ];
 
-  const ribbonMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0x71c4ff,
-    metalness: 0.58,
-    roughness: 0.22,
-    transmission: 0.38,
-    clearcoat: 1,
-    clearcoatRoughness: 0.16,
-    transparent: true,
-    opacity: 0.44,
-    envMapIntensity: 0.9
-  });
-
-  const ribbon = new THREE.Mesh(new THREE.TorusKnotGeometry(2.8, 0.12, 200, 18), ribbonMaterial);
-  ribbon.position.set(3.4, -1.4, -3.4);
-  ribbon.rotation.set(0.82, 0.2, 0.1);
-  fluidGroup.add(ribbon);
-
-  const ribbon2 = new THREE.Mesh(
-    new THREE.TorusGeometry(2.2, 0.09, 18, 90),
-    new THREE.MeshPhysicalMaterial({
-      color: 0x76e6a8,
-      metalness: 0.52,
-      roughness: 0.24,
-      transmission: 0.32,
-      transparent: true,
-      opacity: 0.36,
-      envMapIntensity: 0.76
-    })
-  );
-  ribbon2.position.set(-3.1, 2.2, -3.2);
-  ribbon2.rotation.set(0.95, 0.48, -0.35);
-  fluidGroup.add(ribbon2);
-
-  const makeTokenSprite = (
-    text: string,
-    tint: string,
-    bg: string,
-    widthPx = 340,
-    heightPx = 132
-  ): { sprite: any; texture: any; material: any } => {
-    const canvas = document.createElement('canvas');
-    canvas.width = widthPx;
-    canvas.height = heightPx;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      const sprite = new THREE.Sprite();
-      fluidGroup.add(sprite);
-      return { sprite, texture: null, material: null };
+  const createBeltCloud = (radiusX: number, radiusY: number, count: number, spread: number, color: number, size: number) => {
+    const positions = new Float32Array(count * 3);
+    for (let i = 0; i < count; i += 1) {
+      const angle = randomBetween(0, Math.PI * 2);
+      const jitter = randomBetween(-spread, spread);
+      const z = randomBetween(-0.09, 0.09);
+      const ptr = i * 3;
+      positions[ptr] = Math.cos(angle) * (radiusX + jitter);
+      positions[ptr + 1] = Math.sin(angle) * (radiusY + jitter * 0.62);
+      positions[ptr + 2] = z;
     }
-
-    const radius = 22;
-    ctx.clearRect(0, 0, widthPx, heightPx);
-    ctx.fillStyle = bg;
-    ctx.strokeStyle = 'rgba(255,255,255,0.62)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(radius, 0);
-    ctx.lineTo(widthPx - radius, 0);
-    ctx.quadraticCurveTo(widthPx, 0, widthPx, radius);
-    ctx.lineTo(widthPx, heightPx - radius);
-    ctx.quadraticCurveTo(widthPx, heightPx, widthPx - radius, heightPx);
-    ctx.lineTo(radius, heightPx);
-    ctx.quadraticCurveTo(0, heightPx, 0, heightPx - radius);
-    ctx.lineTo(0, radius);
-    ctx.quadraticCurveTo(0, 0, radius, 0);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    const glow = ctx.createLinearGradient(0, 0, widthPx, 0);
-    glow.addColorStop(0, 'rgba(255,255,255,0.54)');
-    glow.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, widthPx, heightPx * 0.45);
-
-    ctx.font = '700 48px Sora, Manrope, sans-serif';
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'center';
-    ctx.fillStyle = tint;
-    ctx.fillText(text, widthPx / 2, heightPx / 2 + 1);
-
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    const material = new THREE.SpriteMaterial({
-      map: texture,
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const material = new THREE.PointsMaterial({
+      color,
+      size,
       transparent: true,
-      opacity: 0.7,
+      opacity: 0.56,
       depthWrite: false
     });
-    const sprite = new THREE.Sprite(material);
-    sprite.scale.set(1.85, 0.74, 1);
-    fluidGroup.add(sprite);
-    return { sprite, texture, material };
+    const points = new THREE.Points(geometry, material);
+    solarRoot.add(points);
+    disposeBag.push(() => geometry.dispose());
+    disposeBag.push(() => material.dispose());
+    return points;
   };
 
-  type CodeToken = {
-    sprite: any;
-    texture: any;
-    material: any;
-    anchorX: number;
-    anchorY: number;
-    depth: number;
-    speed: number;
+  const asteroidBeltA = createBeltCloud(3.02, 1.88, isMobile ? 240 : 440, 0.16, 0xd9d9da, isMobile ? 0.028 : 0.034);
+  const asteroidBeltB = createBeltCloud(3.21, 2.01, isMobile ? 180 : 340, 0.15, 0xb9bec9, isMobile ? 0.019 : 0.024);
+
+  type MiniSystem = {
+    root: InstanceType<typeof THREE.Group>;
+    baseX: number;
+    baseY: number;
+    core: InstanceType<typeof THREE.Mesh>;
+    glow: InstanceType<typeof THREE.Mesh>;
+    lines: OrbitLine[];
+    planets: OrbitPlanet[];
+    driftSpeed: number;
     phase: number;
-    drift: number;
   };
 
-  const tokenConfigs = [
-    { text: '</>', tint: '#89d0ff', bg: 'rgba(10,32,53,0.62)' },
-    { text: '{CSS}', tint: '#94efb2', bg: 'rgba(10,38,40,0.6)' },
-    { text: 'JS', tint: '#ffd097', bg: 'rgba(54,32,18,0.58)' },
-    { text: 'UI', tint: '#89d0ff', bg: 'rgba(10,32,53,0.62)' },
-    { text: 'SEO', tint: '#94efb2', bg: 'rgba(10,38,40,0.6)' },
-    { text: 'API', tint: '#89d0ff', bg: 'rgba(10,32,53,0.62)' },
-    { text: '404', tint: '#ffd097', bg: 'rgba(54,32,18,0.58)' },
-    { text: '<HTML>', tint: '#94efb2', bg: 'rgba(10,38,40,0.6)' }
+  const miniSystemConfigs = [
+    { x: -8.7, y: 2.7, z: -7.4, scale: 0.68, color: 0x8dc8ff, phase: 0.7 },
+    { x: 8.5, y: 2.9, z: -7.8, scale: 0.62, color: 0xa3f1d3, phase: 1.6 },
+    { x: -7.4, y: -2.8, z: -7.2, scale: 0.56, color: 0xffd19f, phase: 2.4 },
+    { x: 7.2, y: -3.1, z: -7.5, scale: 0.54, color: 0xb5c9ff, phase: 3.1 },
+    { x: -5.1, y: 0.3, z: -6.9, scale: 0.46, color: 0x98d8ff, phase: 3.7 },
+    { x: 5.4, y: -0.4, z: -7.1, scale: 0.44, color: 0xb6ffe0, phase: 4.2 }
   ];
 
-  const tokens: CodeToken[] = tokenConfigs.map((config, index) => {
-    const token = makeTokenSprite(config.text, config.tint, config.bg);
+  const miniSystems: MiniSystem[] = miniSystemConfigs
+    .slice(0, isMobile ? 3 : miniSystemConfigs.length)
+    .map((config) => {
+      const root = new THREE.Group();
+      root.position.set(config.x, config.y, config.z);
+      root.scale.setScalar(config.scale);
+      cosmicRoot.add(root);
+
+      const core = new THREE.Mesh(
+        new THREE.SphereGeometry(0.42, 22, 16),
+        new THREE.MeshStandardMaterial({
+          color: config.color,
+          emissive: config.color,
+          emissiveIntensity: 0.26,
+          roughness: 0.46,
+          metalness: 0.08
+        })
+      );
+      root.add(core);
+      registerMeshDisposable(core);
+
+      const glow = new THREE.Mesh(
+        new THREE.SphereGeometry(0.82, 16, 12),
+        new THREE.MeshBasicMaterial({
+          color: config.color,
+          transparent: true,
+          opacity: 0.2,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false
+        })
+      );
+      root.add(glow);
+      registerMeshDisposable(glow);
+
+      const lines: OrbitLine[] = [];
+      [0.9, 1.24, 1.56].forEach((radius, index) => {
+        const orbit = createOrbitLine(radius, radius * 0.68, 0, 0xbfd7f8, 0.16 + index * 0.02);
+        root.add(orbit.line);
+        lines.push(orbit);
+      });
+
+      const miniPlanets: OrbitPlanet[] = [
+        createPlanet({ radius: 0.08, color: 0x9ebbf4, emissive: 0x334564, orbitX: 0.9, orbitY: 0.61, speed: 1.2, phase: config.phase + 0.4 }),
+        createPlanet({ radius: 0.1, color: 0xffce95, emissive: 0x573d2a, orbitX: 1.24, orbitY: 0.84, speed: 0.96, phase: config.phase + 1.3 }),
+        createPlanet({ radius: 0.09, color: 0x9de8cf, emissive: 0x2f5447, orbitX: 1.56, orbitY: 1.04, speed: 0.74, phase: config.phase + 2.1 })
+      ].map((planet) => {
+        root.add(planet.mesh);
+        root.add(planet.glow);
+        if (planet.ring) {
+          root.add(planet.ring);
+        }
+        return planet;
+      });
+
+      return {
+        root,
+        baseX: config.x,
+        baseY: config.y,
+        core,
+        glow,
+        lines,
+        planets: miniPlanets,
+        driftSpeed: randomBetween(0.06, 0.16),
+        phase: config.phase
+      };
+    });
+
+  const createCometTexture = (): InstanceType<typeof THREE.CanvasTexture> => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 192;
+    canvas.height = 48;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      return new THREE.CanvasTexture(canvas);
+    }
+    const gradient = ctx.createLinearGradient(0, 24, 192, 24);
+    gradient.addColorStop(0, 'rgba(255,255,255,0)');
+    gradient.addColorStop(0.35, 'rgba(161,210,255,0.28)');
+    gradient.addColorStop(0.72, 'rgba(203,233,255,0.88)');
+    gradient.addColorStop(1, 'rgba(255,255,255,1)');
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.moveTo(0, 23);
+    ctx.quadraticCurveTo(64, 4, 192, 24);
+    ctx.quadraticCurveTo(64, 44, 0, 25);
+    ctx.closePath();
+    ctx.fill();
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    return texture;
+  };
+
+  type Comet = {
+    group: InstanceType<typeof THREE.Group>;
+    radiusX: number;
+    radiusY: number;
+    speed: number;
+    phase: number;
+    z: number;
+    tilt: number;
+  };
+
+  const cometTexture = createCometTexture();
+  disposeBag.push(() => cometTexture.dispose());
+  const comets: Comet[] = Array.from({ length: isMobile ? 2 : 3 }, (_, index) => {
+    const group = new THREE.Group();
+    const tail = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.6, 0.34),
+      new THREE.MeshBasicMaterial({
+        map: cometTexture,
+        transparent: true,
+        opacity: 0.82,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      })
+    );
+    const head = new THREE.Mesh(
+      new THREE.SphereGeometry(0.07, 14, 12),
+      new THREE.MeshBasicMaterial({
+        color: 0xe7f5ff,
+        transparent: true,
+        opacity: 0.9
+      })
+    );
+    tail.position.x = -0.56;
+    group.add(tail);
+    group.add(head);
+    cosmicRoot.add(group);
+    registerMeshDisposable(tail);
+    registerMeshDisposable(head);
     return {
-      ...token,
-      anchorX: (index % 4) * 2.2 - 3.2,
-      anchorY: Math.floor(index / 4) * -1.9 + 2,
-      depth: -3.8 - (index % 3) * 0.5,
-      speed: 0.22 + (index % 4) * 0.05,
-      phase: Math.random() * Math.PI * 2,
-      drift: 0.32 + (index % 3) * 0.08
+      group,
+      radiusX: index === 0 ? 9.4 : index === 1 ? 7.8 : 10.2,
+      radiusY: index === 0 ? 4.8 : index === 1 ? 3.2 : 5.4,
+      speed: index === 0 ? 0.14 : index === 1 ? 0.19 : 0.11,
+      phase: index * Math.PI + 0.5,
+      z: index === 0 ? -2.2 : index === 1 ? -3.5 : -4.4,
+      tilt: index === 0 ? -0.38 : index === 1 ? 0.32 : -0.22
     };
   });
+
+  const createSupernovaTexture = (): InstanceType<typeof THREE.CanvasTexture> => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      return new THREE.CanvasTexture(canvas);
+    }
+    const gradient = ctx.createRadialGradient(128, 128, 8, 128, 128, 122);
+    gradient.addColorStop(0, 'rgba(255,255,255,1)');
+    gradient.addColorStop(0.2, 'rgba(196,226,255,0.96)');
+    gradient.addColorStop(0.48, 'rgba(141,189,255,0.54)');
+    gradient.addColorStop(1, 'rgba(141,189,255,0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 256, 256);
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    return texture;
+  };
+
+  type SupernovaEvent = {
+    group: InstanceType<typeof THREE.Group>;
+    core: InstanceType<typeof THREE.Mesh>;
+    coreMaterial: InstanceType<typeof THREE.MeshBasicMaterial>;
+    shell: InstanceType<typeof THREE.Mesh>;
+    shellMaterial: InstanceType<typeof THREE.MeshBasicMaterial>;
+    shockwave: InstanceType<typeof THREE.Mesh>;
+    shockwaveMaterial: InstanceType<typeof THREE.MeshBasicMaterial>;
+    sparks: InstanceType<typeof THREE.Points>;
+    sparkMaterial: InstanceType<typeof THREE.PointsMaterial>;
+    sparkPosition: InstanceType<typeof THREE.BufferAttribute>;
+    basePositions: Float32Array;
+    velocities: Float32Array;
+    light: InstanceType<typeof THREE.PointLight>;
+    bornAt: number;
+    duration: number;
+    driftY: number;
+    intensityScale: number;
+    sizeScale: number;
+  };
+
+  const supernovaTexture = createSupernovaTexture();
+  disposeBag.push(() => supernovaTexture.dispose());
+  const activeSupernovas: SupernovaEvent[] = [];
+  const maxSupernovas = isMobile ? 3 : 6;
+  let nextSupernovaAt = prefersReducedMotion ? Number.POSITIVE_INFINITY : randomBetween(1.2, 2.8);
+  let hasSpawnedFirstSupernova = false;
+
+  const disposeSupernova = (event: SupernovaEvent): void => {
+    event.group.parent?.remove(event.group);
+    event.core.geometry.dispose();
+    event.shell.geometry.dispose();
+    event.shockwave.geometry.dispose();
+    event.sparks.geometry.dispose();
+    event.coreMaterial.dispose();
+    event.shellMaterial.dispose();
+    event.shockwaveMaterial.dispose();
+    event.sparkMaterial.dispose();
+  };
+
+  const scheduleSupernova = (now: number): void => {
+    nextSupernovaAt = now + randomBetween(isMobile ? 4.8 : 2.4, isMobile ? 9.4 : 5.8);
+  };
+
+  const spawnSupernova = (now: number, forceCenter = false): void => {
+    if (activeSupernovas.length >= maxSupernovas) {
+      const stale = activeSupernovas.shift();
+      if (stale) {
+        disposeSupernova(stale);
+      }
+    }
+
+    const group = new THREE.Group();
+    const isDistant = forceCenter ? false : Math.random() < 0.8;
+    const sideSpawn = forceCenter ? false : Math.random() < 0.62;
+    const x = sideSpawn
+      ? (Math.random() < 0.5 ? -1 : 1) * randomBetween(isDistant ? 7.8 : 4.6, isDistant ? 16.8 : 11.8)
+      : randomBetween(isDistant ? -9.4 : -4.8, isDistant ? 9.4 : 4.8);
+    group.position.set(
+      x,
+      randomBetween(isDistant ? -5.8 : -4.6, isDistant ? 4.4 : 3.2),
+      randomBetween(isDistant ? -17.8 : -8.8, isDistant ? -10.4 : -4.6)
+    );
+    cosmicRoot.add(group);
+
+    const intensityScale = forceCenter ? 1 : isDistant ? randomBetween(0.36, 0.62) : randomBetween(0.78, 1);
+    const sizeScale = forceCenter ? 1 : isDistant ? randomBetween(0.44, 0.72) : randomBetween(0.88, 1);
+    const baseSize =
+      randomBetween(isMobile ? 1.04 : 1.36, isMobile ? 1.72 : 2.28) * sizeScale;
+
+    const coreMaterial = new THREE.MeshBasicMaterial({
+        map: supernovaTexture,
+        color: 0xd4ebff,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+    const core = new THREE.Mesh(new THREE.PlaneGeometry(baseSize, baseSize), coreMaterial);
+    group.add(core);
+
+    const shellMaterial = new THREE.MeshBasicMaterial({
+        color: 0x9fc7ff,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+    const shell = new THREE.Mesh(new THREE.SphereGeometry(baseSize * 0.24, 20, 16), shellMaterial);
+    group.add(shell);
+
+    const shockwaveMaterial = new THREE.MeshBasicMaterial({
+        color: 0xb8d8ff,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+    const shockwave = new THREE.Mesh(new THREE.RingGeometry(baseSize * 0.18, baseSize * 0.28, 72), shockwaveMaterial);
+    shockwave.rotation.x = Math.PI / 2;
+    group.add(shockwave);
+
+    const sparkCount = isMobile ? 64 : 150;
+    const sparkPositions = new Float32Array(sparkCount * 3);
+    const sparkBasePositions = new Float32Array(sparkCount * 3);
+    const sparkVelocities = new Float32Array(sparkCount * 3);
+    for (let i = 0; i < sparkCount; i += 1) {
+      const ptr = i * 3;
+      const theta = randomBetween(0, Math.PI * 2);
+      const phi = randomBetween(0, Math.PI);
+      const speed = randomBetween(0.18, 1.12);
+      const vx = Math.sin(phi) * Math.cos(theta) * speed;
+      const vy = Math.sin(phi) * Math.sin(theta) * speed;
+      const vz = Math.cos(phi) * speed;
+      sparkBasePositions[ptr] = vx * 0.06;
+      sparkBasePositions[ptr + 1] = vy * 0.06;
+      sparkBasePositions[ptr + 2] = vz * 0.06;
+      sparkPositions[ptr] = sparkBasePositions[ptr] ?? 0;
+      sparkPositions[ptr + 1] = sparkBasePositions[ptr + 1] ?? 0;
+      sparkPositions[ptr + 2] = sparkBasePositions[ptr + 2] ?? 0;
+      sparkVelocities[ptr] = vx;
+      sparkVelocities[ptr + 1] = vy;
+      sparkVelocities[ptr + 2] = vz;
+    }
+    const sparkGeometry = new THREE.BufferGeometry();
+    const sparkPosition = new THREE.BufferAttribute(sparkPositions, 3);
+    sparkGeometry.setAttribute('position', sparkPosition);
+    const sparkMaterial = new THREE.PointsMaterial({
+        color: 0xe4f3ff,
+        size: isMobile ? 0.032 : 0.04,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+    const sparks = new THREE.Points(sparkGeometry, sparkMaterial);
+    group.add(sparks);
+
+    const light = new THREE.PointLight(0xb3d8ff, 0, isMobile ? 14 : 20, 2);
+    group.add(light);
+
+    activeSupernovas.push({
+      group,
+      core,
+      coreMaterial,
+      shell,
+      shellMaterial,
+      shockwave,
+      shockwaveMaterial,
+      sparks,
+      sparkMaterial,
+      sparkPosition,
+      basePositions: sparkBasePositions,
+      velocities: sparkVelocities,
+      light,
+      bornAt: now,
+      duration: isDistant ? randomBetween(4.4, 6.8) : randomBetween(3.4, 5.2),
+      driftY: randomBetween(0.08, 0.24),
+      intensityScale,
+      sizeScale
+    });
+  };
 
   const pointer = { x: 0, y: 0 };
   const scroll = { progress: 0 };
@@ -592,47 +1092,148 @@ async function setupAmbientFluidScene(): Promise<void> {
   const renderFrame = (t: number): void => {
     const progress = scroll.progress;
 
-    fluidGroup.position.x += (pointer.x * 0.58 - fluidGroup.position.x) * 0.018;
-    fluidGroup.position.y += (pointer.y * -0.42 - progress * 2.8 - fluidGroup.position.y) * 0.018;
-    fluidGroup.rotation.z = Math.sin(t * 0.16) * 0.08 + progress * 0.28;
+    if (!prefersReducedMotion && !hasSpawnedFirstSupernova && t >= nextSupernovaAt) {
+      spawnSupernova(t, true);
+      hasSpawnedFirstSupernova = true;
+      scheduleSupernova(t);
+    } else if (!prefersReducedMotion && t >= nextSupernovaAt) {
+      spawnSupernova(t);
+      scheduleSupernova(t);
+    }
 
-    blobs.forEach((blob, index) => {
-      const orbit = t * blob.orbitSpeed + blob.orbitPhase + progress * 2.6;
-      blob.mesh.position.x = blob.anchorX + Math.cos(orbit) * blob.orbitRadius;
-      blob.mesh.position.y = blob.anchorY + Math.sin(orbit * 0.82 + blob.floatPhase) * 0.82 - progress * 4.3;
-      blob.mesh.position.z = -1.7 + Math.cos(orbit * 0.64) * 1.3;
+    cosmicRoot.position.x += (pointer.x * 0.92 - cosmicRoot.position.x) * 0.016;
+    cosmicRoot.position.y += (pointer.y * -0.48 - progress * 2.6 - cosmicRoot.position.y) * 0.016;
+    cosmicRoot.rotation.z = Math.sin(t * 0.1) * 0.03 + progress * 0.1;
+    cosmicRoot.rotation.y = Math.sin(t * 0.08) * 0.05;
 
-      const sx = 1 + Math.sin(t * blob.wobbleSpeed + blob.floatPhase) * blob.wobbleAmp;
-      const sy = 1 + Math.cos(t * blob.wobbleSpeed * 0.8 + blob.floatPhase) * blob.wobbleAmp * 0.7;
-      const sz = 1 + Math.sin(t * blob.wobbleSpeed * 0.62 + blob.floatPhase) * blob.wobbleAmp * 0.9;
-      blob.mesh.scale.set(sx, sy, sz);
-      blob.mesh.rotation.x += 0.0019 + index * 0.0004;
-      blob.mesh.rotation.y += 0.0024 + index * 0.0005;
-
-      blob.glow.position.copy(blob.mesh.position);
-      blob.glow.scale.copy(blob.mesh.scale).multiplyScalar(1.35);
+    starClouds.forEach((cloud, index) => {
+      cloud.points.rotation.z += cloud.spinSpeed;
+      cloud.points.position.y = Math.sin(t * cloud.swaySpeed + index) * cloud.depthFactor - progress * 2.8;
     });
 
-    ribbon.rotation.y += 0.0014;
-    ribbon.rotation.z += 0.0011;
-    ribbon.position.y = -1.1 - progress * 3.7 + Math.sin(t * 0.58) * 0.62;
-    ribbon.position.x = 3 + Math.cos(t * 0.36) * 0.84;
-
-    ribbon2.rotation.x += 0.001;
-    ribbon2.rotation.z -= 0.0012;
-    ribbon2.position.y = 2.5 - progress * 3.2 + Math.sin(t * 0.47) * 0.5;
-    ribbon2.position.x = -3 + Math.sin(t * 0.4) * 0.7;
-
-    tokens.forEach((token, index) => {
-      const orbit = t * token.speed + token.phase + progress * 2.1;
-      token.sprite.position.x = token.anchorX + Math.cos(orbit) * token.drift + pointer.x * 0.3;
-      token.sprite.position.y = token.anchorY + Math.sin(orbit * 1.16) * 0.48 - progress * 3.7;
-      token.sprite.position.z = token.depth + Math.sin(orbit * 0.68) * 0.4;
-      const tokenScale = 1 + Math.sin(orbit * 1.3) * 0.08;
-      token.sprite.scale.set(1.85 * tokenScale, 0.74 * tokenScale, 1);
-      token.sprite.material.opacity = 0.38 + ((Math.sin(orbit + index) + 1) * 0.5) * 0.25;
-      token.sprite.material.rotation = Math.sin(orbit * 0.84) * 0.14;
+    nebulaSheets.forEach((sheet) => {
+      sheet.material.opacity = sheet.baseOpacity + Math.sin(t * sheet.pulseSpeed + sheet.pulsePhase) * 0.05;
+      sheet.mesh.rotation.z += 0.00006;
     });
+
+    const sunPulse = 1 + Math.sin(t * 1.16) * 0.06;
+    sun.scale.setScalar(sunPulse);
+    sun.material.emissiveIntensity = 1.18 + Math.sin(t * 1.4) * 0.2;
+    sunHalo.scale.setScalar(1.18 + Math.sin(t * 1.02) * 0.16);
+    sunHalo.material.opacity = 0.2 + ((Math.sin(t * 0.9) + 1) * 0.5) * 0.14;
+    sun.rotation.y += 0.003;
+    sun.rotation.x += 0.0016;
+
+    orbitLines.forEach((orbit) => {
+      orbit.material.opacity = orbit.baseOpacity + Math.sin(t * orbit.pulseSpeed + orbit.pulsePhase) * 0.035;
+    });
+
+    planets.forEach((planet, index) => {
+      const orbit = t * planet.speed + planet.phase + progress * 1.2;
+      planet.mesh.position.x = Math.cos(orbit) * planet.orbitX;
+      planet.mesh.position.y = Math.sin(orbit) * planet.orbitY;
+      planet.mesh.position.z =
+        Math.sin(orbit * 0.62 + planet.phase) * planet.depthAmp +
+        Math.sin(t * planet.bobSpeed + index) * planet.bobAmp;
+      planet.mesh.rotation.x += planet.rotX;
+      planet.mesh.rotation.y += planet.rotY;
+      planet.glow.position.copy(planet.mesh.position);
+      if (planet.ring) {
+        planet.ring.position.copy(planet.mesh.position);
+        planet.ring.rotation.z += 0.004 + index * 0.0004;
+      }
+    });
+
+    asteroidBeltA.rotation.z += 0.0014;
+    asteroidBeltB.rotation.z -= 0.0018;
+    solarRoot.rotation.y = Math.sin(t * 0.2) * 0.12 + pointer.x * 0.16;
+    solarRoot.position.y = (isMobile ? 0.22 : 0.06) - progress * 1.54 + Math.sin(t * 0.32) * 0.07;
+
+    miniSystems.forEach((mini, miniIndex) => {
+      mini.root.rotation.z += 0.001 + miniIndex * 0.0002;
+      mini.root.rotation.y = Math.sin(t * mini.driftSpeed + mini.phase) * 0.22;
+      mini.root.position.x = mini.baseX + Math.sin(t * 0.22 + mini.phase) * 0.28 + pointer.x * 0.18;
+      mini.root.position.y = mini.baseY + Math.sin(t * 0.24 + mini.phase) * 0.22 - progress * 1.4;
+      mini.core.rotation.y += 0.01;
+      mini.glow.scale.setScalar(1 + Math.sin(t * 1.2 + mini.phase) * 0.08);
+      mini.lines.forEach((line) => {
+        line.material.opacity = line.baseOpacity + Math.sin(t * line.pulseSpeed + line.pulsePhase) * 0.03;
+      });
+      mini.planets.forEach((planet, index) => {
+        const orbit = t * planet.speed + planet.phase + progress * 0.6;
+        planet.mesh.position.x = Math.cos(orbit) * planet.orbitX;
+        planet.mesh.position.y = Math.sin(orbit) * planet.orbitY;
+        planet.mesh.position.z = Math.sin(orbit * 0.7 + index) * planet.depthAmp;
+        planet.mesh.rotation.x += planet.rotX;
+        planet.mesh.rotation.y += planet.rotY;
+        planet.glow.position.copy(planet.mesh.position);
+      });
+    });
+
+    comets.forEach((comet) => {
+      const angle = t * comet.speed + comet.phase;
+      comet.group.position.x = Math.cos(angle) * comet.radiusX + pointer.x * 0.6;
+      comet.group.position.y = Math.sin(angle) * comet.radiusY - progress * 2.1;
+      comet.group.position.z = comet.z + Math.sin(angle * 0.54) * 0.8;
+      comet.group.rotation.z = angle + comet.tilt;
+    });
+
+    for (let i = activeSupernovas.length - 1; i >= 0; i -= 1) {
+      const event = activeSupernovas[i];
+      if (!event) {
+        continue;
+      }
+      const age = t - event.bornAt;
+      const progress01 = age / event.duration;
+      if (progress01 >= 1) {
+        activeSupernovas.splice(i, 1);
+        disposeSupernova(event);
+        continue;
+      }
+
+      const flashIn = Math.min(progress01 / 0.12, 1);
+      const fadeOut = 1 - Math.max((progress01 - 0.18) / 0.82, 0);
+      const energy = flashIn * fadeOut;
+      const shock = Math.min(progress01 / 0.9, 1);
+      const smoothShock = 1 - (1 - shock) ** 3;
+
+      event.group.position.y += event.driftY * 0.001;
+      event.group.rotation.z += 0.003;
+
+      const coreScale = (0.86 + smoothShock * 8.6) * event.sizeScale;
+      event.core.scale.setScalar(coreScale);
+      event.core.rotation.z += 0.008;
+      event.coreMaterial.opacity = Math.min(1, 0.96 * energy * event.intensityScale);
+
+      const shellScale = (0.62 + smoothShock * 4.4) * event.sizeScale;
+      event.shell.scale.setScalar(shellScale);
+      event.shellMaterial.opacity = 0.54 * energy * event.intensityScale;
+
+      const waveInnerScale = (1 + smoothShock * 14.2) * event.sizeScale;
+      event.shockwave.scale.setScalar(waveInnerScale);
+      event.shockwave.rotation.z += 0.014;
+      event.shockwaveMaterial.opacity = (1 - progress01) * 0.72 * event.intensityScale;
+
+      const drag = 1 - progress01 * 0.56;
+      const sparkPositions = event.sparkPosition.array as Float32Array;
+      for (let sparkIndex = 0; sparkIndex < sparkPositions.length; sparkIndex += 3) {
+        const vx = event.velocities[sparkIndex] ?? 0;
+        const vy = event.velocities[sparkIndex + 1] ?? 0;
+        const vz = event.velocities[sparkIndex + 2] ?? 0;
+        const bx = event.basePositions[sparkIndex] ?? 0;
+        const by = event.basePositions[sparkIndex + 1] ?? 0;
+        const bz = event.basePositions[sparkIndex + 2] ?? 0;
+        sparkPositions[sparkIndex] = bx + vx * age * drag;
+        sparkPositions[sparkIndex + 1] = by + vy * age * drag;
+        sparkPositions[sparkIndex + 2] = bz + vz * age * drag;
+      }
+      event.sparkPosition.needsUpdate = true;
+      event.sparkMaterial.opacity = (1 - progress01) * 0.96 * event.intensityScale;
+      const sparkScale = (0.74 + smoothShock * 3.8) * event.sizeScale;
+      event.sparks.scale.setScalar(sparkScale);
+
+      event.light.intensity = 11.8 * energy * event.intensityScale;
+    }
 
     renderer.render(scene, camera);
   };
@@ -658,10 +1259,9 @@ async function setupAmbientFluidScene(): Promise<void> {
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerleave', onPointerLeave);
     }
-    tokens.forEach((token) => {
-      token.texture?.dispose?.();
-      token.material?.dispose?.();
-    });
+    activeSupernovas.forEach((event) => disposeSupernova(event));
+    activeSupernovas.length = 0;
+    disposeBag.forEach((dispose) => dispose());
     renderer.dispose();
   });
 }

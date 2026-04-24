@@ -40,7 +40,15 @@
     "lastClickAt": "2026-04-18T23:33:07.867Z"
   },
   "moderne": {
+    "nonAdminClicks": 12,
+    "lastClickAt": "2026-04-21T17:34:24.373Z"
+  },
+  "tattoo1": {
     "nonAdminClicks": 2,
-    "lastClickAt": "2026-04-19T14:27:04.392Z"
+    "lastClickAt": "2026-04-20T22:02:16.192Z"
+  },
+  "tattoo3": {
+    "nonAdminClicks": 5,
+    "lastClickAt": "2026-04-20T21:33:06.804Z"
   }
 }

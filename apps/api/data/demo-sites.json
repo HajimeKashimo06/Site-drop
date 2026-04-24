@@ -94,5 +94,17 @@
     "name": "tattoo1",
     "path": "/sites/tattoo1/index.html",
     "active": true
+  },
+  {
+    "id": "tattoo2",
+    "name": "tattoo2",
+    "path": "/sites/tattoo2/index.html",
+    "active": true
+  },
+  {
+    "id": "tattoo3",
+    "name": "tattoo3",
+    "path": "/sites/tattoo3/index.html",
+    "active": true
   }
 ]
