@@ -1,6 +1,6 @@
 ﻿import './style.css';
 
-document.title = 'Hproweb | Création de sites internet professionnels';
+document.title = 'Hproweb | Visibilite totale : site, carte et prospectus';
 
 const app = mustElement<HTMLDivElement>('#app');
 app.innerHTML = `
@@ -11,10 +11,11 @@ app.innerHTML = `
     <header class="pro-header reveal">
       <div class="brand">
         <img class="brand-logo" src="/hplogo.png?v=20260419m1" alt="HP logo" />
-        <span>Création de sites internet</span>
+        <span>Visibilite totale</span>
       </div>
       <nav>
         <a href="#apropos">Accueil</a>
+        <a href="#comparatif">Comparer les prix</a>
         <a href="#offres">Offres</a>
         <a href="#process">Méthode</a>
       </nav>
@@ -35,18 +36,16 @@ app.innerHTML = `
           style="--hero-bg: url('/coiffure1/photoia.png?v=20260419m6');"
         >
           <div class="hero-overlay">
-            <p class="hero-kicker">Prestataire web</p>
-            <h1>Des sites internet qui convertissent vos visiteurs en clients.</h1>
-            <p class="hero-lead">
-              Un accompagnement complet pour lancer un site professionnel, rapide et orienté résultats.
-            </p>
+            <p class="hero-kicker">Offre signature 3-en-1</p>
+            <h1>Site web, carte de visite, prospectus : votre activite devient impossible a ignorer.</h1>
+            <p class="hero-lead">Une visibilite totale pour attirer plus haut, plus large, a moindre cout.</p>
             <ul class="hero-list">
-              <li>Message clair et design professionnel</li>
-              <li>Site rapide, responsive et simple à gérer</li>
-              <li>Mise en ligne accompagnée de A à Z</li>
+              <li>Une image coherente partout</li>
+              <li>Trois supports, une seule strategie</li>
+              <li>Un accompagnement simple et rapide</li>
             </ul>
             <div class="hero-actions">
-              <a class="btn solid" href="#offres">Découvrir nos offres</a>
+              <a class="btn solid" href="#offres">Decouvrir l'offre signature</a>
             </div>
           </div>
         </article>
@@ -57,13 +56,19 @@ app.innerHTML = `
           style="--hero-bg: url('/coiffure1/appel.png?v=20260419m6');"
         >
           <div class="hero-overlay">
-            <p class="hero-kicker">Accompagnement humain</p>
-            <h1>Un échange rapide pour cadrer votre projet sereinement.</h1>
+            <p class="hero-kicker">Montee en gamme</p>
+            <h1>Une meilleure image attire des prospects plus qualifies et plus confiants.</h1>
             <p class="hero-lead">
-              Vous gagnez du temps avec un interlocuteur dédié et des réponses concrètes dès le premier contact.
+              Quand votre presence est nette partout, vous paraissez plus solide, plus memorisable et plus facile a
+              recommander.
             </p>
+            <ul class="hero-list">
+              <li>Vous inspirez plus de confiance des le premier regard</li>
+              <li>Vous attirez une clientele plus serieuse et plus engagee</li>
+              <li>Votre image donne plus de poids a votre activite</li>
+            </ul>
             <div class="hero-actions">
-              <a class="btn solid" href="/contact.html">Être rappelé</a>
+              <a class="btn solid" href="/contact.html">Nous contacter</a>
             </div>
           </div>
         </article>
@@ -73,31 +78,161 @@ app.innerHTML = `
     <section class="stats reveal" aria-label="Indicateurs de service">
       <div class="stats-marquee-wrap">
         <div class="stats-marquee">
-          <span><em>100%</em> Sites adaptés mobile et PC</span>
-          <span><em>24h</em> Pour une première maquette</span>
-          <span><em>500</em> Clients accompagnés</span>
-          <span><em>24</em> Heures sur 24 en ligne</span>
-          <span><em>100%</em> Sites adaptés mobile et PC</span>
-          <span><em>24h</em> Pour une première maquette</span>
-          <span><em>500</em> Clients accompagnés</span>
-          <span><em>24</em> Heures sur 24 en ligne</span>
+          <span><em>3</em> Supports dans une seule offre</span>
+          <span><em>1</em> Image coherente sur tous vos points de contact</span>
+          <span><em>24/7</em> Visibilite qui continue de travailler</span>
+          <span><em>0</em> Agence lourde a financer</span>
+          <span><em>3</em> Supports dans une seule offre</span>
+          <span><em>1</em> Image coherente sur tous vos points de contact</span>
+          <span><em>24/7</em> Visibilite qui continue de travailler</span>
+          <span><em>0</em> Agence lourde a financer</span>
         </div>
       </div>
+    </section>
+
+    <section class="visibility-pack reveal" aria-label="Presentation du pack 3-en-1">
+      <div class="head">
+        <p>Pour une visibilite au max</p>
+        <h2>Trois supports relies pour donner plus de poids a votre <span class="glow-copy">image</span>.</h2>
+      </div>
+      <p class="pack-lead">Visible en ligne, <span class="glow-copy">marquant</span> en rendez-vous, present sur le terrain.</p>
+      <div class="pack-grid">
+        <article class="offer-card pack-card">
+          <figure class="offer-visual offer-visual-site">
+            <img src="/pack/pclogofinal.png" alt="Mockup du site internet Hproweb sur ordinateur portable" />
+          </figure>
+          <p class="pack-card-tag">Confiance en ligne</p>
+          <h3>Site web</h3>
+          <p class="offer-summary">Votre base de <span class="pack-card-accent">confiance</span> pour attirer plus serieux.</p>
+          <div class="pack-card-band">
+            <span>Impact</span>
+            <strong>Visible 24h/24</strong>
+          </div>
+          <ul class="offer-list">
+            <li>Visible 24h/24</li>
+            <li>Credibilite immediate</li>
+          </ul>
+        </article>
+        <article class="offer-card offer-card-featured pack-card">
+          <figure class="offer-visual offer-visual-cardshot">
+            <img src="/pack/cartevi.png" alt="Carte de visite Hproweb sur fond clair" />
+          </figure>
+          <p class="pack-card-tag">Premier contact</p>
+          <h3>Carte de visite</h3>
+          <p class="offer-summary">Le support qui vous laisse <span class="pack-card-accent">en tete</span> apres l'echange.</p>
+          <div class="pack-card-band">
+            <span>Effet</span>
+            <strong>Image plus pro</strong>
+          </div>
+          <ul class="offer-list">
+            <li>Image plus pro</li>
+            <li>Souvenir plus fort</li>
+          </ul>
+        </article>
+        <article class="offer-card pack-card">
+          <figure class="offer-visual offer-visual-prospectus">
+            <img src="/pack/prospectus.png" alt="Prospectus Hproweb sur fond clair" />
+          </figure>
+          <p class="pack-card-tag">Presence terrain</p>
+          <h3>Prospectus</h3>
+          <p class="offer-summary">Votre rappel <span class="pack-card-accent">visuel</span> pour exister meme hors rendez-vous.</p>
+          <div class="pack-card-band">
+            <span>Portee</span>
+            <strong>Diffusion locale</strong>
+          </div>
+          <ul class="offer-list">
+            <li>Diffusion locale</li>
+            <li>Plus de rappels visuels</li>
+          </ul>
+        </article>
+        <span class="pack-link pack-link-1" aria-hidden="true">∞</span>
+        <span class="pack-link pack-link-2" aria-hidden="true">∞</span>
+      </div>
+      <p class="offers-footer">Trois piliers. Une seule strategie. Une visibilite totale a moindre cout.</p>
     </section>
 
     <section class="offres reveal" id="offres">
       <div class="head">
         <p>Offres</p>
-        <h2>Trois niveaux, une qualité premium à chaque étape.</h2>
+        <h2>Trois niveaux, une qualite premium a chaque etape.</h2>
       </div>
-      <aside class="market-claim" aria-label="Comparatif du marché">
-        <p class="market-claim-kicker">Comparatif du marché</p>
-        <h3>Le bon choix pour votre site web</h3>
+      <div class="grid offers-main-grid">
+        <article class="offer-card">
+          <p class="offer-tier">Starter</p>
+          <p class="offer-badge">Pour une visibilite au max</p>
+          <h3>Site Essentiel</h3>
+          <p class="offer-summary">Un site elegant, rapide et pret a convertir, renforce par votre carte et votre prospectus.</p>
+          <div class="offer-pricing">
+            <p><span>Creation</span><strong><em class="offer-discount">-35%</em> 119.99 EUR</strong></p>
+            <p><span>Entretien</span><strong>30 EUR tous les 6 mois</strong></p>
+          </div>
+          <ul class="offer-list">
+            <li>Site vitrine de qualite professionnelle</li>
+            <li>Carte de visite incluse</li>
+            <li>Prospectus inclus</li>
+            <li>Mise en ligne rapide et accompagnee</li>
+          </ul>
+          <div class="offer-includes">
+            <span>Site web</span>
+            <span>Carte</span>
+            <span>Prospectus</span>
+          </div>
+          <a class="offer-link" href="/devis.html?offer=essentiel">Choisir Essentiel</a>
+        </article>
+        <article class="offer-card offer-card-featured">
+          <p class="offer-tier">Business</p>
+          <p class="offer-badge">Pour une visibilite au max</p>
+          <h3>Site Pro Gestion</h3>
+          <p class="offer-summary">Un site complet avec espace d'administration, paiement integre et vos trois supports alignes.</p>
+          <div class="offer-pricing">
+            <p><span>Creation</span><strong><em class="offer-discount">-35%</em> 239,99 EUR</strong></p>
+            <p><span>Admin en plus</span><strong>+20 EUR par compte</strong></p>
+            <p><span>Entretien</span><strong>60 EUR tous les 6 mois</strong></p>
+          </div>
+          <ul class="offer-list">
+            <li>Onglet de connexion pour compte admin</li>
+            <li>Paiement integre sur le site</li>
+            <li>Carte de visite incluse</li>
+            <li>Prospectus inclus</li>
+          </ul>
+          <div class="offer-includes">
+            <span>Site web</span>
+            <span>Carte</span>
+            <span>Prospectus</span>
+          </div>
+          <a class="offer-link" href="/devis.html?offer=pro">Choisir Pro</a>
+        </article>
+        <article class="offer-card">
+          <p class="offer-tier">Premium</p>
+          <p class="offer-badge">Pour une visibilite au max</p>
+          <h3>Site Grand Format</h3>
+          <p class="offer-summary">La solution complete pour un site de niveau professionnel avec une presence commerciale pleine.</p>
+          <div class="offer-pricing">
+            <p><span>Creation</span><strong><em class="offer-discount">-35%</em> 549.99 EUR</strong></p>
+            <p><span>Entretien</span><strong>120 EUR tous les 6 mois</strong></p>
+          </div>
+          <ul class="offer-list">
+            <li>Comptes admin illimites</li>
+            <li>Comptes clients illimites</li>
+            <li>Paiement complet integre + entretien inclus</li>
+            <li>Carte de visite et prospectus inclus</li>
+          </ul>
+          <div class="offer-includes">
+            <span>Site web</span>
+            <span>Carte</span>
+            <span>Prospectus</span>
+          </div>
+          <a class="offer-link" href="/devis.html?offer=grand-format">Choisir Grand Format</a>
+        </article>
+      </div>
+      <aside class="market-claim" id="comparatif" aria-label="Comparatif du marche">
+        <p class="market-claim-kicker">Comparatif du marche</p>
+        <h3>Le bon choix pour votre site et votre visibilite complete</h3>
         <div class="market-table-wrap">
           <table class="market-table">
             <thead>
               <tr>
-                <th scope="col">Critère</th>
+                <th scope="col">Critere</th>
                 <th scope="col">Hproweb (Nous)</th>
                 <th scope="col">Achat classique (Agence)</th>
                 <th scope="col">Abonnement (Wix / Shopify)</th>
@@ -107,20 +242,38 @@ app.innerHTML = `
               <tr>
                 <th scope="row">Paiement</th>
                 <td>
-                  <strong>119.99 EUR</strong>
-                  <span class="market-note yes"><span class="market-mark yes" aria-hidden="true">OK</span> Puis 30 EUR tous les 6 mois.</span>
+                  <strong>Des 119.99 EUR</strong>
+                  <span class="market-note yes"><span class="market-mark yes" aria-hidden="true">OK</span> Puis entretien leger tous les 6 mois.</span>
                 </td>
                 <td>
-                  <strong>1500 à plus de 10 000 EUR</strong>
-                  <span class="market-note no"><span class="market-mark no" aria-hidden="true">X</span> Paiement unique élevé.</span>
+                  <strong>1500 a plus de 10 000 EUR</strong>
+                  <span class="market-note no"><span class="market-mark no" aria-hidden="true">X</span> Paiement unique eleve.</span>
                 </td>
                 <td>
-                  <strong>10 à 500 EUR / mois</strong>
-                  <span class="market-note no"><span class="market-mark no" aria-hidden="true">X</span> Revient cher à l'année.</span>
+                  <strong>10 a 500 EUR / mois</strong>
+                  <span class="market-note no"><span class="market-mark no" aria-hidden="true">X</span> Revient cher a l'annee.</span>
                 </td>
               </tr>
               <tr>
-                <th scope="row">Propriété du site</th>
+                <th scope="row">Site web</th>
+                <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">OK</span> Oui</span></td>
+                <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">OK</span> Oui</span></td>
+                <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">OK</span> Oui</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Carte de visite</th>
+                <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">OK</span> Incluse</span></td>
+                <td><span class="market-state warn"><span class="market-mark warn" aria-hidden="true">!</span> Souvent en option</span></td>
+                <td><span class="market-state no"><span class="market-mark no" aria-hidden="true">X</span> Non</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Prospectus</th>
+                <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">OK</span> Inclus</span></td>
+                <td><span class="market-state warn"><span class="market-mark warn" aria-hidden="true">!</span> Souvent en option</span></td>
+                <td><span class="market-state no"><span class="market-mark no" aria-hidden="true">X</span> Non</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Propriete du site</th>
                 <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">OK</span> Oui</span></td>
                 <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">OK</span> Oui</span></td>
                 <td><span class="market-state no"><span class="market-mark no" aria-hidden="true">X</span> Non</span></td>
@@ -129,7 +282,13 @@ app.innerHTML = `
                 <th scope="row">Personnalisation</th>
                 <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">OK</span> Sur-mesure</span></td>
                 <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">OK</span> Sur-mesure</span></td>
-                <td><span class="market-state no"><span class="market-mark no" aria-hidden="true">X</span> Limitée</span></td>
+                <td><span class="market-state no"><span class="market-mark no" aria-hidden="true">X</span> Limitee</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Cohesion visuelle</th>
+                <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">OK</span> Une seule direction</span></td>
+                <td><span class="market-state warn"><span class="market-mark warn" aria-hidden="true">!</span> Selon budget</span></td>
+                <td><span class="market-state no"><span class="market-mark no" aria-hidden="true">X</span> Fragmentee</span></td>
               </tr>
               <tr>
                 <th scope="row">Accompagnement</th>
@@ -138,7 +297,7 @@ app.innerHTML = `
                 <td><span class="market-state no"><span class="market-mark no" aria-hidden="true">X</span> Faible</span></td>
               </tr>
               <tr>
-                <th scope="row">Coût maîtrisé à l'année</th>
+                <th scope="row">Cout maitrise a l'annee</th>
                 <td><span class="market-state yes"><span class="market-mark yes" aria-hidden="true">OK</span> Oui</span></td>
                 <td><span class="market-state no"><span class="market-mark no" aria-hidden="true">X</span> Non</span></td>
                 <td><span class="market-state no"><span class="market-mark no" aria-hidden="true">X</span> Non</span></td>
@@ -149,68 +308,20 @@ app.innerHTML = `
         <button class="market-table-scroll-btn" type="button" aria-label="Voir la suite du tableau">
           <span aria-hidden="true">→</span>
         </button>
-        <p class="market-claim-highlight">Prix clair, image pro et vrai suivi dans la durée.</p>
+        <p class="market-claim-highlight">Prix clair, image pro, site + carte + prospectus dans la meme logique.</p>
       </aside>
-      <div class="grid">
-        <article class="offer-card">
-          <p class="offer-tier">Starter</p>
-          <h3>Site Essentiel</h3>
-          <p class="offer-summary">Un site élégant, rapide et prêt à convertir les visiteurs en clients.</p>
-          <div class="offer-pricing">
-            <p><span>Création</span><strong><em class="offer-discount">-35%</em> 119.99 EUR</strong></p>
-            <p><span>Entretien</span><strong>30 EUR tous les 6 mois</strong></p>
-          </div>
-          <ul class="offer-list">
-            <li>Site vitrine de qualité professionnelle</li>
-            <li>Réservation client intégrée au site</li>
-            <li>Mise en ligne rapide et accompagnée</li>
-          </ul>
-          <a class="offer-link" href="/devis.html?offer=essentiel">Choisir Essentiel</a>
-        </article>
-        <article class="offer-card offer-card-featured">
-          <p class="offer-tier">Business</p>
-          <h3>Site Pro Gestion</h3>
-          <p class="offer-summary">Un site complet avec espace d'administration et paiement intégré.</p>
-          <div class="offer-pricing">
-            <p><span>Création</span><strong><em class="offer-discount">-35%</em> 239,99 EUR</strong></p>
-            <p><span>Admin en plus</span><strong>+20 EUR par compte</strong></p>
-            <p><span>Entretien</span><strong>60 EUR tous les 6 mois</strong></p>
-          </div>
-          <ul class="offer-list">
-            <li>Onglet de connexion pour compte admin</li>
-            <li>Paiement intégré sur le site</li>
-            <li>1 compte admin inclus + extension à la demande</li>
-          </ul>
-          <a class="offer-link" href="/devis.html?offer=pro">Choisir Pro</a>
-        </article>
-        <article class="offer-card">
-          <p class="offer-tier">Premium</p>
-          <h3>Site Grand Format</h3>
-          <p class="offer-summary">La solution complète pour un site de niveau professionnel.</p>
-          <div class="offer-pricing">
-            <p><span>Création</span><strong><em class="offer-discount">-35%</em> 549.99 EUR</strong></p>
-            <p><span>Entretien</span><strong>120 EUR tous les 6 mois</strong></p>
-          </div>
-          <ul class="offer-list">
-            <li>Comptes admin illimités</li>
-            <li>Comptes clients illimités</li>
-            <li>Paiement complet intégré + entretien inclus</li>
-          </ul>
-          <a class="offer-link" href="/devis.html?offer=grand-format">Choisir Grand Format</a>
-        </article>
-      </div>
     </section>
 
     <section class="process reveal" id="process">
       <div class="head">
-        <p>Méthode</p>
-        <h2>Un processus simple, rapide et transparent.</h2>
+        <p>Methode</p>
+        <h2>Un lancement simple pour mettre vos trois supports dans la meme direction.</h2>
       </div>
       <ol>
-        <li><strong>Diagnostic projet</strong><span>Objectifs, cible, offre et priorités.</span></li>
-        <li><strong>Maquette</strong><span>Structure, design et parcours client validés ensemble.</span></li>
-        <li><strong>Production</strong><span>Développement sur mesure mobile/tablette/ordinateur.</span></li>
-        <li><strong>Mise en ligne</strong><span>Tests finaux, production et accompagnement.</span></li>
+        <li><strong>Diagnostic visibilite</strong><span>Positionnement, clientele visee et angle commercial.</span></li>
+        <li><strong>Direction creative</strong><span>Message, style et coherence entre les trois supports.</span></li>
+        <li><strong>Production 3-en-1</strong><span>Creation du site, de la carte et du prospectus dans la meme logique.</span></li>
+        <li><strong>Livraison prete a diffuser</strong><span>Tout est aligne pour etre montre, partage et utilise rapidement.</span></li>
       </ol>
     </section>
 
@@ -223,11 +334,11 @@ app.innerHTML = `
 
     <section class="contact reveal" id="contact">
       <div>
-        <p>Parlons de ton futur site</p>
-        <h2>Réservez votre démo maintenant</h2>
+        <p>Parlons de votre visibilite totale</p>
+        <h2>Reserve ton echange pour lancer un pack qui attire plus haut.</h2>
       </div>
       <div class="contact-actions">
-        <a class="btn solid" href="/contact.html">Remplir la fiche de contact</a>
+        <a class="btn solid" href="/contact.html">Lancer mon pack 3-en-1</a>
         <a class="btn ghost" href="mailto:contact@hproweb.fr">contact@hproweb.fr</a>
       </div>
     </section>
