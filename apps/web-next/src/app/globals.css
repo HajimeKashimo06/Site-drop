@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+:root {
+  --surface-base: #eef4fb;
+  --surface-soft: rgba(255, 255, 255, 0.74);
+  --surface-card: rgba(255, 255, 255, 0.82);
+  --surface-strong: #102742;
+  --ink-strong: #13253d;
+  --ink-soft: #5b6d82;
+  --line-soft: rgba(124, 151, 182, 0.24);
+  --line-strong: rgba(87, 124, 164, 0.36);
+  --brand: #173a62;
+  --brand-soft: #27527f;
+  --accent: #6ab0ff;
+  --accent-mint: #76d4a1;
+  --accent-warm: #ffc788;
+}
+
+@theme inline {
+  --color-background: var(--surface-base);
+  --color-foreground: var(--ink-strong);
+  --font-sans: var(--font-manrope);
+  --font-display: var(--font-sora);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(920px 420px at -12% 12%, rgba(40, 88, 145, 0.18), rgba(40, 88, 145, 0) 72%),
+    radial-gradient(840px 420px at 108% 18%, rgba(118, 212, 161, 0.18), rgba(118, 212, 161, 0) 72%),
+    radial-gradient(760px 360px at 82% 78%, rgba(255, 199, 136, 0.18), rgba(255, 199, 136, 0) 70%),
+    linear-gradient(180deg, #f6faff 0%, #edf4fb 52%, #e3edf8 100%);
+  color: var(--ink-strong);
+  font-family: var(--font-manrope), sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+::selection {
+  background: rgba(106, 176, 255, 0.26);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.glass-panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(246, 250, 255, 0.72));
+  border: 1px solid var(--line-soft);
+  box-shadow:
+    0 16px 38px rgba(19, 37, 61, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(40px);
+  opacity: 0.7;
+}
+
+.hero-orb-a {
+  inset: 4% auto auto -6%;
+  width: 15rem;
+  height: 15rem;
+  background: rgba(106, 176, 255, 0.24);
+}
+
+.hero-orb-b {
+  inset: auto -2% 12% auto;
+  width: 11rem;
+  height: 11rem;
+  background: rgba(118, 212, 161, 0.18);
+}

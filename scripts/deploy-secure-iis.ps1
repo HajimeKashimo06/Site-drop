@@ -5,6 +5,7 @@ param(
   [string]$HostName = 'hproweb.fr',
   [string]$AppPool = 'hproweb.fr',
   [int]$ApiPort = 8787,
+  [int]$NextPort = 3000,
   [switch]$UseHttps
 )
 
@@ -29,7 +30,8 @@ function Ensure-Admin {
     '-SiteName', "`"$SiteName`"",
     '-HostName', "`"$HostName`"",
     '-AppPool', "`"$AppPool`"",
-    '-ApiPort', "$ApiPort"
+    '-ApiPort', "$ApiPort",
+    '-NextPort', "$NextPort"
   )
   if ($UseHttps) {
     $args += '-UseHttps'
@@ -157,9 +159,50 @@ function Ensure-MsiInstalled {
   }
 }
 
+function Write-CmdLauncher {
+  param(
+    [string]$Path,
+    [string[]]$Lines
+  )
+
+  $parent = Split-Path -Path $Path -Parent
+  New-Item -Path $parent -ItemType Directory -Force | Out-Null
+  Set-Content -LiteralPath $Path -Value $Lines -Encoding ascii
+}
+
+function Stop-ListeningProcess {
+  param(
+    [int]$Port
+  )
+
+  $connection = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
+  if (-not $connection) {
+    return
+  }
+
+  try {
+    Stop-Process -Id $connection.OwningProcess -Force -ErrorAction Stop
+    Start-Sleep -Seconds 1
+  } catch {
+  }
+}
+
+function Register-StartupTaskCmd {
+  param(
+    [string]$TaskName,
+    [string]$LauncherPath
+  )
+
+  cmd /c "schtasks /Delete /TN $TaskName /F" | Out-Null
+  cmd /c "schtasks /Create /TN $TaskName /SC ONSTART /RU SYSTEM /RL HIGHEST /TR `"cmd.exe /c $LauncherPath`" /F" | Out-Null
+}
+
 Ensure-Admin
 
-$webRoot = Join-Path $ProjectRoot 'apps\web'
+$webRoot = Join-Path $ProjectRoot 'apps\web-next'
+$webStandaloneRoot = Join-Path $webRoot '.next\standalone'
+$webStaticRoot = Join-Path $webRoot '.next\static'
+$webPublicRoot = Join-Path $webRoot 'public'
 $apiRoot = Join-Path $ProjectRoot 'apps\api'
 $apiEnvPath = Join-Path $apiRoot '.env'
 $apiEnvExamplePath = Join-Path $apiRoot '.env.example'
@@ -175,7 +218,7 @@ Ensure-MsiInstalled -ProductNameLike 'IIS Application Request Routing 3' -Downlo
 Write-Host '1) Build API + Web...'
 Push-Location $ProjectRoot
 npm run build --workspace @sitedrop/api
-npm run build --workspace @sitedrop/web
+npm run build --workspace @sitedrop/web-next
 Pop-Location
 
 Write-Host '2) Prepare API .env...'
@@ -209,7 +252,11 @@ Ensure-EnvKey -FilePath $apiEnvPath -Key 'SMTP_FROM'
 
 Write-Host '3) Publish web files to IIS folder...'
 New-Item -Path $DeployPath -ItemType Directory -Force | Out-Null
-Invoke-RobocopyMirror -Source (Join-Path $webRoot 'dist') -Destination $DeployPath
+Invoke-RobocopyMirror -Source $webStandaloneRoot -Destination $DeployPath
+New-Item -Path (Join-Path $DeployPath 'apps\web-next\.next') -ItemType Directory -Force | Out-Null
+Invoke-RobocopyMirror -Source $webStaticRoot -Destination (Join-Path $DeployPath 'apps\web-next\.next\static')
+Invoke-RobocopyMirror -Source $webPublicRoot -Destination (Join-Path $DeployPath 'apps\web-next\public')
+Copy-Item -LiteralPath (Join-Path $webRoot 'web.config') -Destination (Join-Path $DeployPath 'web.config') -Force
 
 Write-Host '4) Configure IIS site + app pool...'
 Import-Module WebAdministration
@@ -252,20 +299,58 @@ $logDir = Join-Path $apiRoot 'logs'
 $outLog = Join-Path $logDir 'api-out.log'
 $errLog = Join-Path $logDir 'api-err.log'
 New-Item -Path $logDir -ItemType Directory -Force | Out-Null
+$apiLauncherPath = Join-Path $DeployPath 'start-api.cmd'
 
-$apiCommand = "/c cd /d `"$apiRoot`" && `"$nodeExe`" `"$apiDistEntry`" 1>>`"$outLog`" 2>>`"$errLog`""
-$action = New-ScheduledTaskAction -Execute 'cmd.exe' -Argument $apiCommand
-$trigger = New-ScheduledTaskTrigger -AtStartup
-$principal = New-ScheduledTaskPrincipal -UserId 'SYSTEM' -RunLevel Highest -LogonType ServiceAccount
+Write-CmdLauncher -Path $apiLauncherPath -Lines @(
+  '@echo off',
+  "cd /d `"$apiRoot`"",
+  "`"$nodeExe`" `"$apiDistEntry`" 1>>`"$outLog`" 2>>`"$errLog`""
+)
+Register-StartupTaskCmd -TaskName $taskName -LauncherPath $apiLauncherPath
 
-if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
-  Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
+Write-Host '6) Install/start Next.js scheduled task...'
+$nextTaskName = 'SiteDropWebNext'
+$nextLogDir = Join-Path $DeployPath 'logs'
+$nextOutLog = Join-Path $nextLogDir 'web-out.log'
+$nextErrLog = Join-Path $nextLogDir 'web-err.log'
+New-Item -Path $nextLogDir -ItemType Directory -Force | Out-Null
+$nextLauncherPath = Join-Path $DeployPath 'start-web-next.cmd'
+
+$nextEntry = Join-Path $DeployPath 'apps\web-next\server.js'
+Write-CmdLauncher -Path $nextLauncherPath -Lines @(
+  '@echo off',
+  "cd /d `"$DeployPath\apps\web-next`"",
+  "set PORT=$NextPort",
+  'set HOSTNAME=127.0.0.1',
+  "`"$nodeExe`" `"$nextEntry`" 1>>`"$nextOutLog`" 2>>`"$nextErrLog`""
+)
+Register-StartupTaskCmd -TaskName $nextTaskName -LauncherPath $nextLauncherPath
+
+Stop-ListeningProcess -Port $ApiPort
+Stop-ListeningProcess -Port $NextPort
+Start-Process -FilePath 'cmd.exe' -WindowStyle Hidden -ArgumentList "/c $apiLauncherPath"
+Start-Process -FilePath 'cmd.exe' -WindowStyle Hidden -ArgumentList "/c $nextLauncherPath"
+
+Write-Host '7) Check Next.js health...'
+$frontendHealthUrl = "http://127.0.0.1:$NextPort/"
+$frontendHealthy = $false
+for ($i = 0; $i -lt 15; $i += 1) {
+  Start-Sleep -Seconds 1
+  try {
+    $response = Invoke-WebRequest -Uri $frontendHealthUrl -UseBasicParsing -TimeoutSec 3
+    if ($response.StatusCode -ge 200 -and $response.StatusCode -lt 500) {
+      $frontendHealthy = $true
+      break
+    }
+  } catch {
+  }
 }
 
-Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Principal $principal -Description 'Site Drop API startup task' | Out-Null
-Start-ScheduledTask -TaskName $taskName
+if (-not $frontendHealthy) {
+  Write-Warning "Frontend Next.js non joignable sur $frontendHealthUrl. Verifie logs: $nextOutLog et $nextErrLog"
+}
 
-Write-Host '6) Check API health...'
+Write-Host '8) Check API health...'
 $healthUrl = "http://127.0.0.1:$ApiPort/api/health"
 $isHealthy = $false
 for ($i = 0; $i -lt 12; $i += 1) {
@@ -287,5 +372,5 @@ if (-not $isHealthy) {
 Write-Host ''
 Write-Host 'Deploiement termine.'
 Write-Host "Site: $appUrl"
-Write-Host "Login page: $appUrl/demo-site.html"
+Write-Host "Login page: $appUrl/demo-site"
 Write-Host "API health: $healthUrl"

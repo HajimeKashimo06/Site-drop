@@ -2,109 +2,109 @@
   {
     "id": "page-test",
     "name": "Site test barber",
-    "path": "/page-test.html",
+    "path": "/sites/page-test",
     "active": true
   },
   {
     "id": "testcoiffure1",
     "name": "testcoiffure1",
-    "path": "/sites/testcoiffure1/index.html",
+    "path": "/sites/testcoiffure1",
     "active": true
   },
   {
     "id": "betacoiffure2",
     "name": "betacoiffure2",
-    "path": "/sites/betacoiffure2/index.html",
+    "path": "/sites/betacoiffure2",
     "active": true
   },
   {
     "id": "betaimagi",
     "name": "betaimagi",
-    "path": "/sites/betaimagi/index.html",
+    "path": "/sites/betaimagi",
     "active": true
   },
   {
     "id": "moderne",
     "name": "moderne",
-    "path": "/sites/moderne/index.html",
+    "path": "/sites/moderne",
     "active": true
   },
   {
     "id": "modernef",
     "name": "modernef",
-    "path": "/sites/modernef/index.html",
+    "path": "/sites/modernef",
     "active": true
   },
   {
     "id": "modernemix",
     "name": "modernemix",
-    "path": "/sites/modernemix/index.html",
+    "path": "/sites/modernemix",
     "active": true
   },
   {
     "id": "avocattest",
     "name": "avocattest",
-    "path": "/sites/avocattest/index.html",
+    "path": "/sites/avocattest",
     "active": true
   },
   {
     "id": "avocattest2",
     "name": "avocattest2",
-    "path": "/sites/avocattest2/index.html",
+    "path": "/sites/avocattest2",
     "active": true
   },
   {
     "id": "avocattest3",
     "name": "avocattest3",
-    "path": "/sites/avocattest3/index.html",
+    "path": "/sites/avocattest3",
     "active": true
   },
   {
     "id": "avocattest4",
     "name": "avocattest4",
-    "path": "/sites/avocattest4/index.html",
+    "path": "/sites/avocattest4",
     "active": true
   },
   {
     "id": "avocattest5",
     "name": "avocattest5",
-    "path": "/sites/avocattest5/index.html",
+    "path": "/sites/avocattest5",
     "active": true
   },
   {
     "id": "avocattest6",
     "name": "avocattest6",
-    "path": "/sites/avocattest6/index.html",
+    "path": "/sites/avocattest6",
     "active": true
   },
   {
     "id": "avocattest7",
     "name": "avocattest7",
-    "path": "/sites/avocattest7/index.html",
+    "path": "/sites/avocattest7",
     "active": true
   },
   {
     "id": "avocattest8",
     "name": "avocattest8",
-    "path": "/sites/avocattest8/index.html",
+    "path": "/sites/avocattest8",
     "active": true
   },
   {
     "id": "tattoo1",
     "name": "tattoo1",
-    "path": "/sites/tattoo1/index.html",
+    "path": "/sites/tattoo1",
     "active": true
   },
   {
     "id": "tattoo2",
     "name": "tattoo2",
-    "path": "/sites/tattoo2/index.html",
+    "path": "/sites/tattoo2",
     "active": true
   },
   {
     "id": "tattoo3",
     "name": "tattoo3",
-    "path": "/sites/tattoo3/index.html",
+    "path": "/sites/tattoo3",
     "active": true
   }
 ]

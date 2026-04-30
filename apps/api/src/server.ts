@@ -20,7 +20,7 @@ const workspaceRoot = resolve(moduleDir, '../../..');
 const demoSitesDataPath = resolve(moduleDir, '../data/demo-sites.json');
 const siteTrafficDataPath = resolve(moduleDir, '../data/site-traffic.json');
 const siteSettingsDataPath = resolve(moduleDir, '../data/site-settings.json');
-const webPublicSitesRoot = resolve(workspaceRoot, 'apps/web/public/sites');
+const webPublicSitesRoot = resolve(workspaceRoot, 'apps/web-next/public/sites');
 
 type UserRole = 'admin' | 'client';
 
@@ -111,7 +111,7 @@ const defaultDemoSites: DemoSite[] = [
   {
     id: 'page-test',
     name: 'Site test barber',
-    path: '/page-test.html',
+    path: '/sites/page-test',
     active: true
   }
 ];
@@ -127,7 +127,7 @@ const fallbackSite: DemoSite = getFallbackSite() ??
   defaultDemoSites[0] ?? {
     id: 'page-test',
     name: 'Site test barber',
-    path: '/page-test.html',
+    path: '/sites/page-test',
     active: true
   };
 
@@ -260,7 +260,7 @@ app.post('/api/auth/admin-login', async (req, res) => {
   res.json({
     ok: true,
     role: 'admin',
-    redirectPath: '/admin.html'
+    redirectPath: '/admin'
   });
 });
 
@@ -308,7 +308,7 @@ app.get('/api/auth/session', async (req, res) => {
     authenticated: true,
     username: user.username,
     role,
-    redirectPath: role === 'admin' ? '/admin.html' : redirectSite?.path ?? null,
+    redirectPath: role === 'admin' ? '/admin' : redirectSite?.path ?? null,
     sites: toPublicDemoSites(resolveAccessibleSites(user))
   });
 });
@@ -418,7 +418,7 @@ app.post('/api/admin/demo-sites', async (req, res) => {
   const name = normalizeDemoSiteName(body?.name);
   const requestedSiteId = normalizeSiteIdInput(body?.siteId);
   const siteId = requestedSiteId || slugifySiteId(name);
-  const path = `/sites/${siteId}/index.html`;
+  const path = buildDemoSitePath(siteId);
 
   if (!name) {
     res.status(400).json({ ok: false, error: 'Nom du site invalide (2 a 80 caracteres).' });
@@ -446,7 +446,7 @@ app.post('/api/admin/demo-sites', async (req, res) => {
   const siteFolderPath = toWorkspaceRelativePath(siteFolder);
 
   try {
-    await createDemoSiteStarter(newSite);
+    await createDemoSiteAssetsFolder(newSite);
     demoSites = [...demoSites, newSite];
     persistDemoSites(demoSites);
     res.json({
@@ -1341,7 +1341,7 @@ function toOrigin(urlLike: string): string {
 }
 
 function buildAllowedOrigins(baseOrigin: string): Set<string> {
-  const allowed = new Set<string>(['http://localhost:5173']);
+  const allowed = new Set<string>(['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5180']);
   if (baseOrigin) {
     allowed.add(baseOrigin);
     try {
@@ -1464,9 +1464,14 @@ function findDemoSiteById(siteId: string): DemoSite | null {
   return getActiveDemoSites().find((site) => site.id === normalized) ?? null;
 }
 
+function buildDemoSitePath(siteId: string): string {
+  return `/sites/${siteId}`;
+}
+
 function loadDemoSites(): DemoSite[] {
   const fromFile = loadDemoSitesFromFile();
   if (fromFile.length > 0) {
+    persistDemoSites(fromFile);
     return fromFile;
   }
 
@@ -1627,11 +1632,10 @@ function normalizeDemoSites(input: unknown): DemoSite[] {
     const candidate = item as { id?: unknown; name?: unknown; path?: unknown; active?: unknown };
     const id = slugifySiteId(typeof candidate.id === 'string' ? candidate.id : '');
     const name = normalizeDemoSiteName(candidate.name);
-    const pathRaw = typeof candidate.path === 'string' ? candidate.path.trim() : '';
-    const path = pathRaw.startsWith('/') ? pathRaw : '';
+    const path = buildDemoSitePath(id);
     const active = candidate.active === undefined ? true : Boolean(candidate.active);
 
-    if (!id || !name || !path || ids.has(id)) {
+    if (!id || !name || ids.has(id)) {
       continue;
     }
 
@@ -1649,20 +1653,20 @@ function persistDemoSites(sites: DemoSite[]): void {
   writeFileSync(demoSitesDataPath, JSON.stringify(output, null, 2), 'utf8');
 }
 
-async function createDemoSiteStarter(site: DemoSite): Promise<void> {
+async function createDemoSiteAssetsFolder(site: DemoSite): Promise<void> {
   await mkdir(webPublicSitesRoot, { recursive: true });
 
   const siteFolder = resolveSiteFolder(site.id);
-  const htmlPath = join(siteFolder, 'index.html');
+  const readmePath = join(siteFolder, 'README.txt');
   if (existsSync(siteFolder)) {
-    if (!existsSync(htmlPath)) {
-      await writeFile(htmlPath, buildDemoSiteStarterHtml(site), 'utf8');
+    if (!existsSync(readmePath)) {
+      await writeFile(readmePath, buildDemoSiteStarterReadme(site), 'utf8');
     }
     return;
   }
 
   await mkdir(siteFolder, { recursive: false });
-  await writeFile(htmlPath, buildDemoSiteStarterHtml(site), 'utf8');
+  await writeFile(readmePath, buildDemoSiteStarterReadme(site), 'utf8');
 }
 
 async function deleteDemoSiteFolder(siteId: string): Promise<void> {
@@ -1679,103 +1683,17 @@ function resolveSiteFolder(siteId: string): string {
   return siteFolder;
 }
 
-function buildDemoSiteStarterHtml(site: DemoSite): string {
-  const safeName = escapeHtmlText(site.name);
-  const safeSiteId = escapeHtmlText(site.id);
-  return `<!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${safeName}</title>
-    <style>
-      :root {
-        color-scheme: light;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        font-family: "Segoe UI", Arial, sans-serif;
-        color: #12324d;
-        background: linear-gradient(145deg, #eaf2fb, #f9fbff);
-      }
-      main {
-        width: min(760px, calc(100% - 2rem));
-        border-radius: 16px;
-        background: #ffffff;
-        border: 1px solid #d8e4f0;
-        box-shadow: 0 12px 30px rgba(16, 41, 68, 0.12);
-        padding: 1.4rem;
-      }
-      h1 {
-        margin: 0;
-        font-size: 1.7rem;
-      }
-      p {
-        margin: 0.7rem 0 0;
-        line-height: 1.45;
-      }
-      .pill {
-        display: inline-flex;
-        margin-top: 0.9rem;
-        border-radius: 999px;
-        border: 1px solid #bfd2e5;
-        padding: 0.35rem 0.65rem;
-        font-size: 0.82rem;
-        color: #305477;
-      }
-      .cta {
-        display: inline-flex;
-        margin-top: 1.1rem;
-        border-radius: 999px;
-        text-decoration: none;
-        padding: 0.55rem 0.95rem;
-        color: #fff;
-        background: #1b7f43;
-        font-weight: 700;
-      }
-    </style>
-  </head>
-  <body>
-    <main>
-      <h1>${safeName}</h1>
-      <p>Page de demarrage creee depuis l'espace admin.</p>
-      <p>Vous pouvez maintenant personnaliser ce site et y ajouter vos sections.</p>
-      <span class="pill">ID site: ${safeSiteId}</span>
-      <a class="cta" href="/">Retour a l'accueil pro</a>
-    </main>
-    <script>
-      (async () => {
-        try {
-          const response = await fetch('/api/auth/session?site=${safeSiteId}', {
-            method: 'GET',
-            credentials: 'include'
-          });
-          if (!response.ok) {
-            window.location.replace('/demo-site.html');
-          }
-        } catch {
-          window.location.replace('/demo-site.html');
-        }
-      })();
-    </script>
-  </body>
-</html>
-`;
-}
-
-function escapeHtmlText(value: string): string {
-  return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
+function buildDemoSiteStarterReadme(site: DemoSite): string {
+  return [
+    `Site: ${site.name}`,
+    `ID: ${site.id}`,
+    `Route Next: ${site.path}`,
+    '',
+    'Ce dossier sert maintenant aux assets publics de la demo.',
+    "Le rendu du site passe par la route Next dynamique /sites/[siteId].",
+    "Vous pouvez y deposer images, logos ou fichiers medias sans recreer de page HTML legacy.",
+    '',
+  ].join('\n');
 }
 
 function buildVsCodeUri(folderPath: string): string {

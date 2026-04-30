@@ -110,7 +110,7 @@ AUTH_ADMIN_PASSWORD=Hproweb@2026!
 Page admin:
 
 ```text
-https://hproweb.fr/admin.html
+https://hproweb.fr/admin
 ```
 
 ## 8) Emplacement de la config MongoDB

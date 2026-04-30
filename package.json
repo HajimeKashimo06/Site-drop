@@ -6,10 +6,12 @@
     "apps/*"
   ],
   "scripts": {
-    "dev": "concurrently -n web,api -c cyan,magenta \"npm run dev --workspace @sitedrop/web\" \"npm run dev --workspace @sitedrop/api\"",
-    "dev:web": "npm run dev --workspace @sitedrop/web",
+    "dev": "concurrently -n web,api -c cyan,magenta \"npm run dev --workspace @sitedrop/web-next\" \"npm run dev --workspace @sitedrop/api\"",
+    "dev:web": "npm run dev --workspace @sitedrop/web-next",
+    "dev:web-next": "npm run dev --workspace @sitedrop/web-next",
     "dev:api": "npm run dev --workspace @sitedrop/api",
-    "build": "npm run build --workspace @sitedrop/api && npm run build --workspace @sitedrop/web",
+    "build": "npm run build --workspace @sitedrop/api && npm run build --workspace @sitedrop/web-next",
+    "build:web-next": "npm run build --workspace @sitedrop/web-next",
     "start": "npm run start --workspace @sitedrop/api",
     "user:add": "node scripts/add-site-user.mjs",
     "user:list": "node scripts/list-site-users.mjs",
