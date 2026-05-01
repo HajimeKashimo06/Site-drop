@@ -116,11 +116,11 @@ export function SiteGrowthChart() {
             ))}
 
             <motion.g
-              animate={{ x: [0, 0, 6, 0], y: [0, -6, -6, 0], opacity: [0.82, 1, 1, 0.82] }}
+              animate={{ x: [0, 0, 4, 0], y: [0, -4, -4, 0], opacity: [0.84, 1, 1, 0.84] }}
               transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
             >
-              <rect x="314" y="10" width="148" height="38" rx="19" fill="#133a62" />
-              <text x="388" y="34" textAnchor="middle" fontSize="14" fontWeight="700" fill="#fffdf8">
+              <rect x="298" y="18" width="124" height="32" rx="16" fill="#133a62" />
+              <text x="360" y="38" textAnchor="middle" fontSize="12" fontWeight="700" fill="#fffdf8">
                 Croissance continue
               </text>
             </motion.g>

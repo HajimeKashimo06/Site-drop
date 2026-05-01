@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": "restaudemo",
+    "name": "restaudemo",
+    "path": "/sites/restaudemo",
+    "active": true
+  },
+  {
+    "id": "restaudemo2",
+    "name": "restaudemo2",
+    "path": "/sites/restaudemo2",
+    "active": true
+  }
+]

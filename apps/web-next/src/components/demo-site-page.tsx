@@ -4,6 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { RestaurantDemoPage } from "@/components/restaurant-demo-page";
+import { RestaurantDemoSeasidePage } from "@/components/restaurant-demo-seaside-page";
+
 type DemoSiteAsset = {
   fileName: string;
   publicPath: string;
@@ -114,6 +117,14 @@ export function DemoSitePage({
         </div>
       </main>
     );
+  }
+
+  if (site.id === "restaudemo" && !htmlPreviewPath) {
+    return <RestaurantDemoPage site={site} />;
+  }
+
+  if (site.id === "restaudemo2" && !htmlPreviewPath) {
+    return <RestaurantDemoSeasidePage site={site} />;
   }
 
   return (
