@@ -11,34 +11,34 @@ export default function QuiSommesNousPage() {
     <InfoPage
       eyebrow="Notre vision"
       title="Qui sommes-nous ?"
-      subtitle="Une approche humaine, directe et orientee resultats."
+      subtitle="Une approche humaine, directe et orientée résultats."
       sections={[
         {
-          title: "Hproweb, un projet porte par un passionne",
+          title: "Hproweb, un projet porté par un passionné",
           paragraphs: [
-            "Je suis AY, fondateur de Hproweb. Je suis passionne par le web, le design utile et les outils digitaux qui aident concretement les entreprises a mieux se presenter et a convertir leurs visiteurs.",
-            "Mon objectif est simple : livrer des sites clairs, rapides et professionnels, avec un accompagnement reel, sans jargon inutile.",
+            "Je suis AY, fondateur de Hproweb. Je suis passionné par le web, le design utile et les outils digitaux qui aident concrètement les entreprises à mieux se présenter et à convertir leurs visiteurs.",
+            "Mon objectif est simple : livrer des sites clairs, rapides et professionnels, avec un accompagnement réel, sans jargon inutile.",
           ],
         },
         {
-          title: "Notre maniere de travailler",
+          title: "Notre manière de travailler",
           bullets: [
-            "Ecoute : comprendre votre activite, vos priorites et vos objectifs.",
-            "Clarte : proposer une structure lisible et des offres transparentes.",
-            "Qualite : livrer un site propre, responsive et pret a etre exploite.",
-            "Suivi : rester disponible apres mise en ligne pour faire evoluer le projet.",
+            "Écoute : comprendre votre activité, vos priorités et vos objectifs.",
+            "Clarté : proposer une structure lisible et des offres transparentes.",
+            "Qualité : livrer un site propre, responsive et prêt à être exploité.",
+            "Suivi : rester disponible après mise en ligne pour faire évoluer le projet.",
           ],
         },
         {
           title: "Pour qui ?",
           paragraphs: [
-            "Hproweb accompagne les independants, artisans, commercants et petites structures qui veulent un site fiable, une image professionnelle et un interlocuteur unique.",
+            "Hproweb accompagne les indépendants, artisans, commerçants et petites structures qui veulent un site fiable, une image professionnelle et un interlocuteur unique.",
           ],
         },
         {
           title: "Nous contacter",
           paragraphs: [
-            "Vous avez un projet ou une idee a lancer ? Demandez a etre rappele et nous construisons la meilleure version de votre site ensemble.",
+            "Vous avez un projet ou une idée à lancer ? Demandez à être rappelé et nous construisons la meilleure version de votre site ensemble.",
           ],
         },
       ]}

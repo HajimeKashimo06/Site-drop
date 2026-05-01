@@ -26,8 +26,8 @@ export function InfoPage({
       title={title}
       description={subtitle}
       navLinks={[
-        { href: "/#offres", label: "Offres" },
-        { href: "/mentions-legales", label: "Mentions legales" },
+        { href: "/offres", label: "Offres" },
+        { href: "/mentions-legales", label: "Mentions légales" },
         { href: "/cgv", label: "CGV" },
         { href: "/contact", label: "Nous contacter" },
       ]}

@@ -3,18 +3,18 @@ import type { Metadata } from "next";
 import { InfoPage } from "@/components/info-page";
 
 export const metadata: Metadata = {
-  title: "Mentions legales",
+  title: "Mentions légales",
 };
 
 export default function MentionsLegalesPage() {
   return (
     <InfoPage
-      eyebrow="Informations legales"
-      title="Mentions legales du site Hproweb"
-      subtitle="Mise a jour : 17 avril 2026"
+      eyebrow="Informations légales"
+      title="Mentions légales du site Hproweb"
+      subtitle="Mise à jour : 17 avril 2026"
       sections={[
         {
-          title: "Editeur du site",
+          title: "Éditeur du site",
           paragraphs: [
             "Nom commercial : Hproweb",
             "Entrepreneur : AY",
@@ -31,28 +31,28 @@ export default function MentionsLegalesPage() {
         {
           title: "Hebergement",
           paragraphs: [
-            "Hebergeur declare : Hproweb",
-            "Pour toute demande liee a l'hebergement, contactez : contact@hproweb.fr.",
+            "Hébergeur déclaré : Hproweb",
+            "Pour toute demande liée à l'hébergement, contactez : contact@hproweb.fr.",
           ],
         },
         {
-          title: "Propriete intellectuelle",
+          title: "Propriété intellectuelle",
           paragraphs: [
-            "L'ensemble des contenus presents sur ce site (textes, visuels, identite graphique, elements techniques) est protege par le droit d'auteur et le droit de la propriete intellectuelle.",
-            "Toute reproduction, representation, adaptation ou exploitation, totale ou partielle, sans autorisation ecrite prealable, est interdite.",
+            "L'ensemble des contenus présents sur ce site (textes, visuels, identité graphique, éléments techniques) est protégé par le droit d'auteur et le droit de la propriété intellectuelle.",
+            "Toute reproduction, représentation, adaptation ou exploitation, totale ou partielle, sans autorisation écrite préalable, est interdite.",
           ],
         },
         {
-          title: "Donnees personnelles",
+          title: "Données personnelles",
           paragraphs: [
-            "Les donnees collectees via les formulaires (contact, devis, rappel) sont utilisees uniquement pour traiter votre demande commerciale et assurer le suivi de la relation client.",
-            "Vous pouvez demander l'acces, la rectification ou la suppression de vos donnees en ecrivant a contact@hproweb.fr.",
+            "Les données collectées via les formulaires (contact, devis, rappel) sont utilisées uniquement pour traiter votre demande commerciale et assurer le suivi de la relation client.",
+            "Vous pouvez demander l'accès, la rectification ou la suppression de vos données en écrivant à contact@hproweb.fr.",
           ],
         },
         {
-          title: "References legales",
+          title: "Références légales",
           paragraphs: [
-            "Ce document est redige en coherence avec les obligations applicables aux sites professionnels en France, notamment la loi numero 2004-575 du 21 juin 2004 (LCEN).",
+            "Ce document est rédigé en cohérence avec les obligations applicables aux sites professionnels en France, notamment la loi numéro 2004-575 du 21 juin 2004 (LCEN).",
           ],
         },
       ]}

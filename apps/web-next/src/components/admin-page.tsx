@@ -2,30 +2,23 @@
 
 import Link from "next/link";
 import type { FormEvent, ReactNode } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { FadeIn } from "@/components/fade-in";
-import { PublicPageShell } from "@/components/public-page-shell";
-import type { AdminUser, DemoSite, SiteAnalytics, SiteSettings, UserRole } from "@/lib/site";
-
-type CreateSiteResponse = {
-  site?: DemoSite;
-  vscodeUri?: string;
-  siteFolderPath?: string;
-  error?: string;
-};
-
-type DeleteSiteResponse = {
-  removedSite?: DemoSite | null;
-  error?: string;
-};
+import type {
+  AdminUser,
+  DemoSite,
+  SiteAnalytics,
+  SiteSettings,
+  UserRole,
+} from "@/lib/site";
 
 type FeedbackTone = "success" | "error" | "";
 
 const initialUserForm = {
   username: "",
   password: "",
-  role: "client" as UserRole,
+  role: "admin" as UserRole,
   siteId: "",
   active: true,
 };
@@ -40,40 +33,37 @@ export function AdminPage() {
   const [loginFeedback, setLoginFeedback] = useState("");
   const [loginTone, setLoginTone] = useState<FeedbackTone>("");
 
-  const [demoSites, setDemoSites] = useState<DemoSite[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const [demoSites, setDemoSites] = useState<DemoSite[]>([]);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings>({
+    demoSitesPublic: false,
+  });
   const [analyticsSites, setAnalyticsSites] = useState<SiteAnalytics[]>([]);
   const [analyticsTotal, setAnalyticsTotal] = useState(0);
-  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
 
-  const [adminFeedback, setAdminFeedback] = useState("");
-  const [adminTone, setAdminTone] = useState<FeedbackTone>("");
+  const [accountFeedback, setAccountFeedback] = useState("");
+  const [accountTone, setAccountTone] = useState<FeedbackTone>("");
   const [siteFeedback, setSiteFeedback] = useState("");
   const [siteTone, setSiteTone] = useState<FeedbackTone>("");
-  const [analyticsFeedback, setAnalyticsFeedback] = useState("");
-  const [analyticsTone, setAnalyticsTone] = useState<FeedbackTone>("");
   const [settingsFeedback, setSettingsFeedback] = useState("");
   const [settingsTone, setSettingsTone] = useState<FeedbackTone>("");
-
-  const [siteCreateOpen, setSiteCreateOpen] = useState(false);
-  const [siteCreateName, setSiteCreateName] = useState("");
-  const [siteVsCodeLink, setSiteVsCodeLink] = useState("");
+  const [analyticsFeedback, setAnalyticsFeedback] = useState("");
+  const [analyticsTone, setAnalyticsTone] = useState<FeedbackTone>("");
 
   const [userForm, setUserForm] = useState(initialUserForm);
+  const [siteCreateName, setSiteCreateName] = useState("");
+  const [siteCreateId, setSiteCreateId] = useState("");
   const [submittingLogin, setSubmittingLogin] = useState(false);
   const [submittingUser, setSubmittingUser] = useState(false);
   const [submittingSite, setSubmittingSite] = useState(false);
   const [togglingPublicMode, setTogglingPublicMode] = useState(false);
 
-  const roleNeedsSite = userForm.role === "client";
-  const activeSiteCount = useMemo(() => demoSites.length, [demoSites]);
-
   async function refreshAll() {
     await Promise.all([
-      refreshDemoSites(),
       refreshUsers(),
-      refreshAnalytics(),
+      refreshDemoSites(),
       refreshSiteSettings(),
+      refreshAnalytics(),
     ]);
   }
 
@@ -105,36 +95,8 @@ export function AdminPage() {
     return () => {
       cancelled = true;
     };
-    // Intentional one-shot bootstrap on first mount.
-    // Subsequent refreshes are triggered by explicit admin actions.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  async function refreshDemoSites() {
-    const response = await fetch("/api/admin/demo-sites", {
-      method: "GET",
-      credentials: "include",
-    });
-    if (!response.ok) {
-      setDemoSites([]);
-      return;
-    }
-
-    const payload = (await readJson(response)) as { sites?: DemoSite[] } | null;
-    const sites = Array.isArray(payload?.sites) ? payload.sites : [];
-    setDemoSites(sites);
-
-    setUserForm((current) => {
-      if (current.role !== "client") {
-        return current;
-      }
-      const hasSelectedSite = sites.some((site) => site.id === current.siteId);
-      return {
-        ...current,
-        siteId: hasSelectedSite ? current.siteId : sites[0]?.id ?? "",
-      };
-    });
-  }
 
   async function refreshUsers() {
     const response = await fetch("/api/admin/users", {
@@ -148,6 +110,49 @@ export function AdminPage() {
 
     const payload = (await readJson(response)) as { users?: AdminUser[] } | null;
     setUsers(Array.isArray(payload?.users) ? payload.users : []);
+  }
+
+  async function refreshDemoSites() {
+    const response = await fetch("/api/admin/demo-sites", {
+      method: "GET",
+      credentials: "include",
+    });
+    if (!response.ok) {
+      setDemoSites([]);
+      return;
+    }
+
+    const payload = (await readJson(response)) as { sites?: DemoSite[] } | null;
+    const nextSites = Array.isArray(payload?.sites) ? payload.sites : [];
+    setDemoSites(nextSites);
+    setUserForm((current) =>
+      current.role === "client" && !current.siteId && nextSites[0]?.id
+        ? {
+            ...current,
+            siteId: nextSites[0]?.id ?? "",
+          }
+        : current,
+    );
+  }
+
+  async function refreshSiteSettings() {
+    const response = await fetch("/api/admin/site-settings", {
+      method: "GET",
+      credentials: "include",
+    });
+    if (!response.ok) {
+      setSiteSettings({ demoSitesPublic: false });
+      return;
+    }
+
+    const payload = (await readJson(response)) as
+      | { settings?: SiteSettings }
+      | null;
+    setSiteSettings(
+      payload?.settings && typeof payload.settings.demoSitesPublic === "boolean"
+        ? payload.settings
+        : { demoSitesPublic: false },
+    );
   }
 
   async function refreshAnalytics() {
@@ -170,23 +175,9 @@ export function AdminPage() {
       | null;
     setAnalyticsSites(Array.isArray(payload?.sites) ? payload.sites : []);
     const totalRaw = Number(payload?.totalNonAdminClicks ?? 0);
-    setAnalyticsTotal(Number.isFinite(totalRaw) ? Math.max(0, Math.floor(totalRaw)) : 0);
-  }
-
-  async function refreshSiteSettings() {
-    const response = await fetch("/api/admin/site-settings", {
-      method: "GET",
-      credentials: "include",
-    });
-    if (!response.ok) {
-      setSiteSettings(null);
-      return;
-    }
-
-    const payload = (await readJson(response)) as { settings?: SiteSettings } | null;
-    if (payload?.settings && typeof payload.settings.demoSitesPublic === "boolean") {
-      setSiteSettings(payload.settings);
-    }
+    setAnalyticsTotal(
+      Number.isFinite(totalRaw) ? Math.max(0, Math.floor(totalRaw)) : 0,
+    );
   }
 
   const onLogin = async (event: FormEvent<HTMLFormElement>) => {
@@ -226,7 +217,7 @@ export function AdminPage() {
       }
 
       setAuthenticated(true);
-      setLoginFeedback("Connexion validee.");
+      setLoginFeedback("Connexion validée.");
       setLoginTone("success");
       await refreshAll();
     } catch {
@@ -247,115 +238,22 @@ export function AdminPage() {
     setDemoSites([]);
     setAnalyticsSites([]);
     setAnalyticsTotal(0);
-    setSiteSettings(null);
-  };
-
-  const onCreateSite = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setSiteFeedback("");
-    setSiteTone("");
-    setSiteVsCodeLink("");
-
-    if (!siteCreateName.trim()) {
-      setSiteFeedback("Nom du site invalide.");
-      setSiteTone("error");
-      return;
-    }
-
-    setSubmittingSite(true);
-    try {
-      const response = await fetch("/api/admin/demo-sites", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: siteCreateName.trim() }),
-      });
-
-      const payload = (await readJson(response)) as CreateSiteResponse | null;
-      if (!response.ok) {
-        setSiteFeedback(
-          typeof payload?.error === "string" ? payload.error : "Creation refusee.",
-        );
-        setSiteTone("error");
-        return;
-      }
-
-      setSiteFeedback(
-        payload?.site
-          ? `Site cree: ${payload.site.name} (${payload.site.path})${
-              payload.siteFolderPath ? ` | Dossier: ${payload.siteFolderPath}` : ""
-            }`
-          : "Site cree.",
-      );
-      setSiteTone("success");
-      setSiteCreateOpen(false);
-      setSiteCreateName("");
-      setSiteVsCodeLink(
-        typeof payload?.vscodeUri === "string" ? payload.vscodeUri : "",
-      );
-      await refreshDemoSites();
-      await refreshAnalytics();
-    } catch {
-      setSiteFeedback("Erreur reseau pendant la creation du site.");
-      setSiteTone("error");
-    } finally {
-      setSubmittingSite(false);
-    }
-  };
-
-  const onDeleteSite = async (site: DemoSite) => {
-    const confirmed = window.confirm(
-      `Supprimer le site "${site.name}" ? Cette action est definitive.`,
-    );
-    if (!confirmed) {
-      return;
-    }
-
-    setSiteFeedback("");
-    setSiteTone("");
-    try {
-      const response = await fetch(
-        `/api/admin/demo-sites/${encodeURIComponent(site.id)}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        },
-      );
-
-      const payload = (await readJson(response)) as DeleteSiteResponse | null;
-      if (!response.ok) {
-        setSiteFeedback(
-          typeof payload?.error === "string" ? payload.error : "Suppression refusee.",
-        );
-        setSiteTone("error");
-        return;
-      }
-
-      setSiteFeedback(`Site supprime: ${site.name}`);
-      setSiteTone("success");
-      await refreshDemoSites();
-      await refreshAnalytics();
-      await refreshUsers();
-    } catch {
-      setSiteFeedback("Erreur reseau pendant la suppression.");
-      setSiteTone("error");
-    }
   };
 
   const onSaveUser = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setAdminFeedback("");
-    setAdminTone("");
+    setAccountFeedback("");
+    setAccountTone("");
 
     if (!userForm.username.trim()) {
-      setAdminFeedback("Formulaire incomplet.");
-      setAdminTone("error");
+      setAccountFeedback("Formulaire incomplet.");
+      setAccountTone("error");
       return;
     }
 
-    if (roleNeedsSite && !userForm.siteId) {
-      setAdminFeedback("Veuillez choisir un site demo pour ce compte client.");
-      setAdminTone("error");
+    if (userForm.role === "client" && !userForm.siteId) {
+      setAccountFeedback("Choisis un site de démo pour ce compte client.");
+      setAccountTone("error");
       return;
     }
 
@@ -369,41 +267,41 @@ export function AdminPage() {
           username: userForm.username.trim().toLowerCase(),
           password: userForm.password.trim(),
           role: userForm.role,
-          active: userForm.active,
           siteId: userForm.role === "client" ? userForm.siteId : "",
+          active: userForm.active,
         }),
       });
 
       const payload = await readJson(response);
       if (!response.ok) {
-        setAdminFeedback(
-          typeof payload?.error === "string" ? payload.error : "Operation refusee.",
+        setAccountFeedback(
+          typeof payload?.error === "string" ? payload.error : "Opération refusée.",
         );
-        setAdminTone("error");
+        setAccountTone("error");
         return;
       }
 
-      setAdminFeedback("Utilisateur enregistre.");
-      setAdminTone("success");
+      setAccountFeedback("Compte enregistré.");
+      setAccountTone("success");
       setUserForm({
         username: "",
         password: "",
-        role: "client",
-        siteId: demoSites[0]?.id ?? "",
+        role: "admin",
+        siteId: "",
         active: true,
       });
       await refreshUsers();
     } catch {
-      setAdminFeedback("Erreur reseau.");
-      setAdminTone("error");
+      setAccountFeedback("Erreur réseau.");
+      setAccountTone("error");
     } finally {
       setSubmittingUser(false);
     }
   };
 
   const onToggleUser = async (user: AdminUser) => {
-    setAdminFeedback("");
-    setAdminTone("");
+    setAccountFeedback("");
+    setAccountTone("");
     try {
       const response = await fetch(
         `/api/admin/users/${encodeURIComponent(user.username)}/toggle`,
@@ -417,51 +315,143 @@ export function AdminPage() {
 
       const payload = await readJson(response);
       if (!response.ok) {
-        setAdminFeedback(
+        setAccountFeedback(
           typeof payload?.error === "string" ? payload.error : "Action refusee.",
         );
-        setAdminTone("error");
+        setAccountTone("error");
         return;
       }
 
-      setAdminFeedback(`Etat utilisateur mis a jour: ${user.username}`);
-      setAdminTone("success");
+      setAccountFeedback(`État du compte mis à jour : ${user.username}`);
+      setAccountTone("success");
       await refreshUsers();
     } catch {
-      setAdminFeedback("Erreur reseau.");
-      setAdminTone("error");
+      setAccountFeedback("Erreur réseau.");
+      setAccountTone("error");
     }
   };
 
-  const onTogglePublicMode = async (nextValue: boolean) => {
-    setTogglingPublicMode(true);
+  const onCreateSite = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSiteFeedback("");
+    setSiteTone("");
+
+    if (!siteCreateName.trim()) {
+      setSiteFeedback("Indique au moins un nom de site.");
+      setSiteTone("error");
+      return;
+    }
+
+    setSubmittingSite(true);
+    try {
+      const response = await fetch("/api/admin/demo-sites", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: siteCreateName.trim(),
+          siteId: siteCreateId.trim(),
+        }),
+      });
+
+      const payload = await readJson(response);
+      if (!response.ok) {
+        setSiteFeedback(
+          typeof payload?.error === "string" ? payload.error : "Création impossible.",
+        );
+        setSiteTone("error");
+        return;
+      }
+
+      const folderPath =
+        typeof payload?.siteFolderPath === "string" ? payload.siteFolderPath : "";
+      setSiteFeedback(
+        folderPath
+          ? `Site de démo créé. Dossier prêt : ${folderPath}`
+          : "Site de démo créé.",
+      );
+      setSiteTone("success");
+      setSiteCreateName("");
+      setSiteCreateId("");
+      await Promise.all([refreshDemoSites(), refreshAnalytics()]);
+    } catch {
+      setSiteFeedback("Erreur réseau.");
+      setSiteTone("error");
+    } finally {
+      setSubmittingSite(false);
+    }
+  };
+
+  const onDeleteSite = async (site: DemoSite) => {
+    setSiteFeedback("");
+    setSiteTone("");
+
+    try {
+      const response = await fetch(
+        `/api/admin/demo-sites/${encodeURIComponent(site.id)}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        },
+      );
+
+      const payload = await readJson(response);
+      if (!response.ok) {
+        setSiteFeedback(
+          typeof payload?.error === "string" ? payload.error : "Suppression impossible.",
+        );
+        setSiteTone("error");
+        return;
+      }
+
+      if (userForm.siteId === site.id) {
+        setUserForm((current) => ({
+          ...current,
+          siteId: "",
+        }));
+      }
+      setSiteFeedback(`Site supprimé : ${site.name}`);
+      setSiteTone("success");
+      await Promise.all([refreshDemoSites(), refreshUsers(), refreshAnalytics()]);
+    } catch {
+      setSiteFeedback("Erreur réseau.");
+      setSiteTone("error");
+    }
+  };
+
+  const onTogglePublicMode = async () => {
     setSettingsFeedback("");
     setSettingsTone("");
+    setTogglingPublicMode(true);
+
     try {
       const response = await fetch("/api/admin/site-settings", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ demoSitesPublic: nextValue }),
+        body: JSON.stringify({
+          demoSitesPublic: !siteSettings.demoSitesPublic,
+        }),
       });
 
-      const payload = (await readJson(response)) as { settings?: SiteSettings } | null;
-      if (!response.ok || !payload?.settings) {
-        setSettingsFeedback("Impossible de mettre a jour le mode.");
+      const payload = await readJson(response);
+      if (!response.ok) {
+        setSettingsFeedback(
+          typeof payload?.error === "string" ? payload.error : "Mise à jour impossible.",
+        );
         setSettingsTone("error");
-        await refreshSiteSettings();
         return;
       }
 
-      setSiteSettings(payload.settings);
       setSettingsFeedback(
-        payload.settings.demoSitesPublic
-          ? "Mode public active: les liens demo s'ouvrent sans code."
-          : "Mode protege active: le code est a nouveau requis.",
+        !siteSettings.demoSitesPublic
+          ? "Les liens démo sont maintenant visibles sans connexion."
+          : "Les liens démo sont de nouveau réservés aux comptes autorisés.",
       );
       setSettingsTone("success");
+      await refreshSiteSettings();
     } catch {
-      setSettingsFeedback("Impossible de mettre a jour le mode.");
+      setSettingsFeedback("Erreur réseau.");
       setSettingsTone("error");
     } finally {
       setTogglingPublicMode(false);
@@ -469,231 +459,121 @@ export function AdminPage() {
   };
 
   return (
-    <PublicPageShell
-      eyebrow="Compte"
-      title="Connexion et administration"
-      description="Le nouvel espace admin Next.js garde les flux existants: connexion, gestion des acces, sites demo et analytics."
-      navLinks={[
-        { href: "/", label: "Retour accueil" },
-        { href: "/demo-site", label: "Demo site" },
-      ]}
-    >
-      {!authenticated ? (
+    <main className="px-4 py-4 md:px-6">
+      <div className="mx-auto w-full max-w-6xl">
+        {!authenticated ? (
         <section className="glass-panel rounded-[1.8rem] px-6 py-7">
-          <p className="font-display text-sm font-semibold uppercase tracking-[0.24em] text-[var(--brand-soft)]">
-            Connexion
-          </p>
-          <h2 className="mt-3 font-display text-3xl font-semibold text-[var(--ink-strong)]">
-            Espace admin
-          </h2>
-          <form className="mt-6 grid gap-4" onSubmit={onLogin} noValidate>
-            <Field label="Identifiant">
-              <input
-                value={loginUsername}
-                onChange={(event) => setLoginUsername(event.target.value)}
-                className={fieldClassName}
-                autoComplete="username"
-                required
-              />
-            </Field>
-
-            <Field label="Mot de passe">
-              <input
-                type="password"
-                value={loginPassword}
-                onChange={(event) => setLoginPassword(event.target.value)}
-                className={fieldClassName}
-                autoComplete="current-password"
-                required
-              />
-            </Field>
-
-            <button
-              type="submit"
-              disabled={submittingLogin || loading}
-              className="rounded-full bg-[linear-gradient(110deg,#6f9f29,#8abf39)] px-5 py-3 text-sm font-extrabold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {submittingLogin ? "Connexion..." : "Se connecter"}
-            </button>
-
-            <Feedback text={loginFeedback} tone={loginTone} />
-          </form>
-        </section>
-      ) : (
-        <section className="grid gap-4">
-          <FadeIn className="glass-panel rounded-[1.8rem] px-6 py-6">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <p className="font-display text-sm font-semibold uppercase tracking-[0.24em] text-[var(--brand-soft)]">
-                  Gestion
-                </p>
-                <h2 className="mt-2 font-display text-3xl font-semibold text-[var(--ink-strong)]">
-                  Gestion des acces
-                </h2>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href="/demo-site"
-                  className="rounded-full border border-[var(--line-strong)] bg-white px-4 py-3 text-sm font-semibold text-[var(--brand)]"
-                >
-                  Ouvrir le portail demo
-                </Link>
-                <button
-                  type="button"
-                  onClick={onLogout}
-                  className="rounded-full border border-[var(--line-strong)] bg-[var(--surface-strong)] px-4 py-3 text-sm font-semibold text-white"
-                >
-                  Se deconnecter
-                </button>
-              </div>
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="font-display text-sm font-semibold uppercase tracking-[0.24em] text-[var(--brand-soft)]">
+                Connexion
+              </p>
+              <h2 className="mt-3 font-display text-3xl font-semibold text-[var(--ink-strong)]">
+                Se connecter
+              </h2>
             </div>
-          </FadeIn>
-
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => setActiveTab("access")}
-              className={`rounded-full px-4 py-3 text-sm font-semibold transition ${
-                activeTab === "access"
-                  ? "bg-[var(--surface-strong)] text-white"
-                  : "border border-[var(--line-strong)] bg-white text-[var(--brand)]"
-              }`}
+            <Link
+              href="/"
+              className="rounded-full border border-[var(--line-strong)] bg-white px-4 py-3 text-sm font-semibold text-[var(--brand)]"
             >
-              Acces et comptes
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("sites")}
-              className={`rounded-full px-4 py-3 text-sm font-semibold transition ${
-                activeTab === "sites"
-                  ? "bg-[var(--surface-strong)] text-white"
-                  : "border border-[var(--line-strong)] bg-white text-[var(--brand)]"
-              }`}
-            >
-              Sites et clics
-            </button>
+              Retour accueil
+            </Link>
           </div>
+          <form className="mt-6 grid gap-4" onSubmit={onLogin} noValidate>
+              <Field label="Identifiant">
+                <input
+                  value={loginUsername}
+                  onChange={(event) => setLoginUsername(event.target.value)}
+                  className={fieldClassName}
+                  autoComplete="username"
+                  required
+                />
+              </Field>
 
-          {activeTab === "access" ? (
-            <>
-              <section className="glass-panel rounded-[1.8rem] px-6 py-6">
-                <p className="font-display text-sm font-semibold uppercase tracking-[0.24em] text-[var(--brand-soft)]">
-                  Visibilite
-                </p>
-                <h3 className="mt-2 font-display text-2xl font-semibold text-[var(--ink-strong)]">
-                  Acces aux liens demo
-                </h3>
-                <p className="mt-3 text-sm leading-7 text-[var(--ink-soft)]">
-                  {siteSettings?.demoSitesPublic
-                    ? "Mode actuel: liens demo ouverts publiquement (sans code)."
-                    : "Mode actuel: protection par code active."}
-                </p>
-                <label className="mt-4 flex items-start gap-3 text-sm font-semibold text-[var(--ink-soft)]">
-                  <input
-                    type="checkbox"
-                    checked={siteSettings?.demoSitesPublic ?? false}
-                    onChange={(event) => onTogglePublicMode(event.target.checked)}
-                    disabled={togglingPublicMode}
-                    className="mt-1 h-4 w-4 rounded border-[var(--line-strong)]"
-                  />
-                  <span>Liens publics (sans code)</span>
-                </label>
-                <Feedback text={settingsFeedback} tone={settingsTone} />
-              </section>
+              <Field label="Mot de passe">
+                <input
+                  type="password"
+                  value={loginPassword}
+                  onChange={(event) => setLoginPassword(event.target.value)}
+                  className={fieldClassName}
+                  autoComplete="current-password"
+                  required
+                />
+              </Field>
 
-              <section className="glass-panel rounded-[1.8rem] px-6 py-6">
-                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                  <div>
-                    <p className="font-display text-sm font-semibold uppercase tracking-[0.24em] text-[var(--brand-soft)]">
-                      Sites demo
-                    </p>
-                    <h3 className="mt-2 font-display text-2xl font-semibold text-[var(--ink-strong)]">
-                      Sites disponibles
-                    </h3>
-                  </div>
+              <button
+                type="submit"
+                disabled={submittingLogin || loading}
+                className="rounded-full bg-[linear-gradient(110deg,#6f9f29,#8abf39)] px-5 py-3 text-sm font-extrabold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {submittingLogin ? "Connexion..." : "Se connecter"}
+              </button>
+
+              <Feedback text={loginFeedback} tone={loginTone} />
+            </form>
+          </section>
+        ) : (
+          <section className="grid gap-4">
+            <FadeIn className="glass-panel rounded-[1.8rem] px-6 py-6">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <p className="font-display text-sm font-semibold uppercase tracking-[0.24em] text-[var(--brand-soft)]">
+                    Gestion
+                  </p>
+                  <h2 className="mt-2 font-display text-3xl font-semibold text-[var(--ink-strong)]">
+                    Accès et comptes
+                  </h2>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    href="/"
+                    className="rounded-full border border-[var(--line-strong)] bg-white px-4 py-3 text-sm font-semibold text-[var(--brand)]"
+                  >
+                    Retour accueil
+                  </Link>
                   <button
                     type="button"
-                    onClick={() => setSiteCreateOpen((current) => !current)}
-                    className="rounded-full bg-[var(--surface-strong)] px-4 py-3 text-sm font-semibold text-white"
+                    onClick={onLogout}
+                    className="rounded-full border border-[var(--line-strong)] bg-[var(--surface-strong)] px-4 py-3 text-sm font-semibold text-white"
                   >
-                    {siteCreateOpen ? "Fermer" : "Creer un site"}
+                    Se déconnecter
                   </button>
                 </div>
+              </div>
+            </FadeIn>
 
-                {siteCreateOpen ? (
-                  <form className="mt-5 grid gap-4" onSubmit={onCreateSite} noValidate>
-                    <Field label="Nom du site">
-                      <input
-                        value={siteCreateName}
-                        onChange={(event) => setSiteCreateName(event.target.value)}
-                        className={fieldClassName}
-                        placeholder="Ex: Site test coiffure 2"
-                        required
-                      />
-                    </Field>
-                    <button
-                      type="submit"
-                      disabled={submittingSite}
-                      className="w-fit rounded-full bg-[linear-gradient(110deg,#6f9f29,#8abf39)] px-5 py-3 text-sm font-extrabold text-white disabled:cursor-not-allowed disabled:opacity-70"
-                    >
-                      {submittingSite ? "Creation..." : "Valider"}
-                    </button>
-                  </form>
-                ) : null}
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => setActiveTab("access")}
+                className={`rounded-full px-4 py-3 text-sm font-semibold transition ${
+                  activeTab === "access"
+                    ? "bg-[var(--surface-strong)] text-white"
+                    : "border border-[var(--line-strong)] bg-white text-[var(--brand)]"
+                }`}
+              >
+                Accès et comptes
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("sites")}
+                className={`rounded-full px-4 py-3 text-sm font-semibold transition ${
+                  activeTab === "sites"
+                    ? "bg-[var(--surface-strong)] text-white"
+                    : "border border-[var(--line-strong)] bg-white text-[var(--brand)]"
+                }`}
+              >
+                Sites et clics
+              </button>
+            </div>
 
-                {siteVsCodeLink ? (
-                  <a
-                    href={siteVsCodeLink}
-                    className="mt-4 inline-flex text-sm font-bold text-[var(--brand)]"
-                  >
-                    Ouvrir dans VS Code
-                  </a>
-                ) : null}
-
-                <Feedback text={siteFeedback} tone={siteTone} />
-
-                <div className="mt-5 grid gap-3">
-                  {demoSites.length === 0 ? (
-                    <p className="rounded-[1.2rem] border border-white/70 bg-white/72 px-4 py-4 text-sm text-[var(--ink-soft)]">
-                      Aucun site demo disponible.
-                    </p>
-                  ) : (
-                    demoSites.map((site) => (
-                      <div
-                        key={site.id}
-                        className="flex flex-col gap-3 rounded-[1.2rem] border border-white/70 bg-white/72 px-4 py-4 lg:flex-row lg:items-center lg:justify-between"
-                      >
-                        <div>
-                          <p className="font-semibold text-[var(--ink-strong)]">{site.name}</p>
-                          <p className="text-sm text-[var(--ink-soft)]">{site.path}</p>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          <Link
-                            href={withCacheBuster(site.path)}
-                            className="rounded-full border border-[var(--line-strong)] bg-white px-4 py-2 text-xs font-semibold text-[var(--brand)]"
-                          >
-                            Voir site
-                          </Link>
-                          <button
-                            type="button"
-                            onClick={() => onDeleteSite(site)}
-                            className="rounded-full border border-[#d58f8f] bg-[#fff4f4] px-4 py-2 text-xs font-semibold text-[#8f2b2b]"
-                          >
-                            Supprimer
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </section>
-
+            {activeTab === "access" ? (
               <section className="glass-panel rounded-[1.8rem] px-6 py-6">
                 <p className="font-display text-sm font-semibold uppercase tracking-[0.24em] text-[var(--brand-soft)]">
                   Comptes
                 </p>
                 <h3 className="mt-2 font-display text-2xl font-semibold text-[var(--ink-strong)]">
-                  Creer ou mettre a jour un utilisateur
+                  Créer ou mettre à jour un compte
                 </h3>
 
                 <form className="mt-5 grid gap-4" onSubmit={onSaveUser} noValidate>
@@ -707,7 +587,7 @@ export function AdminPage() {
                         }))
                       }
                       className={fieldClassName}
-                      placeholder="ex: coiffure2"
+                      placeholder="ex: client-demo"
                       required
                     />
                   </Field>
@@ -726,7 +606,7 @@ export function AdminPage() {
                     />
                   </Field>
 
-                  <Field label="Role">
+                  <Field label="Rôle">
                     <select
                       value={userForm.role}
                       onChange={(event) =>
@@ -746,8 +626,8 @@ export function AdminPage() {
                     </select>
                   </Field>
 
-                  {roleNeedsSite ? (
-                    <Field label="Site demo autorise">
+                  {userForm.role === "client" ? (
+                    <Field label="Site de démo autorisé">
                       <select
                         value={userForm.siteId}
                         onChange={(event) =>
@@ -757,17 +637,16 @@ export function AdminPage() {
                           }))
                         }
                         className={fieldClassName}
-                        disabled={activeSiteCount === 0}
+                        disabled={demoSites.length === 0}
                       >
                         {demoSites.length === 0 ? (
-                          <option value="">Aucun site demo</option>
-                        ) : (
-                          demoSites.map((site) => (
-                            <option key={site.id} value={site.id}>
-                              {site.name} ({site.path})
-                            </option>
-                          ))
-                        )}
+                          <option value="">Aucun site de démo disponible</option>
+                        ) : null}
+                        {demoSites.map((site) => (
+                          <option key={site.id} value={site.id}>
+                            {site.name}
+                          </option>
+                        ))}
                       </select>
                     </Field>
                   ) : null}
@@ -792,10 +671,10 @@ export function AdminPage() {
                     disabled={submittingUser}
                     className="w-fit rounded-full bg-[linear-gradient(110deg,#6f9f29,#8abf39)] px-5 py-3 text-sm font-extrabold text-white disabled:cursor-not-allowed disabled:opacity-70"
                   >
-                    {submittingUser ? "Enregistrement..." : "Creer / Mettre a jour"}
+                    {submittingUser ? "Enregistrement..." : "Créer / mettre à jour"}
                   </button>
 
-                  <Feedback text={adminFeedback} tone={adminTone} />
+                  <Feedback text={accountFeedback} tone={accountTone} />
                 </form>
 
                 <div className="mt-6 overflow-x-auto">
@@ -803,10 +682,10 @@ export function AdminPage() {
                     <thead>
                       <tr className="text-left text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand-soft)]">
                         <th className="px-3 py-2">Identifiant</th>
-                        <th className="px-3 py-2">Role</th>
+                        <th className="px-3 py-2">Rôle</th>
                         <th className="px-3 py-2">Site</th>
-                        <th className="px-3 py-2">Etat</th>
-                        <th className="px-3 py-2">Mise a jour</th>
+                        <th className="px-3 py-2">État</th>
+                        <th className="px-3 py-2">Mise à jour</th>
                         <th className="px-3 py-2">Action</th>
                       </tr>
                     </thead>
@@ -822,7 +701,10 @@ export function AdminPage() {
                         </tr>
                       ) : (
                         users.map((user) => (
-                          <tr key={user.username} className="bg-white/72 text-sm text-[var(--ink-strong)]">
+                          <tr
+                            key={user.username}
+                            className="bg-white/72 text-sm text-[var(--ink-strong)]"
+                          >
                             <td className="rounded-l-[1rem] px-3 py-4 font-semibold">
                               {user.username}
                             </td>
@@ -832,15 +714,19 @@ export function AdminPage() {
                                 ? `${user.siteName} (${user.sitePath ?? ""})`
                                 : "-"}
                             </td>
-                            <td className="px-3 py-4">{user.active ? "Actif" : "Desactive"}</td>
-                            <td className="px-3 py-4">{formatDateTime(user.updatedAt)}</td>
+                            <td className="px-3 py-4">
+                              {user.active ? "Actif" : "Désactivé"}
+                            </td>
+                            <td className="px-3 py-4">
+                              {formatDateTime(user.updatedAt)}
+                            </td>
                             <td className="rounded-r-[1rem] px-3 py-4">
                               <button
                                 type="button"
                                 onClick={() => onToggleUser(user)}
                                 className="rounded-full border border-[var(--line-strong)] bg-white px-4 py-2 text-xs font-semibold text-[var(--brand)]"
                               >
-                                {user.active ? "Desactiver" : "Activer"}
+                                {user.active ? "Désactiver" : "Activer"}
                               </button>
                             </td>
                           </tr>
@@ -850,71 +736,201 @@ export function AdminPage() {
                   </table>
                 </div>
               </section>
-            </>
-          ) : (
-            <section className="glass-panel rounded-[1.8rem] px-6 py-6">
-              <p className="font-display text-sm font-semibold uppercase tracking-[0.24em] text-[var(--brand-soft)]">
-                Performance
-              </p>
-              <h3 className="mt-2 font-display text-2xl font-semibold text-[var(--ink-strong)]">
-                Tous les sites
-              </h3>
-              <p className="mt-3 text-sm font-semibold text-[var(--ink-soft)]">
-                Total clics hors admin: {formatNumber(analyticsTotal)}
-              </p>
-              <Feedback text={analyticsFeedback} tone={analyticsTone} />
+            ) : (
+              <div className="grid gap-4">
+                <section className="glass-panel rounded-[1.8rem] px-6 py-6">
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="max-w-2xl">
+                      <p className="font-display text-sm font-semibold uppercase tracking-[0.24em] text-[var(--brand-soft)]">
+                        Démos
+                      </p>
+                      <h3 className="mt-2 font-display text-2xl font-semibold text-[var(--ink-strong)]">
+                        Créer et gérer vos sites de démonstration
+                      </h3>
+                      <p className="mt-3 text-sm leading-6 text-[var(--ink-soft)]">
+                        Crée un nouveau site de démo, ouvre son dossier pour y
+                        glisser tes fichiers, puis partage le lien public ou
+                        un compte client selon ton besoin.
+                      </p>
+                    </div>
 
-              <div className="mt-6 overflow-x-auto">
-                <table className="min-w-full border-separate border-spacing-y-2">
-                  <thead>
-                    <tr className="text-left text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand-soft)]">
-                      <th className="px-3 py-2">Site</th>
-                      <th className="px-3 py-2">URL</th>
-                      <th className="px-3 py-2">Clics hors admin</th>
-                      <th className="px-3 py-2">Dernier clic</th>
-                      <th className="px-3 py-2">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {analyticsSites.length === 0 ? (
-                      <tr>
-                        <td
-                          colSpan={5}
-                          className="rounded-[1rem] bg-white/72 px-3 py-4 text-sm text-[var(--ink-soft)]"
-                        >
-                          Aucun site.
-                        </td>
-                      </tr>
-                    ) : (
-                      analyticsSites.map((site) => (
-                        <tr key={site.id} className="bg-white/72 text-sm text-[var(--ink-strong)]">
-                          <td className="rounded-l-[1rem] px-3 py-4 font-semibold">
-                            {site.name}
-                          </td>
-                          <td className="px-3 py-4">{site.path}</td>
-                          <td className="px-3 py-4">{formatNumber(site.nonAdminClicks)}</td>
-                          <td className="px-3 py-4">
-                            {site.lastClickAt ? formatDateTime(site.lastClickAt) : "-"}
-                          </td>
-                          <td className="rounded-r-[1rem] px-3 py-4">
-                            <Link
-                              href={withCacheBuster(site.path)}
-                              className="rounded-full border border-[var(--line-strong)] bg-white px-4 py-2 text-xs font-semibold text-[var(--brand)]"
-                            >
-                              Voir site
-                            </Link>
-                          </td>
+                    <div className="rounded-[1.2rem] border border-[var(--line-strong)] bg-white/80 px-4 py-4 text-sm">
+                      <p className="font-semibold text-[var(--ink-strong)]">
+                        Accès public
+                      </p>
+                      <p className="mt-2 text-[var(--ink-soft)]">
+                        {siteSettings.demoSitesPublic
+                          ? "Les liens démo sont visibles sans connexion."
+                          : "Les liens démo restent privés sans connexion."}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={onTogglePublicMode}
+                        disabled={togglingPublicMode}
+                        className="mt-4 rounded-full bg-[var(--surface-strong)] px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-70"
+                      >
+                        {togglingPublicMode
+                          ? "Mise à jour..."
+                          : siteSettings.demoSitesPublic
+                            ? "Repasser en privé"
+                            : "Rendre public"}
+                      </button>
+                      <Feedback text={settingsFeedback} tone={settingsTone} />
+                    </div>
+                  </div>
+
+                  <form
+                    className="mt-6 grid gap-4 rounded-[1.4rem] border border-[var(--line-strong)] bg-white/72 p-5"
+                    onSubmit={onCreateSite}
+                    noValidate
+                  >
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <Field label="Nom du site de démo">
+                        <input
+                          value={siteCreateName}
+                          onChange={(event) => setSiteCreateName(event.target.value)}
+                          className={fieldClassName}
+                          placeholder="ex: Demo avocat premium"
+                          required
+                        />
+                      </Field>
+
+                      <Field label="Identifiant (optionnel)">
+                        <input
+                          value={siteCreateId}
+                          onChange={(event) => setSiteCreateId(event.target.value)}
+                          className={fieldClassName}
+                          placeholder="ex: demo-avocat"
+                        />
+                      </Field>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={submittingSite}
+                      className="w-fit rounded-full bg-[linear-gradient(110deg,#6f9f29,#8abf39)] px-5 py-3 text-sm font-extrabold text-white disabled:cursor-not-allowed disabled:opacity-70"
+                    >
+                      {submittingSite ? "Création..." : "Créer un site de démo"}
+                    </button>
+
+                    <Feedback text={siteFeedback} tone={siteTone} />
+                  </form>
+                </section>
+
+                <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                  {demoSites.length === 0 ? (
+                    <div className="glass-panel rounded-[1.8rem] px-6 py-6 text-sm text-[var(--ink-soft)]">
+                      Aucun site de démo pour le moment.
+                    </div>
+                  ) : (
+                    demoSites.map((site, index) => (
+                      <FadeIn
+                        key={site.id}
+                        delay={0.04 * index}
+                        className="glass-panel rounded-[1.8rem] px-6 py-6"
+                      >
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--brand-soft)]">
+                          {site.id}
+                        </p>
+                        <h4 className="mt-3 font-display text-2xl font-semibold text-[var(--ink-strong)]">
+                          {site.name}
+                        </h4>
+                        <p className="mt-3 text-sm text-[var(--ink-soft)]">
+                          {site.path}
+                        </p>
+
+                        <div className="mt-6 flex flex-wrap gap-3">
+                          <Link
+                            href={withCacheBuster(site.path)}
+                            className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-[var(--brand)]"
+                          >
+                            Voir le site
+                          </Link>
+                          <button
+                            type="button"
+                            onClick={() => onDeleteSite(site)}
+                            className="rounded-full border border-[var(--line-strong)] bg-transparent px-4 py-2 text-sm font-semibold text-[var(--ink-strong)]"
+                          >
+                            Supprimer
+                          </button>
+                        </div>
+                      </FadeIn>
+                    ))
+                  )}
+                </section>
+
+                <section className="glass-panel rounded-[1.8rem] px-6 py-6">
+                  <p className="font-display text-sm font-semibold uppercase tracking-[0.24em] text-[var(--brand-soft)]">
+                    Performance
+                  </p>
+                  <h3 className="mt-2 font-display text-2xl font-semibold text-[var(--ink-strong)]">
+                    Sites et clics
+                  </h3>
+                  <p className="mt-3 text-sm font-semibold text-[var(--ink-soft)]">
+                    Total des clics hors connexion : {formatNumber(analyticsTotal)}
+                  </p>
+                  <Feedback text={analyticsFeedback} tone={analyticsTone} />
+
+                  <div className="mt-6 overflow-x-auto">
+                    <table className="min-w-full border-separate border-spacing-y-2">
+                      <thead>
+                        <tr className="text-left text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand-soft)]">
+                          <th className="px-3 py-2">Site</th>
+                          <th className="px-3 py-2">URL</th>
+                          <th className="px-3 py-2">Clics hors connexion</th>
+                          <th className="px-3 py-2">Dernier clic</th>
+                          <th className="px-3 py-2">Action</th>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+                      </thead>
+                      <tbody>
+                        {analyticsSites.length === 0 ? (
+                          <tr>
+                            <td
+                              colSpan={5}
+                              className="rounded-[1rem] bg-white/72 px-3 py-4 text-sm text-[var(--ink-soft)]"
+                            >
+                              Aucun site.
+                            </td>
+                          </tr>
+                        ) : (
+                          analyticsSites.map((site) => (
+                            <tr
+                              key={site.id}
+                              className="bg-white/72 text-sm text-[var(--ink-strong)]"
+                            >
+                              <td className="rounded-l-[1rem] px-3 py-4 font-semibold">
+                                {site.name}
+                              </td>
+                              <td className="px-3 py-4">{site.path}</td>
+                              <td className="px-3 py-4">
+                                {formatNumber(site.nonAdminClicks)}
+                              </td>
+                              <td className="px-3 py-4">
+                                {site.lastClickAt
+                                  ? formatDateTime(site.lastClickAt)
+                                  : "-"}
+                              </td>
+                              <td className="rounded-r-[1rem] px-3 py-4">
+                                <Link
+                                  href={withCacheBuster(site.path)}
+                                  className="inline-flex whitespace-nowrap rounded-full border border-[var(--line-strong)] bg-white px-4 py-2 text-xs font-semibold text-[var(--brand)]"
+                                >
+                                  Voir le site
+                                </Link>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
               </div>
-            </section>
-          )}
-        </section>
-      )}
-    </PublicPageShell>
+            )}
+          </section>
+        )}
+      </div>
+    </main>
   );
 }
 
@@ -965,7 +981,9 @@ async function fetchAdminSession(): Promise<{ authenticated: boolean }> {
       return { authenticated: false };
     }
 
-    const payload = (await readJson(response)) as { authenticated?: boolean } | null;
+    const payload = (await readJson(response)) as
+      | { authenticated?: boolean }
+      | null;
     return { authenticated: payload?.authenticated === true };
   } catch {
     return { authenticated: false };

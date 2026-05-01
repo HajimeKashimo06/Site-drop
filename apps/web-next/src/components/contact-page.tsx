@@ -50,13 +50,13 @@ export function ContactPage() {
     setTone("");
 
     if (!form.consent) {
-      setFeedback("Vous devez accepter d'etre contacte pour envoyer la demande.");
+      setFeedback("Vous devez accepter d'être contacté pour envoyer la demande.");
       setTone("error");
       return;
     }
 
     if (!form.name.trim() || !form.phone.trim() || !form.email.trim() || !form.message.trim()) {
-      setFeedback("Nom, telephone, email et message sont obligatoires.");
+      setFeedback("Nom, téléphone, email et message sont obligatoires.");
       setTone("error");
       return;
     }
@@ -97,12 +97,12 @@ export function ContactPage() {
       setFeedback(
         data && typeof data.message === "string" && data.message.trim()
           ? data.message
-          : "Demande envoyee. Merci.",
+          : "Demande envoyée. Merci.",
       );
       setTone("success");
       setForm(initialState);
     } catch {
-      setFeedback("Erreur reseau. Veuillez reessayer dans un instant.");
+      setFeedback("Erreur réseau. Veuillez réessayer dans un instant.");
       setTone("error");
     } finally {
       setSubmitting(false);
@@ -111,23 +111,23 @@ export function ContactPage() {
 
   return (
     <PublicPageShell
-      eyebrow="Demande de rappel"
-      title="Laissez vos coordonnees et nous vous contactons rapidement."
-      description="Ce formulaire envoie votre demande directement a l'adresse contact@hproweb.fr."
+      eyebrow="Contact"
+      title="Parlons de votre projet de site internet."
+      description="Expliquez votre besoin, laissez vos coordonnées et nous revenons vers vous rapidement."
     >
       <article className="rounded-[1.8rem] border border-[rgba(25,76,138,0.24)] bg-[linear-gradient(118deg,rgba(11,31,56,0.82),rgba(23,78,134,0.84))] px-6 py-7 text-white shadow-[0_24px_46px_rgba(18,45,77,0.22)]">
         <p className="font-display text-sm font-semibold uppercase tracking-[0.24em] text-[#aed0f8]">
-          Rappel gratuit
+          Premier échange
         </p>
         <h2 className="mt-4 max-w-lg text-balance font-display text-3xl font-semibold leading-tight md:text-4xl">
-          Reservation de demo gratuite, reponse rapide et echange clair.
+          Un premier contact simple pour comprendre votre activité et vos objectifs.
         </h2>
         <ul className="mt-6 grid gap-3 text-sm leading-7 text-white/90 md:text-base">
           {[
-            "Reservation de demo 100% gratuite",
-            "Reponse sous 24h en general",
-            "Echange clair sur vos besoins",
-            "Aucun engagement au premier contact",
+            "Echange sans engagement",
+            "Réponse rapide selon disponibilité",
+            "Conseil adapté à votre projet",
+            "Orientation claire sur l'offre la plus pertinente",
           ].map((item) => (
             <li
               key={item}
@@ -141,10 +141,10 @@ export function ContactPage() {
 
       <section className="glass-panel rounded-[1.8rem] px-6 py-7">
         <h2 className="font-display text-3xl font-semibold text-[var(--ink-strong)]">
-          Fiche contact
+          Votre demande
         </h2>
         <p className="mt-3 text-sm leading-7 text-[var(--ink-soft)] md:text-base">
-          Completez les champs puis cliquez sur Envoyer. La reservation de demo est gratuite.
+          Complétez ce formulaire pour nous présenter votre besoin et être recontacté.
         </p>
 
         <form className="mt-6 grid gap-4" onSubmit={onSubmit} noValidate>
@@ -159,7 +159,7 @@ export function ContactPage() {
             />
           </Field>
 
-          <Field label="Telephone">
+          <Field label="Téléphone">
             <input
               value={form.phone}
               onChange={(event) => updateField("phone", event.target.value)}
@@ -182,7 +182,7 @@ export function ContactPage() {
             />
           </Field>
 
-          <Field label="Societe (optionnel)">
+          <Field label="Société (optionnel)">
             <input
               value={form.company}
               onChange={(event) => updateField("company", event.target.value)}
@@ -219,7 +219,7 @@ export function ContactPage() {
               rows={5}
               minLength={10}
               maxLength={3000}
-              placeholder="Decrivez votre besoin en quelques lignes."
+              placeholder="Décrivez votre besoin en quelques lignes."
               required
             />
           </Field>
@@ -240,7 +240,7 @@ export function ContactPage() {
               onChange={(event) => updateField("consent", event.target.checked)}
               className="mt-1 h-4 w-4 rounded border-[var(--line-strong)]"
             />
-            <span>J&apos;accepte d&apos;etre contacte au sujet de ma demande.</span>
+            <span>J&apos;accepte d&apos;être contacté au sujet de ma demande.</span>
           </label>
 
           <button

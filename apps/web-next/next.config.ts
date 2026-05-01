@@ -12,9 +12,8 @@ const nextConfig: NextConfig = {
       { source: "/mentions-legales.html", destination: "/mentions-legales", permanent: false },
       { source: "/cgv.html", destination: "/cgv", permanent: false },
       { source: "/qui-sommes-nous.html", destination: "/qui-sommes-nous", permanent: false },
-      { source: "/page-test.html", destination: "/sites/page-test", permanent: false },
-      { source: "/page-test", destination: "/sites/page-test", permanent: false },
-      { source: "/sites/:siteId/index.html", destination: "/sites/:siteId", permanent: false },
+      { source: "/page-test.html", destination: "/", permanent: false },
+      { source: "/page-test", destination: "/", permanent: false },
     ];
   },
 };

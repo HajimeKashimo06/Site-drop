@@ -107,14 +107,7 @@ type QuotePayload = {
   sourcePage: string;
 };
 
-const defaultDemoSites: DemoSite[] = [
-  {
-    id: 'page-test',
-    name: 'Site test barber',
-    path: '/sites/page-test',
-    active: true
-  }
-];
+const defaultDemoSites: DemoSite[] = [];
 
 const defaultSiteSettings: SiteSettings = {
   demoSitesPublic: parseBooleanFlag(process.env.DEMO_SITES_PUBLIC, false)
@@ -123,13 +116,7 @@ const defaultSiteSettings: SiteSettings = {
 let demoSites = loadDemoSites();
 let siteTraffic = loadSiteTraffic();
 let siteSettings = loadSiteSettings();
-const fallbackSite: DemoSite = getFallbackSite() ??
-  defaultDemoSites[0] ?? {
-    id: 'page-test',
-    name: 'Site test barber',
-    path: '/sites/page-test',
-    active: true
-  };
+const fallbackSite: DemoSite | null = getFallbackSite();
 
 const app = express();
 const port = Number(process.env.PORT ?? 8787);
@@ -141,8 +128,6 @@ const mongoUri = process.env.MONGO_URI ?? 'mongodb://127.0.0.1:27017';
 const mongoDbName = process.env.MONGO_DB_NAME ?? 'sitedrop';
 const mongoUsersCollectionName = process.env.MONGO_USERS_COLLECTION ?? 'users';
 
-const seedClientUsername = normalizeUsername(process.env.AUTH_DEMO_USERNAME ?? 'coiffure1');
-const seedClientPassword = process.env.AUTH_DEMO_PASSWORD ?? '1234';
 const seedAdminUsername = normalizeUsername(process.env.AUTH_ADMIN_USERNAME ?? 'admin');
 const seedAdminPassword = process.env.AUTH_ADMIN_PASSWORD ?? 'Hproweb@2026!';
 
@@ -150,8 +135,12 @@ const authSessionSecret = process.env.AUTH_SESSION_SECRET ?? randomBytes(32).toS
 const rawSessionTtl = Number(process.env.AUTH_SESSION_TTL_SECONDS ?? 8 * 60 * 60);
 const authSessionTtlSeconds = Number.isFinite(rawSessionTtl) ? Math.max(300, Math.round(rawSessionTtl)) : 8 * 60 * 60;
 const authSessionCookie = 'site_drop_session';
+const ownerPreviewCookie = 'site_drop_owner_preview';
 const authCookieSecureMode = normalizeAuthCookieSecureMode(process.env.AUTH_COOKIE_SECURE);
 const passwordHashRounds = 12;
+const ownerPreviewTtlSeconds = 365 * 24 * 60 * 60;
+const ignoredTrafficUsernames = parseNormalizedUsernames(process.env.SITE_TRAFFIC_IGNORED_USERNAMES);
+const ignoredTrafficIps = parseNormalizedIpList(process.env.SITE_TRAFFIC_IGNORED_IPS);
 
 const checkoutProductName = process.env.CHECKOUT_PRODUCT_NAME ?? 'Machine a glacons Signature';
 const checkoutProductDescription =
@@ -215,7 +204,7 @@ if (!process.env.AUTH_SESSION_SECRET) {
 
 app.get('/api/demo-sites', (_req, res) => {
   res.json({
-    sites: toPublicDemoSites(getActiveDemoSites())
+    sites: isDemoSitesPublic() ? toPublicDemoSites(getActiveDemoSites()) : []
   });
 });
 
@@ -240,6 +229,7 @@ app.post('/api/auth/login', async (req, res) => {
 
   const sessionToken = signSession(result.user.username);
   setAuthCookie(req, res, sessionToken);
+  setOwnerPreviewCookie(req, res, result.user.username);
   res.json({
     ok: true,
     role,
@@ -271,7 +261,7 @@ app.get('/api/auth/session', async (req, res) => {
 
   if (!user) {
     if (siteQuery && isDemoSitesPublic() && findDemoSiteById(siteQuery)) {
-      registerNonAdminSiteVisit(siteQuery);
+      registerNonAdminSiteVisit(req, siteQuery, null);
       siteVisitRecorded = true;
       res.json({
         authenticated: false,
@@ -288,10 +278,13 @@ app.get('/api/auth/session', async (req, res) => {
   }
 
   const role = getEffectiveRole(user);
+  if (role === 'admin') {
+    setOwnerPreviewCookie(req, res, user.username);
+  }
 
   if (siteQuery && role !== 'admin' && !hasSiteAccess(user, siteQuery)) {
     if (isDemoSitesPublic() && findDemoSiteById(siteQuery)) {
-      registerNonAdminSiteVisit(siteQuery);
+      registerNonAdminSiteVisit(req, siteQuery, user);
       siteVisitRecorded = true;
     } else {
       res.status(403).json({ authenticated: false, authorized: false });
@@ -300,7 +293,7 @@ app.get('/api/auth/session', async (req, res) => {
   }
 
   if (siteQuery && role !== 'admin' && !siteVisitRecorded) {
-    registerNonAdminSiteVisit(siteQuery);
+    registerNonAdminSiteVisit(req, siteQuery, user);
   }
 
   const redirectSite = getPrimaryAccessibleSite(user);
@@ -570,9 +563,10 @@ app.post('/api/admin/users', async (req, res) => {
   }
 
   if (role === 'client' && !findDemoSiteById(siteId)) {
-    res.status(400).json({ ok: false, error: 'Site démo invalide.' });
+    res.status(400).json({ ok: false, error: 'Site de demo invalide.' });
     return;
   }
+
 
   const users = await usersCollectionPromise;
   const existing = await users.findOne({ username });
@@ -878,7 +872,7 @@ async function startServer(): Promise<void> {
       console.log(`[api] listening on http://localhost:${port}`);
       console.log(`[api] mongodb connected on ${mongoUri}/${mongoDbName}`);
       console.log(
-        `[api] demo sites mode: ${siteSettings.demoSitesPublic ? 'PUBLIC (liens ouverts)' : 'PROTEGE (code requis)'}`
+        `[api] acces public aux sites: ${siteSettings.demoSitesPublic ? 'ACTIVE' : 'DESACTIVE'}`
       );
     });
   } catch (error) {
@@ -895,14 +889,20 @@ async function initUsersCollection(): Promise<Collection<SiteUserDoc>> {
   await users.createIndex({ username: 1 }, { unique: true });
   await users.updateMany({ role: { $exists: false } }, { $set: { role: 'client' } });
   await users.updateMany({ active: { $exists: false } }, { $set: { active: true } });
-  await users.updateMany(
-    {
-      role: 'client',
-      $or: [{ siteAccess: { $exists: false } }, { siteAccess: { $size: 0 } }]
-    },
-    { $set: { siteAccess: [fallbackSite.id] } }
-  );
-  await ensureSeedUser(users, seedClientUsername, seedClientPassword, 'client', [fallbackSite.id]);
+  if (fallbackSite) {
+    await users.updateMany(
+      {
+        role: 'client',
+        $or: [{ siteAccess: { $exists: false } }, { siteAccess: { $size: 0 } }]
+      },
+      { $set: { siteAccess: [fallbackSite.id] } }
+    );
+  } else {
+    await users.updateMany(
+      { role: 'client', siteAccess: { $exists: true } },
+      { $set: { siteAccess: [] } }
+    );
+  }
   await ensureSeedUser(users, seedAdminUsername, seedAdminPassword, 'admin', []);
   return users;
 }
@@ -1089,6 +1089,11 @@ function readAuthCookie(req: Request): string | null {
   return cookies[authSessionCookie] ?? null;
 }
 
+function readOwnerPreviewCookie(req: Request): string | null {
+  const cookies = parseCookieHeader(req.headers.cookie);
+  return cookies[ownerPreviewCookie] ?? null;
+}
+
 function setAuthCookie(req: Request, res: Response, token: string): void {
   const secureCookie = shouldUseSecureCookie(req);
   res.cookie(authSessionCookie, token, {
@@ -1097,6 +1102,18 @@ function setAuthCookie(req: Request, res: Response, token: string): void {
     secure: secureCookie,
     path: '/',
     maxAge: authSessionTtlSeconds * 1000
+  });
+}
+
+function setOwnerPreviewCookie(req: Request, res: Response, username: string): void {
+  const secureCookie = shouldUseSecureCookie(req);
+  const token = signOwnerPreview(username);
+  res.cookie(ownerPreviewCookie, token, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: secureCookie,
+    path: '/',
+    maxAge: ownerPreviewTtlSeconds * 1000
   });
 }
 
@@ -1168,6 +1185,43 @@ function secureEqual(left: string, right: string): boolean {
   }
 
   return timingSafeEqual(leftBuffer, rightBuffer);
+}
+
+function signOwnerPreview(username: string): string {
+  const normalizedUsername = normalizeUsername(username);
+  const expiresAt = Date.now() + ownerPreviewTtlSeconds * 1000;
+  const encodedUser = Buffer.from(normalizedUsername, 'utf8').toString('base64url');
+  const payload = `${encodedUser}.${expiresAt}`;
+  const signature = createSignature(`preview:${payload}`);
+  return `${payload}.${signature}`;
+}
+
+function verifyOwnerPreview(token: string): SessionIdentity | null {
+  const [encodedUser, expiresAtRaw, signature] = token.split('.');
+  if (!encodedUser || !expiresAtRaw || !signature) {
+    return null;
+  }
+
+  const payload = `${encodedUser}.${expiresAtRaw}`;
+  const expectedSignature = createSignature(`preview:${payload}`);
+  if (!secureEqual(signature, expectedSignature)) {
+    return null;
+  }
+
+  const expiresAt = Number(expiresAtRaw);
+  if (!Number.isFinite(expiresAt) || expiresAt < Date.now()) {
+    return null;
+  }
+
+  try {
+    const username = normalizeUsername(Buffer.from(encodedUser, 'base64url').toString('utf8'));
+    if (!username) {
+      return null;
+    }
+    return { username };
+  } catch {
+    return null;
+  }
 }
 
 function parseContactPayload(input: ContactRequestBody):
@@ -1302,7 +1356,29 @@ function isValidPhone(value: string): boolean {
 }
 
 function getRequestIp(req: Request): string {
-  return req.ip || req.socket.remoteAddress || 'unknown';
+  const forwardedFor = req.headers['x-forwarded-for'];
+  const forwardedValue = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor;
+  const firstForwardedIp = typeof forwardedValue === 'string' ? forwardedValue.split(',')[0]?.trim() ?? '' : '';
+  const xRealIp = typeof req.headers['x-real-ip'] === 'string' ? req.headers['x-real-ip'].trim() : '';
+  const rawIp = firstForwardedIp || xRealIp || req.ip || req.socket.remoteAddress || 'unknown';
+  return normalizeIp(rawIp);
+}
+
+function normalizeIp(value: string): string {
+  const trimmed = value.trim().toLowerCase();
+  if (!trimmed) {
+    return 'unknown';
+  }
+
+  if (trimmed.startsWith('::ffff:')) {
+    return trimmed.slice('::ffff:'.length);
+  }
+
+  if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+    return trimmed.slice(1, -1);
+  }
+
+  return trimmed;
 }
 
 function canSubmitContactRequest(ip: string): boolean {
@@ -1364,6 +1440,15 @@ function normalizeUsername(value: string): string {
   return value.trim().toLowerCase();
 }
 
+function parseNormalizedUsernames(value: string | undefined): Set<string> {
+  return new Set(
+    (value ?? '')
+      .split(',')
+      .map((entry) => normalizeUsername(entry))
+      .filter(Boolean)
+  );
+}
+
 function normalizeRole(value: unknown): UserRole | null {
   return value === 'admin' || value === 'client' ? value : null;
 }
@@ -1401,6 +1486,37 @@ function normalizeDemoSiteName(value: unknown): string {
   return normalized;
 }
 
+function parseNormalizedIpList(value: string | undefined): Set<string> {
+  return new Set(
+    (value ?? '')
+      .split(',')
+      .map((entry) => normalizeIp(entry))
+      .filter(Boolean)
+  );
+}
+
+function shouldIgnoreSiteVisit(req: Request, user: Pick<SiteUserDoc, 'username' | 'role'> | null): boolean {
+  if (user && getEffectiveRole(user) === 'admin') {
+    return true;
+  }
+
+  if (user && ignoredTrafficUsernames.has(normalizeUsername(user.username))) {
+    return true;
+  }
+
+  const ownerPreviewToken = readOwnerPreviewCookie(req);
+  if (ownerPreviewToken && verifyOwnerPreview(ownerPreviewToken)) {
+    return true;
+  }
+
+  const requestIp = getRequestIp(req);
+  if (ignoredTrafficIps.has(requestIp)) {
+    return true;
+  }
+
+  return false;
+}
+
 function normalizeSiteAccess(siteAccess: string[]): string[] {
   const dedup = new Set<string>();
   for (const id of siteAccess) {
@@ -1426,7 +1542,7 @@ function getActiveDemoSites(): DemoSite[] {
 
 function getFallbackSite(): DemoSite | null {
   const activeSites = getActiveDemoSites();
-  return activeSites[0] ?? demoSites[0] ?? defaultDemoSites[0] ?? null;
+  return activeSites[0] ?? demoSites[0] ?? null;
 }
 
 function resolveAccessibleSites(user: Pick<SiteUserDoc, 'role' | 'siteAccess'>): DemoSite[] {
@@ -1481,8 +1597,8 @@ function loadDemoSites(): DemoSite[] {
     return fromEnv;
   }
 
-  persistDemoSites(defaultDemoSites);
-  return defaultDemoSites;
+  persistDemoSites([]);
+  return [];
 }
 
 function loadSiteSettings(): SiteSettings {
@@ -1571,9 +1687,13 @@ function persistSiteTraffic(stats: SiteTrafficMap): void {
   writeFileSync(siteTrafficDataPath, JSON.stringify(stats, null, 2), 'utf8');
 }
 
-function registerNonAdminSiteVisit(siteId: string): void {
+function registerNonAdminSiteVisit(
+  req: Request,
+  siteId: string,
+  user: Pick<SiteUserDoc, 'username' | 'role'> | null
+): void {
   const normalizedSiteId = normalizeSiteId(siteId);
-  if (!normalizedSiteId) {
+  if (!normalizedSiteId || shouldIgnoreSiteVisit(req, user)) {
     return;
   }
 
@@ -1648,9 +1768,8 @@ function normalizeDemoSites(input: unknown): DemoSite[] {
 
 function persistDemoSites(sites: DemoSite[]): void {
   const normalized = normalizeDemoSites(sites);
-  const output = normalized.length > 0 ? normalized : defaultDemoSites;
   mkdirSync(dirname(demoSitesDataPath), { recursive: true });
-  writeFileSync(demoSitesDataPath, JSON.stringify(output, null, 2), 'utf8');
+  writeFileSync(demoSitesDataPath, JSON.stringify(normalized, null, 2), 'utf8');
 }
 
 async function createDemoSiteAssetsFolder(site: DemoSite): Promise<void> {

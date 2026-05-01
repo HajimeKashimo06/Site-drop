@@ -18,7 +18,7 @@ type QuoteFormState = {
   consent: boolean;
 };
 
-const defaultOffer: QuoteOfferId = "essentiel";
+const defaultOffer: QuoteOfferId = "premium-base";
 
 function resolveOffer(rawValue: string | null): QuoteOfferId {
   const normalized = (rawValue ?? "").trim().toLowerCase();
@@ -54,13 +54,13 @@ export function QuotePage() {
     setTone("");
 
     if (!form.consent) {
-      setFeedback("Vous devez accepter d'etre contacte pour envoyer la demande.");
+      setFeedback("Vous devez accepter d'être contacté pour envoyer la demande.");
       setTone("error");
       return;
     }
 
     if (!form.name.trim() || !form.phone.trim() || !form.email.trim()) {
-      setFeedback("Offre, nom, telephone et email sont obligatoires.");
+      setFeedback("Offre, nom, téléphone et email sont obligatoires.");
       setTone("error");
       return;
     }
@@ -112,7 +112,7 @@ export function QuotePage() {
         consent: false,
       });
     } catch {
-      setFeedback("Erreur reseau. Veuillez reessayer dans un instant.");
+      setFeedback("Erreur réseau. Veuillez réessayer dans un instant.");
       setTone("error");
     } finally {
       setSubmitting(false);
@@ -122,21 +122,21 @@ export function QuotePage() {
   return (
     <PublicPageShell
       eyebrow="Demande de devis"
-      title="Parlons de votre projet et de l'offre la plus adaptee."
-      description="Cette demande est envoyee directement a contact@hproweb.fr."
+      title="Recevez un devis adapté à votre projet."
+      description="Choisissez une offre, laissez vos coordonnées et précisez votre besoin pour obtenir une proposition claire."
     >
       <article className="rounded-[1.8rem] border border-[rgba(25,76,138,0.24)] bg-[linear-gradient(118deg,rgba(11,31,56,0.82),rgba(23,78,134,0.84))] px-6 py-7 text-white shadow-[0_24px_46px_rgba(18,45,77,0.22)]">
         <p className="font-display text-sm font-semibold uppercase tracking-[0.24em] text-[#aed0f8]">
           Demande de devis
         </p>
         <h2 className="mt-4 max-w-lg text-balance font-display text-3xl font-semibold leading-tight md:text-4xl">
-          Validation du pack choisi, reponse rapide et ajustements selon vos besoins.
+          Une proposition claire selon votre activité, vos besoins et le niveau de finition attendu.
         </h2>
         <ul className="mt-6 grid gap-3 text-sm leading-7 text-white/90 md:text-base">
           {[
-            "Reponse rapide et claire",
-            "Validation du pack choisi",
-            "Ajustements possibles selon vos besoins",
+            "Offre choisie ou ajustée avec vous",
+            "Budget et périmètre clarifiés",
+            "Réponse adaptée à votre projet",
           ].map((item) => (
             <li
               key={item}
@@ -153,7 +153,7 @@ export function QuotePage() {
           Votre devis
         </h2>
         <p className="mt-3 text-sm leading-7 text-[var(--ink-soft)] md:text-base">
-          Renseignez vos coordonnees et l&apos;offre souhaitee.
+          Renseignez vos coordonnées et décrivez votre besoin en quelques lignes.
         </p>
 
         <form className="mt-6 grid gap-4" onSubmit={onSubmit} noValidate>
@@ -197,7 +197,7 @@ export function QuotePage() {
             />
           </Field>
 
-          <Field label="Telephone">
+          <Field label="Téléphone">
             <input
               value={form.phone}
               onChange={(event) => updateField("phone", event.target.value)}
@@ -208,14 +208,14 @@ export function QuotePage() {
             />
           </Field>
 
-          <Field label="Details du besoin (optionnel)">
+          <Field label="Détails du besoin (optionnel)">
             <textarea
               value={form.message}
               onChange={(event) => updateField("message", event.target.value)}
               className={`${fieldClassName} min-h-32 resize-y`}
               rows={5}
               maxLength={3000}
-              placeholder="Ajoutez des infos utiles sur votre activite et votre besoin."
+              placeholder="Ajoutez des infos utiles sur votre activité et votre besoin."
             />
           </Field>
 
@@ -235,7 +235,7 @@ export function QuotePage() {
               onChange={(event) => updateField("consent", event.target.checked)}
               className="mt-1 h-4 w-4 rounded border-[var(--line-strong)]"
             />
-            <span>J&apos;accepte d&apos;etre contacte au sujet de ma demande de devis.</span>
+            <span>J&apos;accepte d&apos;être contacté au sujet de ma demande de devis.</span>
           </label>
 
           <button

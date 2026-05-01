@@ -1,75 +1,176 @@
 export const mainNavigation = [
   { href: "/", label: "Accueil" },
-  { href: "/demo-site", label: "Site demo" },
-  { href: "/devis", label: "Devis" },
+  { href: "/offres", label: "Nos offres" },
   { href: "/contact", label: "Contact" },
   { href: "/admin", label: "Admin" },
 ] as const;
 
 export const legalNavigation = [
-  { href: "/mentions-legales", label: "Mentions legales" },
-  { href: "/cgv", label: "Conditions generales de vente" },
+  { href: "/mentions-legales", label: "Mentions légales" },
+  { href: "/cgv", label: "Conditions générales de vente" },
   { href: "/qui-sommes-nous", label: "Qui sommes-nous" },
 ] as const;
 
-export const offers = [
-  {
-    title: "Site web",
-    tagline: "Confiance en ligne",
-    summary: "Un front plus rapide, plus net et plus simple a maintenir.",
-    image: "/pack/pclogofinal.png",
-    alt: "Mockup site web Hproweb",
-  },
-  {
-    title: "Carte de visite",
-    tagline: "Premier contact",
-    summary: "Le systeme visuel reste cohherent entre l'ecran et le terrain.",
-    image: "/pack/cartevi.png",
-    alt: "Carte de visite Hproweb",
-  },
-  {
-    title: "Prospectus",
-    tagline: "Presence locale",
-    summary: "Les supports print restent dans la meme direction de marque.",
-    image: "/pack/prospectus.png",
-    alt: "Prospectus Hproweb",
-  },
-] as const;
-
-export const migrationSteps = [
-  {
-    title: "Fond 3D retire",
-    description:
-      "Le canvas WebGL a ete retire du front principal. Le rendu reste plus leger, plus lisible et plus stable.",
-  },
-  {
-    title: "Nouvelle base Next.js",
-    description:
-      "Le front principal tourne maintenant sur Next.js avec Tailwind CSS et Framer Motion dans une base separee et propre.",
-  },
-  {
-    title: "Demos unifiees",
-    description:
-      "Les pages publiques, l'admin et toutes les demos passent maintenant par des routes Next, sans point d'entree HTML legacy.",
-  },
-] as const;
-
-export const routeStatuses = [
-  { title: "Accueil", status: "Pret", href: "/", detail: "Nouvelle direction visuelle et structure de base en place." },
-  { title: "Contact", status: "Migre", href: "/contact", detail: "Formulaire branche sur l'API via le proxy Next." },
-  { title: "Devis", status: "Migre", href: "/devis", detail: "Selection d'offre et envoi vers l'API conserves." },
-  { title: "Admin", status: "Migre", href: "/admin", detail: "Connexion, gestion des users, sites et stats portes dans Next." },
-  { title: "Demo", status: "Migre", href: "/demo-site", detail: "Portail, protections et sites clients servis par les routes Next unifiees." },
-  { title: "Legal", status: "Migre", href: "/mentions-legales", detail: "Contenus editoriaux portes dans la nouvelle structure." },
-] as const;
-
 export const quoteOffers = [
-  { id: "essentiel", label: "Essentiel" },
-  { id: "pro", label: "Pro" },
-  { id: "grand-format", label: "Grand format" },
+  { id: "premium-base", label: "Offre premium - Option 1" },
+  { id: "premium-admin", label: "Offre premium - Option 2" },
+  {
+    id: "premium-admin-clients",
+    label: "Offre premium - Option 3",
+  },
+  { id: "premium-deluxe-base", label: "Offre premium deluxe - Option 1" },
+  { id: "premium-deluxe-admin", label: "Offre premium deluxe - Option 2" },
+  {
+    id: "premium-deluxe-admin-clients",
+    label: "Offre premium deluxe - Option 3",
+  },
 ] as const;
 
 export type QuoteOfferId = (typeof quoteOffers)[number]["id"];
+
+export const offerFamilies = [
+  {
+    id: "premium",
+    eyebrow: "Site internet",
+    title: "Offre premium",
+    price: "À partir de 300 EUR",
+    summary:
+      "3 options pour créer votre site avec le bon niveau de gestion selon votre besoin.",
+    accentBackground: "linear-gradient(135deg, #0f172f 0%, #173763 48%, #234d84 100%)",
+    highlights: [
+      "Site sur-mesure",
+      "Réservation ou contact",
+      "Support inclus",
+    ],
+  },
+  {
+    id: "premium-deluxe",
+    eyebrow: "Site + print",
+    title: "Offre premium deluxe",
+    price: "À partir de 450 EUR",
+    summary:
+      "Les mêmes 3 options que l'offre premium, avec en plus le site, la carte de visite et le prospectus.",
+    accentBackground: "linear-gradient(135deg, #201914 0%, #6d4c27 46%, #c59548 100%)",
+    highlights: [
+      "Site sur-mesure",
+      "Carte de visite",
+      "Prospectus inclus",
+    ],
+  },
+] as const;
+
+export type OfferFamilyId = (typeof offerFamilies)[number]["id"];
+
+export type OfferTierOption = {
+  id: QuoteOfferId;
+  title: string;
+  price: string;
+  summary: string;
+  features: string[];
+  ctaLabel: string;
+};
+
+export const offerTierOptions: Record<OfferFamilyId, readonly OfferTierOption[]> = {
+  premium: [
+    {
+      id: "premium-base",
+      title: "Option 1",
+      price: "300 EUR",
+      summary:
+        "Site avec réservation possible, sans compte admin.",
+      features: [
+        "Site vitrine premium",
+        "Réservation intégrée",
+        "Sans compte admin",
+        "Problèmes techniques pris en charge",
+        "Modifications possibles selon la demande",
+      ],
+      ctaLabel: "Choisir l'option 1",
+    },
+    {
+      id: "premium-admin",
+      title: "Option 2",
+      price: "500 EUR",
+      summary:
+        "Site avec réservation et compte admin pour gérer votre contenu.",
+      features: [
+        "Site premium complet",
+        "Compte admin pour gérer votre contenu",
+        "Réservation intégrée",
+        "Problèmes techniques pris en charge",
+        "Modifications possibles selon la demande",
+      ],
+      ctaLabel: "Choisir l'option 2",
+    },
+    {
+      id: "premium-admin-clients",
+      title: "Option 3",
+      price: "900 EUR",
+      summary:
+        "Site avec compte admin et comptes clients illimités.",
+      features: [
+        "Compte admin complet",
+        "Comptes clients illimités",
+        "Réservation intégrée",
+        "Problèmes techniques pris en charge",
+        "Modifications possibles selon la demande",
+      ],
+      ctaLabel: "Choisir l'option 3",
+    },
+  ],
+  "premium-deluxe": [
+    {
+      id: "premium-deluxe-base",
+      title: "Option 1",
+      price: "450 EUR",
+      summary:
+        "Option 1 premium avec le site, la carte de visite et le prospectus.",
+      features: [
+        "Site internet premium",
+        "Réservation intégrée",
+        "Carte de visite incluse",
+        "Prospectus inclus",
+        "Sans compte admin",
+        "Problèmes techniques pris en charge",
+        "Modifications possibles selon la demande",
+      ],
+      ctaLabel: "Choisir l'option 1",
+    },
+    {
+      id: "premium-deluxe-admin",
+      title: "Option 2",
+      price: "650 EUR",
+      summary:
+        "Option 2 premium avec le site, la carte de visite et le prospectus.",
+      features: [
+        "Site internet premium",
+        "Réservation intégrée",
+        "Carte de visite et prospectus",
+        "Compte admin inclus",
+        "Problèmes techniques pris en charge",
+        "Modifications possibles selon la demande",
+      ],
+      ctaLabel: "Choisir l'option 2",
+    },
+    {
+      id: "premium-deluxe-admin-clients",
+      title: "Option 3",
+      price: "1 050 EUR",
+      summary:
+        "Option 3 premium avec le site, la carte de visite, le prospectus et les comptes clients illimités.",
+      features: [
+        "Site internet premium deluxe",
+        "Compte admin complet",
+        "Comptes clients illimités",
+        "Réservation intégrée",
+        "Carte de visite et prospectus",
+        "Problèmes techniques pris en charge",
+        "Modifications possibles selon la demande",
+      ],
+      ctaLabel: "Choisir l'option 3",
+    },
+  ],
+};
 
 export type DemoSite = {
   id: string;

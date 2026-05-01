@@ -17,11 +17,11 @@ const sora = Sora({
 
 export const metadata: Metadata = {
   title: {
-    default: "Hproweb | Visibilite totale",
+    default: "Hproweb | Visibilité totale",
     template: "%s | Hproweb",
   },
   description:
-    "Nouveau front Hproweb en migration vers Next.js, Tailwind CSS et Framer Motion.",
+    "Création de sites internet sur-mesure pour entreprises, indépendants et commerces qui veulent une image professionnelle en ligne.",
 };
 
 export default function RootLayout({

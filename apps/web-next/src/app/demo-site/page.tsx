@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
-import { DemoLoginPage } from "@/components/demo-login-page";
+import { DemoSitesPage } from "@/components/demo-sites-page";
 
 export const metadata: Metadata = {
-  title: "Connexion site demo",
+  title: "Portail démo",
 };
 
 export default function DemoSiteRoute() {
-  return <DemoLoginPage />;
+  return <DemoSitesPage />;
 }

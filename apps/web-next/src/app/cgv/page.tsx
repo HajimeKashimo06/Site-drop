@@ -3,15 +3,15 @@ import type { Metadata } from "next";
 import { InfoPage } from "@/components/info-page";
 
 export const metadata: Metadata = {
-  title: "Conditions generales de vente",
+  title: "Conditions générales de vente",
 };
 
 export default function CgvPage() {
   return (
     <InfoPage
       eyebrow="Cadre contractuel"
-      title="Conditions Generales de Vente (CGV)"
-      subtitle="Mise a jour : 17 avril 2026"
+      title="Conditions Générales de Vente (CGV)"
+      subtitle="Mise à jour : 17 avril 2026"
       sections={[
         {
           title: "1. Identification du vendeur",
@@ -26,70 +26,70 @@ export default function CgvPage() {
         {
           title: "2. Objet",
           paragraphs: [
-            "Les presentes CGV definissent les conditions dans lesquelles Hproweb propose des prestations de conception, developpement, mise en ligne et accompagnement de sites internet.",
+            "Les présentes CGV définissent les conditions dans lesquelles Hproweb propose des prestations de conception, développement, mise en ligne et accompagnement de sites internet.",
           ],
         },
         {
           title: "3. Prestations",
           paragraphs: [
-            "Les prestations sont decrites sur le site et/ou dans le devis transmis au client. Le contenu precis, le perimetre technique, les options, les delais et le prix final sont confirmes dans le devis accepte.",
+            "Les prestations sont décrites sur le site et/ou dans le devis transmis au client. Le contenu précis, le périmètre technique, les options, les délais et le prix final sont confirmés dans le devis accepté.",
           ],
         },
         {
           title: "4. Commande et formation du contrat",
           paragraphs: [
-            "La commande est consideree comme ferme a reception de l'acceptation ecrite du devis (email ou signature) et, le cas echeant, du reglement d'acompte prevu au devis.",
+            "La commande est considérée comme ferme à réception de l'acceptation écrite du devis (email ou signature) et, le cas échéant, du règlement d'acompte prévu au devis.",
           ],
         },
         {
-          title: "5. Prix et modalites de paiement",
+          title: "5. Prix et modalités de paiement",
           paragraphs: [
-            "Les prix sont indiques en euros. Sauf mention contraire, les modalites de paiement (acompte, echeances, solde) sont celles precisees sur le devis valide par le client.",
-            "En cas de retard de paiement, Hproweb peut suspendre l'execution de la prestation apres relance restee sans effet.",
+            "Les prix sont indiqués en euros. Sauf mention contraire, les modalités de paiement (acompte, échéances, solde) sont celles précisées sur le devis validé par le client.",
+            "En cas de retard de paiement, Hproweb peut suspendre l'exécution de la prestation après relance restée sans effet.",
           ],
         },
         {
-          title: "6. Delais de realisation",
+          title: "6. Délais de réalisation",
           paragraphs: [
-            "Les delais sont communiques a titre estimatif et peuvent evoluer selon la complexite du projet, les demandes de modification et la reactivite du client pour valider les etapes.",
+            "Les délais sont communiqués à titre estimatif et peuvent évoluer selon la complexité du projet, les demandes de modification et la réactivité du client pour valider les étapes.",
           ],
         },
         {
-          title: "7. Droit de retractation (clients consommateurs)",
+          title: "7. Droit de rétractation (clients consommateurs)",
           paragraphs: [
-            "Conformement aux articles L221-18 et suivants du Code de la consommation, le client consommateur dispose d'un delai de 14 jours pour exercer son droit de retractation pour les contrats conclus a distance.",
-            "Si le client demande expressement l'execution de la prestation avant la fin du delai de retractation, il peut etre tenu de payer la part de service deja executee en cas de retractation, selon les dispositions legales.",
+            "Conformément aux articles L221-18 et suivants du Code de la consommation, le client consommateur dispose d'un délai de 14 jours pour exercer son droit de rétractation pour les contrats conclus à distance.",
+            "Si le client demande expressément l'exécution de la prestation avant la fin du délai de rétractation, il peut être tenu de payer la part de service déjà exécutée en cas de rétractation, selon les dispositions légales.",
           ],
         },
         {
           title: "8. Obligations du client",
           paragraphs: [
-            "Le client s'engage a fournir des informations exactes, les contenus necessaires (textes, images, acces) et a respecter les delais de validation pour permettre l'avancement du projet.",
+            "Le client s'engage à fournir des informations exactes, les contenus nécessaires (textes, images, accès) et à respecter les délais de validation pour permettre l'avancement du projet.",
           ],
         },
         {
-          title: "9. Propriete intellectuelle",
+          title: "9. Propriété intellectuelle",
           paragraphs: [
-            "Sauf clause contraire au devis, les droits d'utilisation du site livre sont cedes au client apres paiement integral des sommes dues. Les outils, composants, methodes et savoir-faire propres a Hproweb restent sa propriete.",
+            "Sauf clause contraire au devis, les droits d'utilisation du site livré sont cédés au client après paiement intégral des sommes dues. Les outils, composants, méthodes et savoir-faire propres à Hproweb restent sa propriété.",
           ],
         },
         {
-          title: "10. Responsabilite",
+          title: "10. Responsabilité",
           paragraphs: [
-            "Hproweb met en oeuvre les moyens professionnels adaptes a la realisation des prestations. La responsabilite est limitee aux dommages directs, a l'exclusion des dommages indirects (perte d'exploitation, perte de chiffre d'affaires, perte d'opportunite, etc.).",
+            "Hproweb met en œuvre les moyens professionnels adaptés à la réalisation des prestations. La responsabilité est limitée aux dommages directs, à l'exclusion des dommages indirects (perte d'exploitation, perte de chiffre d'affaires, perte d'opportunité, etc.).",
           ],
         },
         {
-          title: "11. Reclamations et mediation",
+          title: "11. Réclamations et médiation",
           paragraphs: [
-            "En cas de litige, le client est invite a adresser une reclamation ecrite a contact@hproweb.fr afin de rechercher une solution amiable.",
-            "Pour les clients consommateurs, un dispositif de mediation de la consommation est applicable conformement aux articles L612-1 et suivants du Code de la consommation. Les coordonnees du mediateur competent seront communiquees sur demande tant que la designation formelle est en cours.",
+            "En cas de litige, le client est invité à adresser une réclamation écrite à contact@hproweb.fr afin de rechercher une solution amiable.",
+            "Pour les clients consommateurs, un dispositif de médiation de la consommation est applicable conformément aux articles L612-1 et suivants du Code de la consommation. Les coordonnées du médiateur compétent seront communiquées sur demande tant que la désignation formelle est en cours.",
           ],
         },
         {
           title: "12. Droit applicable et juridiction",
           paragraphs: [
-            "Les presentes CGV sont soumises au droit francais. A defaut d'accord amiable, le litige est porte devant la juridiction competente selon les regles legales en vigueur.",
+            "Les présentes CGV sont soumises au droit français. À défaut d'accord amiable, le litige est porté devant la juridiction compétente selon les règles légales en vigueur.",
           ],
         },
       ]}

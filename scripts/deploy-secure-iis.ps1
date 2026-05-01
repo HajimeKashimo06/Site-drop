@@ -235,8 +235,6 @@ Update-Or-AddEnvValue -FilePath $apiEnvPath -Key 'APP_URL' -Value $appUrl
 Update-Or-AddEnvValue -FilePath $apiEnvPath -Key 'MONGO_URI' -Value 'mongodb://127.0.0.1:27017'
 Update-Or-AddEnvValue -FilePath $apiEnvPath -Key 'MONGO_DB_NAME' -Value 'sitedrop'
 Update-Or-AddEnvValue -FilePath $apiEnvPath -Key 'MONGO_USERS_COLLECTION' -Value 'users'
-Update-Or-AddEnvValue -FilePath $apiEnvPath -Key 'AUTH_DEMO_USERNAME' -Value 'coiffure1'
-Update-Or-AddEnvValue -FilePath $apiEnvPath -Key 'AUTH_DEMO_PASSWORD' -Value '1234'
 Update-Or-AddEnvValue -FilePath $apiEnvPath -Key 'AUTH_ADMIN_USERNAME' -Value 'admin'
 Update-Or-AddEnvValue -FilePath $apiEnvPath -Key 'AUTH_ADMIN_PASSWORD' -Value 'Hproweb@2026!'
 Update-Or-AddEnvValue -FilePath $apiEnvPath -Key 'AUTH_SESSION_SECRET' -Value $secret
@@ -372,5 +370,5 @@ if (-not $isHealthy) {
 Write-Host ''
 Write-Host 'Deploiement termine.'
 Write-Host "Site: $appUrl"
-Write-Host "Login page: $appUrl/demo-site"
+Write-Host "Login page: $appUrl/admin"
 Write-Host "API health: $healthUrl"
