@@ -47,8 +47,27 @@ function Register-StartupTaskCmd {
     [string]$LauncherPath
   )
 
-  cmd /c "schtasks /Delete /TN $TaskName /F" | Out-Null
-  cmd /c "schtasks /Create /TN $TaskName /SC ONSTART /RU SYSTEM /RL HIGHEST /TR `"cmd.exe /c $LauncherPath`" /F" | Out-Null
+  $existingTask = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+  if ($existingTask) {
+    Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
+  }
+
+  $action = New-ScheduledTaskAction -Execute 'cmd.exe' -Argument "/c `"$LauncherPath`""
+  $trigger = New-ScheduledTaskTrigger -AtStartup
+  $settings = New-ScheduledTaskSettingsSet `
+    -AllowStartIfOnBatteries `
+    -DontStopIfGoingOnBatteries `
+    -StartWhenAvailable `
+    -ExecutionTimeLimit (New-TimeSpan -Seconds 0)
+
+  Register-ScheduledTask `
+    -TaskName $TaskName `
+    -Action $action `
+    -Trigger $trigger `
+    -Settings $settings `
+    -RunLevel Highest `
+    -User 'SYSTEM' `
+    -Force | Out-Null
 }
 
 Write-Host '1) Build Next.js app...'

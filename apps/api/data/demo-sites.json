@@ -10,5 +10,17 @@
     "name": "restaudemo2",
     "path": "/sites/restaudemo2",
     "active": true
+  },
+  {
+    "id": "coiffeurdemo",
+    "name": "coiffeurdemo",
+    "path": "/sites/coiffeurdemo",
+    "active": true
+  },
+  {
+    "id": "demo999",
+    "name": "demo999",
+    "path": "/sites/demo999",
+    "active": true
   }
 ]

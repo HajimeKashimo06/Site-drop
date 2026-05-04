@@ -4,8 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { CoiffeurDemoPage } from "@/components/coiffeur-demo-page";
 import { RestaurantDemoPage } from "@/components/restaurant-demo-page";
 import { RestaurantDemoSeasidePage } from "@/components/restaurant-demo-seaside-page";
+import { TattooDemoPage } from "@/components/tattoo-demo-page";
 
 type DemoSiteAsset = {
   fileName: string;
@@ -125,6 +127,14 @@ export function DemoSitePage({
 
   if (site.id === "restaudemo2" && !htmlPreviewPath) {
     return <RestaurantDemoSeasidePage site={site} />;
+  }
+
+  if (site.id === "coiffeurdemo") {
+    return <CoiffeurDemoPage site={site} />;
+  }
+
+  if (site.id === "demo999") {
+    return <TattooDemoPage site={site} />;
   }
 
   return (
