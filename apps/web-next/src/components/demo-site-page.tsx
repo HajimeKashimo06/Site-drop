@@ -4,9 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { AvocatDemoPage } from "@/components/avocat-demo-page";
 import { CoiffeurDemoPage } from "@/components/coiffeur-demo-page";
 import { RestaurantDemoPage } from "@/components/restaurant-demo-page";
 import { RestaurantDemoSeasidePage } from "@/components/restaurant-demo-seaside-page";
+import { TattooMartDemoPage } from "@/components/tattoo-mart-demo-page";
 import { TattooDemoPage } from "@/components/tattoo-demo-page";
 
 type DemoSiteAsset = {
@@ -135,6 +137,14 @@ export function DemoSitePage({
 
   if (site.id === "demo999") {
     return <TattooDemoPage site={site} />;
+  }
+
+  if (site.id === "avocatdemo") {
+    return <AvocatDemoPage site={site} />;
+  }
+
+  if (site.id === "tattoomart") {
+    return <TattooMartDemoPage site={site} />;
   }
 
   return (

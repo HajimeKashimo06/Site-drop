@@ -22,5 +22,17 @@
     "name": "demo999",
     "path": "/sites/demo999",
     "active": true
+  },
+  {
+    "id": "avocatdemo",
+    "name": "avocatdemo",
+    "path": "/sites/avocatdemo",
+    "active": true
+  },
+  {
+    "id": "tattoomart",
+    "name": "tattoomart",
+    "path": "/sites/tattoomart",
+    "active": true
   }
 ]

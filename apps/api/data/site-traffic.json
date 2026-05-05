@@ -1,6 +1,10 @@
 {
   "demo999": {
-    "nonAdminClicks": 33,
-    "lastClickAt": "2026-05-05T00:32:57.254Z"
+    "nonAdminClicks": 44,
+    "lastClickAt": "2026-05-05T22:11:39.014Z"
+  },
+  "avocatdemo": {
+    "nonAdminClicks": 10,
+    "lastClickAt": "2026-05-05T22:11:26.974Z"
   }
 }
