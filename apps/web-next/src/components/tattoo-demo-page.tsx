@@ -1,5 +1,6 @@
 "use client";
 
+import "@google/model-viewer";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
@@ -14,6 +15,14 @@ type DemoSiteRecord = {
 type TattooDemoPageProps = {
   site: DemoSiteRecord;
 };
+
+declare global {
+  namespace React.JSX {
+    interface IntrinsicElements {
+      "model-viewer": any;
+    }
+  }
+}
 
 type Artist = {
   id: string;
@@ -290,18 +299,18 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
           <div className="absolute inset-x-0 bottom-0 h-48 bg-[linear-gradient(0deg,rgba(6,16,13,0.94),transparent)]" />
           <div className="absolute inset-0 opacity-[0.05] [background-image:linear-gradient(rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.12)_1px,transparent_1px)] [background-size:48px_48px]" />
 
-          <div className="relative z-10 mx-auto flex min-h-[100svh] w-[min(1280px,calc(100vw-20px))] flex-col px-0 pb-16 pt-3 md:min-h-screen md:w-[min(1280px,calc(100vw-32px))] md:px-1 md:pt-4">
-            <header className="relative rounded-[1.5rem] border border-white/8 bg-[rgba(10,10,10,0.78)] px-3 py-2 backdrop-blur-xl md:px-6 md:py-3">
+          <div className="relative z-10 mx-auto flex min-h-[100svh] w-[min(1280px,calc(100vw-20px))] flex-col px-0 pb-10 pt-2 md:min-h-screen md:w-[min(1280px,calc(100vw-32px))] md:px-1 md:pb-16 md:pt-4">
+            <header className="relative rounded-[1.35rem] border border-white/8 bg-[rgba(10,10,10,0.78)] px-3 py-1.5 backdrop-blur-xl md:rounded-[1.5rem] md:px-6 md:py-3">
               <Link
                 href="/"
-                className="absolute left-3 top-2.5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-white/80 md:left-6 md:top-3 md:px-3 md:py-2 md:text-[0.72rem] md:tracking-[0.12em]"
+                className="absolute left-3 top-2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-2 py-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-white/80 md:left-6 md:top-3 md:px-3 md:py-2 md:text-[0.72rem] md:tracking-[0.12em]"
               >
                 <span aria-hidden="true">&lt;-</span>
                 Retour
               </Link>
 
-              <div className="mx-auto flex max-w-[980px] flex-col items-center gap-1">
-                <div className="relative w-28 sm:w-20 md:w-24 lg:hidden">
+              <div className="mx-auto flex max-w-[980px] flex-col items-center gap-0.5">
+                <div className="relative w-24 md:w-24 lg:hidden">
                   <Image
                     src="/sites/demo999/tattoo2.png"
                     alt="999 Studio"
@@ -311,12 +320,12 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                   />
                 </div>
 
-                <div className="grid w-full grid-cols-2 gap-1.5 pt-8 lg:hidden">
+                <div className="grid w-full max-w-[20rem] grid-cols-2 gap-1 pt-4 lg:hidden">
                   {artists.map((artist) => (
                     <a
                       key={artist.id}
                       href={`#${artist.id}`}
-                      className="rounded-full border border-white/10 bg-white/[0.03] px-2 py-1.5 text-center text-[0.56rem] font-semibold uppercase tracking-[0.06em] text-white/60"
+                      className="rounded-full border border-white/10 bg-white/[0.03] px-2 py-1.5 text-center text-[0.52rem] font-semibold uppercase tracking-[0.04em] text-white/60"
                     >
                       {artist.name}
                     </a>
@@ -361,11 +370,11 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
               </div>
             </header>
 
-            <div className="flex flex-1 flex-col justify-center py-8 sm:py-12">
-              <div className="mx-auto mb-8 w-full max-w-[30rem] md:hidden">
-                <div className="overflow-hidden rounded-[1.8rem] border border-white/10 bg-[rgba(8,20,17,0.86)] p-2 shadow-[0_18px_50px_rgba(0,0,0,0.34)]">
+            <div className="flex flex-1 flex-col justify-center py-6 sm:py-12">
+              <div className="mx-auto mb-6 w-full max-w-[22rem] md:hidden">
+                <div className="overflow-hidden rounded-[1.55rem] border border-white/10 bg-[rgba(8,20,17,0.86)] p-2 shadow-[0_18px_50px_rgba(0,0,0,0.34)]">
                   <video
-                    className="h-[30rem] w-full rounded-[1.2rem] object-cover object-center"
+                    className="h-[22rem] w-full rounded-[1.1rem] object-cover object-center"
                     autoPlay
                     muted
                     loop
@@ -383,7 +392,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, delay: 0.06 }}
-                className="text-center text-[0.7rem] font-extrabold uppercase tracking-[0.34em] text-[#67d0ca]"
+                className="text-center text-[0.62rem] font-extrabold uppercase tracking-[0.3em] text-[#67d0ca] sm:text-[0.7rem] sm:tracking-[0.34em]"
               >
                 999 Studio
               </motion.p>
@@ -392,12 +401,12 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.55, delay: 0.12 }}
-                className="mx-auto mt-4 flex max-w-2xl flex-col items-center gap-4 px-3 text-center"
+                className="mx-auto mt-3 flex max-w-2xl flex-col items-center gap-3 px-3 text-center"
               >
-                <h1 className="font-display text-[clamp(2.45rem,8.5vw,5.2rem)] font-semibold leading-[0.96] tracking-[-0.05em]">
+                <h1 className="font-display text-[clamp(2rem,8.7vw,5.2rem)] font-semibold leading-[0.92] tracking-[-0.05em]">
                   Nos tatoueurs
                 </h1>
-                <p className="max-w-[34rem] text-sm leading-7 text-white/56 sm:text-[0.95rem]">
+                <p className="max-w-[19rem] text-[0.84rem] leading-6 text-white/56 sm:max-w-[34rem] sm:text-[0.95rem] sm:leading-7">
                   Quatre univers. Quatre signatures. Une base sobre, noire, nette.
                 </p>
               </motion.div>
@@ -412,7 +421,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                 ))}
               </div>
 
-              <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:hidden">
+              <div className="-mx-1 mt-7 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-2 lg:hidden">
                 {artists.map((artist, index) => (
                   <ArtistHeroCard
                     key={artist.id}
@@ -425,6 +434,52 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
             </div>
           </div>
         </section>
+
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-0 z-[0] hidden lg:block">
+            <div className="sticky top-28 h-[80vh] overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(86,208,198,0.08),transparent_40%)]" />
+              <motion.div
+                animate={{
+                  rotate: [0, -12, -24, -10, 8, 22, 12, -6, -18, 0],
+                  x: [0, -42, -86, -28, 34, 92, 48, -18, -64, 0],
+                  y: [0, 18, 58, 96, 74, 22, -28, -62, -18, 0],
+                  scale: [1.52, 1.56, 1.54, 1.58, 1.55, 1.53, 1.57, 1.54, 1.56, 1.52],
+                }}
+                transition={{
+                  duration: 34,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  times: [0, 0.08, 0.18, 0.31, 0.44, 0.58, 0.71, 0.84, 0.93, 1],
+                }}
+                className="h-full w-full"
+                style={{
+                  opacity: 0.16,
+                  filter: "drop-shadow(0 30px 60px rgba(0,0,0,0.25))",
+                }}
+              >
+                <model-viewer
+                  src="/sites/demo999/tattoo_machine.glb"
+                  alt="Machine de tatouage 3D"
+                  camera-orbit="28deg 82deg 90%"
+                  min-camera-orbit="auto auto 90%"
+                  max-camera-orbit="auto auto 90%"
+                  interaction-prompt="none"
+                  disable-pan
+                  disable-zoom
+                  shadow-intensity="0"
+                  exposure="0.95"
+                  environment-image="neutral"
+                  loading="lazy"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                  }}
+                />
+              </motion.div>
+            </div>
+          </div>
 
         {artists.map((artist, index) => (
           <div key={artist.id}>
@@ -459,7 +514,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.5 }}
-                className="relative overflow-hidden rounded-[2rem] border border-white/8 bg-[linear-gradient(180deg,rgba(12,18,16,0.94),rgba(8,12,10,0.98))] p-4 sm:p-6 lg:p-8"
+                className="relative overflow-hidden rounded-[1.65rem] border border-white/8 bg-[linear-gradient(180deg,rgba(12,18,16,0.94),rgba(8,12,10,0.98))] p-4 sm:rounded-[2rem] sm:p-6 lg:p-8"
               >
                 <div className="relative z-[2] grid gap-6 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
                   <div className={`order-1 ${index % 2 === 1 ? "lg:order-2" : ""}`}>
@@ -488,16 +543,16 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                     <h2 className="mt-3 font-display text-[clamp(2.4rem,8vw,5rem)] font-semibold leading-[0.88] tracking-[-0.06em]">
                       {artist.name}
                     </h2>
-                    <p className="mt-4 max-w-[34rem] text-[0.95rem] leading-7 text-white/56">
+                    <p className="mt-4 max-w-[28rem] text-[0.9rem] leading-6 text-white/56 sm:text-[0.95rem] sm:leading-7">
                       Espace dedie pour construire l'univers de {artist.name}. On
                       branchera ici ses photos, ses projets et son style propre.
                     </p>
 
-                    <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                    <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
                       {["Photo 1", "Photo 2", "Photo 3"].map((label) => (
                         <div
                           key={`${artist.id}-${label}`}
-                          className="flex min-h-[10rem] items-end rounded-[1.35rem] border border-dashed border-white/12 bg-white/[0.02] p-4"
+                          className="flex min-h-[8.5rem] items-end rounded-[1.15rem] border border-dashed border-white/12 bg-white/[0.02] p-3 sm:min-h-[10rem] sm:rounded-[1.35rem] sm:p-4"
                         >
                           <div>
                             <p className="text-[0.7rem] font-extrabold uppercase tracking-[0.24em] text-[#67d0ca]">
@@ -513,7 +568,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                       <a
                         href="#reservation"
                         onClick={() => setSelectedArtistId(artist.id)}
-                        className="inline-flex min-h-12 items-center justify-center rounded-full bg-[linear-gradient(135deg,#1a5b53,#67d0ca)] px-5 text-sm font-bold text-[#071311]"
+                        className="inline-flex min-h-11 items-center justify-center rounded-full bg-[linear-gradient(135deg,#1a5b53,#67d0ca)] px-5 text-sm font-bold text-[#071311] sm:min-h-12"
                       >
                         Reserver avec {artist.name}
                       </a>
@@ -521,7 +576,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                         href={instaHref}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex min-h-12 items-center justify-center gap-3 rounded-full border border-white/10 bg-white/[0.04] px-5 text-sm font-semibold text-white/84"
+                        className="inline-flex min-h-11 items-center justify-center gap-3 rounded-full border border-white/10 bg-white/[0.04] px-5 text-sm font-semibold text-white/84 sm:min-h-12"
                       >
                         <span className="relative h-7 w-7 overflow-hidden rounded-full">
                           <Image
@@ -541,6 +596,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
             </section>
           </div>
         ))}
+        </div>
 
         <section
           id="reservation"
@@ -551,14 +607,14 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
-            className="overflow-hidden rounded-[2rem] border border-white/8 bg-[linear-gradient(180deg,rgba(12,18,16,0.94),rgba(8,12,10,0.98))] p-4 sm:p-6 lg:p-8"
+            className="overflow-hidden rounded-[1.65rem] border border-white/8 bg-[linear-gradient(180deg,rgba(12,18,16,0.94),rgba(8,12,10,0.98))] p-4 sm:rounded-[2rem] sm:p-6 lg:p-8"
           >
             <div className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr]">
               <div>
                 <p className="text-[0.72rem] font-extrabold uppercase tracking-[0.32em] text-[#67d0ca]">
                   Reservation
                 </p>
-                <h2 className="mt-3 font-display text-[clamp(2.2rem,7vw,4.5rem)] font-semibold leading-[0.9] tracking-[-0.05em]">
+                <h2 className="mt-3 font-display text-[clamp(1.85rem,7vw,4.5rem)] font-semibold leading-[0.92] tracking-[-0.05em]">
                   Choisissez tatoueur, date, heure.
                 </h2>
 
@@ -571,7 +627,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                         key={artist.id}
                         type="button"
                         onClick={() => setSelectedArtistId(artist.id)}
-                        className={`rounded-[1.2rem] border px-4 py-4 text-left transition ${
+                        className={`rounded-[1rem] border px-3 py-3.5 text-left transition sm:rounded-[1.2rem] sm:px-4 sm:py-4 ${
                           active
                             ? "border-[#67d0ca]/30 bg-[#67d0ca]/12 text-white"
                             : "border-white/10 bg-white/[0.03] text-white/74"
@@ -609,7 +665,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                   })}
                 </div>
 
-                <div className="mt-5 grid grid-cols-7 gap-1.5 sm:gap-3">
+                <div className="mt-5 grid grid-cols-7 gap-1 sm:gap-3">
                   {weekLabels.map((label) => (
                     <div
                       key={label}
@@ -637,7 +693,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                           setSelectedDate(cell.date);
                           setSelectedTime(null);
                         }}
-                        className={`rounded-[0.95rem] border px-1 py-2.5 text-center transition sm:rounded-[1.15rem] sm:px-2 sm:py-4 ${
+                        className={`rounded-[0.8rem] border px-1 py-2 text-center transition sm:rounded-[1.15rem] sm:px-2 sm:py-4 ${
                           selected
                             ? "border-[#67d0ca]/30 bg-[#67d0ca] text-[#071311]"
                             : disabled
@@ -645,7 +701,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                               : "border-white/10 bg-white/[0.03] text-white hover:border-[#67d0ca]/20"
                         }`}
                       >
-                        <p className="font-display text-[1rem] font-semibold leading-none sm:text-[1.5rem]">
+                        <p className="font-display text-[0.92rem] font-semibold leading-none sm:text-[1.5rem]">
                           {cell.date.getDate()}
                         </p>
                       </button>
@@ -653,7 +709,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                   })}
                 </div>
 
-                <div className="mt-5 rounded-[1.25rem] border border-white/10 bg-white/[0.03] p-4">
+                <div className="mt-5 rounded-[1.1rem] border border-white/10 bg-white/[0.03] p-3.5 sm:rounded-[1.25rem] sm:p-4">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="text-[0.72rem] uppercase tracking-[0.22em] text-[#67d0ca]">
@@ -699,7 +755,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
 
               <div className="grid gap-5">
                 <article className="overflow-hidden rounded-[1.8rem] border border-white/10 bg-[rgba(10,10,10,0.8)]">
-                  <div className="relative min-h-[16rem]">
+                  <div className="relative min-h-[13rem] sm:min-h-[16rem]">
                     <Image
                       src="/sites/demo999/map.png"
                       alt="Carte 999 Studio"
@@ -726,8 +782,8 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                   </div>
                 </article>
 
-                <article className="rounded-[1.8rem] border border-white/10 bg-[rgba(10,10,10,0.8)] p-4 sm:p-6">
-                  <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.03] p-4">
+                <article className="rounded-[1.5rem] border border-white/10 bg-[rgba(10,10,10,0.8)] p-4 sm:rounded-[1.8rem] sm:p-6">
+                  <div className="rounded-[1.1rem] border border-white/10 bg-white/[0.03] p-4 sm:rounded-[1.25rem]">
                     <p className="text-[0.72rem] uppercase tracking-[0.22em] text-[#67d0ca]">
                       Recapitulatif
                     </p>
@@ -755,7 +811,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                     </div>
                   </div>
 
-                  <div className="mt-5 rounded-[1.25rem] border border-white/10 bg-white/[0.03] p-4">
+                  <div className="mt-5 rounded-[1.1rem] border border-white/10 bg-white/[0.03] p-4 sm:rounded-[1.25rem]">
                     <p className="text-[0.72rem] uppercase tracking-[0.22em] text-[#67d0ca]">
                       Contact
                     </p>
@@ -769,7 +825,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                   <div className="mt-5 flex flex-col gap-3">
                     <a
                       href={phoneHref}
-                      className="inline-flex min-h-12 items-center justify-center rounded-full bg-[linear-gradient(135deg,#1a5b53,#67d0ca)] px-6 text-sm font-bold text-[#071311]"
+                      className="inline-flex min-h-11 items-center justify-center rounded-full bg-[linear-gradient(135deg,#1a5b53,#67d0ca)] px-6 text-sm font-bold text-[#071311] sm:min-h-12"
                     >
                       Reserver avec {selectedArtist.name}
                     </a>
@@ -777,7 +833,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                       href={mapHref}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-6 text-sm font-semibold text-white/84"
+                      className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-6 text-sm font-semibold text-white/84 sm:min-h-12"
                     >
                       Ouvrir l'adresse
                     </a>
@@ -785,7 +841,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                       href={instaHref}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex min-h-12 items-center justify-center gap-3 rounded-full border border-white/10 bg-white/[0.04] px-6 text-sm font-semibold text-white/84"
+                      className="inline-flex min-h-11 items-center justify-center gap-3 rounded-full border border-white/10 bg-white/[0.04] px-6 text-sm font-semibold text-white/84 sm:min-h-12"
                     >
                       <span className="relative h-7 w-7 overflow-hidden rounded-full">
                         <Image
@@ -814,23 +870,23 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
-            className="overflow-hidden rounded-[2rem] border border-white/8 bg-[linear-gradient(180deg,rgba(12,18,16,0.94),rgba(8,12,10,0.98))] p-4 sm:p-6 lg:p-8"
+            className="overflow-hidden rounded-[1.65rem] border border-white/8 bg-[linear-gradient(180deg,rgba(12,18,16,0.94),rgba(8,12,10,0.98))] p-4 sm:rounded-[2rem] sm:p-6 lg:p-8"
           >
             <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr]">
               <div>
                 <p className="text-[0.72rem] font-extrabold uppercase tracking-[0.32em] text-[#67d0ca]">
                   Avis
                 </p>
-                <h2 className="mt-3 font-display text-[clamp(2.2rem,7vw,4.5rem)] font-semibold leading-[0.9] tracking-[-0.05em]">
+                <h2 className="mt-3 font-display text-[clamp(1.85rem,7vw,4.5rem)] font-semibold leading-[0.92] tracking-[-0.05em]">
                   Les retours du studio.
                 </h2>
               </div>
 
               <div className="grid gap-5">
-                <article className="rounded-[1.8rem] border border-white/10 bg-[rgba(10,10,10,0.76)] p-5 sm:p-6">
+                <article className="rounded-[1.45rem] border border-white/10 bg-[rgba(10,10,10,0.76)] p-4 sm:rounded-[1.8rem] sm:p-6">
                   <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                     <div className="min-w-0 flex-1">
-                      <p className="text-lg font-semibold text-white">Resume des avis</p>
+                      <p className="text-base font-semibold text-white sm:text-lg">Resume des avis</p>
                       <p className="mt-2 text-sm text-white/42">Les avis ne sont pas verifies</p>
 
                       <div className="mt-5 grid gap-3">
@@ -855,7 +911,7 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                     </div>
 
                     <div className="flex min-w-[7rem] flex-row items-end justify-between gap-4 md:flex-col md:items-end">
-                      <div className="text-[4rem] font-semibold leading-none tracking-[-0.06em] text-white/84">
+                      <div className="text-[3.2rem] font-semibold leading-none tracking-[-0.06em] text-white/84 sm:text-[4rem]">
                         5,0
                       </div>
                       <div className="pb-2 text-right">
@@ -870,14 +926,14 @@ export function TattooDemoPage({ site }: TattooDemoPageProps) {
                   {reviewItems.map((review) => (
                     <article
                       key={review.author}
-                      className="rounded-[1.5rem] border border-white/10 bg-[rgba(10,10,10,0.76)] p-5"
+                      className="rounded-[1.25rem] border border-white/10 bg-[rgba(10,10,10,0.76)] p-4 sm:rounded-[1.5rem] sm:p-5"
                     >
                       <div className="flex items-center justify-between gap-4">
                         <p className="font-semibold text-white">{review.author}</p>
                         <p className="text-sm font-bold text-[#f6bf26]">{review.note}</p>
                       </div>
                       <p className="mt-2 text-sm tracking-[0.18em] text-[#f6bf26]">★★★★★</p>
-                      <p className="mt-4 text-[0.94rem] leading-7 text-white/66">
+                      <p className="mt-4 text-[0.9rem] leading-6 text-white/66 sm:text-[0.94rem] sm:leading-7">
                         {review.text}
                       </p>
                     </article>
@@ -913,7 +969,7 @@ function ArtistHeroCard({
       href={`#${artist.id}`}
       whileHover={{ y: -10, scale: 1.02 }}
       transition={{ duration: 0.28, ease: "easeOut" }}
-      className={`group relative overflow-hidden rounded-[1.8rem] border border-white/10 bg-[linear-gradient(180deg,rgba(11,22,18,0.96),rgba(7,12,10,0.98))] p-3 sm:p-4 ${compact ? "min-h-[19rem]" : "min-h-[28rem]"}`}
+      className={`group relative shrink-0 overflow-hidden rounded-[1.45rem] border border-white/10 bg-[linear-gradient(180deg,rgba(11,22,18,0.96),rgba(7,12,10,0.98))] p-3 sm:rounded-[1.8rem] sm:p-4 ${compact ? "min-h-[15rem] w-[78vw] snap-center sm:min-h-[19rem] sm:w-auto" : "min-h-[28rem]"}`}
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(98,213,205,0.08),transparent_28%)]" />
       <div
@@ -922,13 +978,13 @@ function ArtistHeroCard({
       <motion.div
         animate={{ y: [0, -3, 0], opacity: [0.7, 1, 0.7] }}
         transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-        className={`absolute top-4 z-[3] flex items-center gap-2 rounded-full border border-[#67d0ca]/24 bg-[rgba(7,20,18,0.88)] px-3 py-2 text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#67d0ca] shadow-[0_0_18px_rgba(103,208,202,0.12)] ${align === "right" ? "right-4" : "left-4"}`}
+        className={`absolute top-3 z-[3] flex items-center gap-2 rounded-full border border-[#67d0ca]/24 bg-[rgba(7,20,18,0.88)] px-2.5 py-1.5 text-[0.55rem] font-extrabold uppercase tracking-[0.14em] text-[#67d0ca] shadow-[0_0_18px_rgba(103,208,202,0.12)] sm:top-4 sm:px-3 sm:py-2 sm:text-[0.62rem] sm:tracking-[0.18em] ${align === "right" ? "right-3 sm:right-4" : "left-3 sm:left-4"}`}
       >
         <span className="inline-flex h-2 w-2 rounded-full bg-[#67d0ca]" />
         Cliquer
       </motion.div>
       <div className={`relative flex h-full flex-col ${align === "right" ? "items-end text-right" : "items-start text-left"}`}>
-        <div className={`relative w-full ${compact ? "min-h-[13rem]" : "min-h-[20rem]"}`}>
+        <div className={`relative w-full ${compact ? "min-h-[9.5rem] sm:min-h-[13rem]" : "min-h-[20rem]"}`}>
           <Image
             src={artist.image}
             alt={artist.name}
@@ -938,10 +994,10 @@ function ArtistHeroCard({
           />
         </div>
         <div className="mt-auto pt-3">
-          <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.28em] text-[#67d0ca]">
+          <p className="text-[0.58rem] font-extrabold uppercase tracking-[0.24em] text-[#67d0ca] sm:text-[0.68rem] sm:tracking-[0.28em]">
             999 Studio
           </p>
-          <p className="mt-2 text-[1rem] font-semibold tracking-[0.02em] text-white sm:text-[1.08rem]">
+          <p className="mt-2 text-[0.92rem] font-semibold tracking-[0.01em] text-white sm:text-[1.08rem]">
             {artist.name}
           </p>
         </div>
